@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.4 2014-11-21 23:33
  * 
  */
 
@@ -120,7 +120,7 @@
 			{
 				$this->_firstRowCache 	= $this->fetch();
 				$this->_firstRowCached 	= true;
-				$this->rewind();
+				mysqli_data_seek($this->_mysqlResult,0);
 			}
 		}
 
