@@ -1,7 +1,7 @@
 {
     "name": "simpletools/framework",
     "type": "library",
-    "description": "MVC Framework",
+    "description": "High Performance MVC Framework",
     "keywords": ["mvc","mysql","model","view","controller"],
     "homepage": "http://www.getsimpletools.com/",
     "license": "BSD",
