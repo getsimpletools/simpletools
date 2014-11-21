@@ -2,15 +2,14 @@
     "name": "simpletools/framework",
     "type": "library",
     "description": "High Performance MVC Framework",
-    "keywords": ["mvc","mysql","model","view","controller"],
+    "keywords": ["framework"],
     "homepage": "http://www.getsimpletools.com/",
     "license": "BSD",
     "authors": [
         {
             "name": "Marcin Rosinski",
             "email": "marcin@getsimpletools.com",
-            "homepage": "http://twitter.com/marcinrosinski",
-            "role": "Developer"
+            "homepage": "http://twitter.com/marcinrosinski"
         }
     ],
     "require": {
