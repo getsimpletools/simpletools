@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.4 2014-11-21 18:29
  *
  */
 
@@ -184,6 +184,11 @@
 					$this->_params['associative'][$key] = $value;
 				}
 			}
+		}
+
+		public function &view()
+		{
+			return $this->_view;
 		}
 
 		public function setViewProperty($key,$value)
