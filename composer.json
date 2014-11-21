@@ -1,5 +1,5 @@
 {
-    "name": "simpletools/simpletools",
+    "name": "simpletools/framework",
     "type": "library",
     "description": "MVC Framework",
     "keywords": ["mvc","mysql","model","view","controller"],
