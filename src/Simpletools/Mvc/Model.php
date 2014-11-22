@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.7 2014-11-22 15:57
  *
  */
 
@@ -68,9 +68,24 @@
 			$ns = str_replace('/','\\',$ns);
 			self::$_instance->_activeRoutingNamespace = $ns;
 		}
-		
-		public static function getInstance($model,$initArgs=null)
+
+		public static function __callStatic($name, $args)
 		{
+			array_unshift($args, $name);
+			return call_user_func_array(array('self','getInstance'), $args);
+		}
+
+		public static function of($model)
+		{
+			$args = func_get_args();
+			return call_user_func_array(array('self','getInstance'), $args);
+		}
+		
+		public static function getInstance($model)
+		{
+			$initArgs = func_get_args();
+			array_shift($initArgs);
+
 			if(!isset(self::$_instance))
 				throw new \Exception('\Simpletools\Mvc\Model: There are no settings provided.');
 			
@@ -98,12 +113,12 @@
 			{	
 				if(!class_exists($class)) 
 				{
-					$p = str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$model.'.php';
+					$p = str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$model.'Model.php';
 					$p = realpath(self::$_instance->_appDir.'/models/'.$p);
 
 					if($p===false)
 					{
-						$p = str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$model.'Model.php';
+						$p = str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$model.'.php';
 						$p = realpath(self::$_instance->_appDir.'/models/'.$p);
 
 						if($p===false)
@@ -128,8 +143,8 @@
 				}
 				else
 				{
-					if(method_exists($obj,'init')){$obj->init($initArgs);}
-					
+					call_user_func_array(array($obj,'init'),$initArgs);
+
 					self::$_instance->objects[$class] = $obj;
 					return $obj;
 				}
