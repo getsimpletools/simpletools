@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.4 2014-11-21 23:33
+ * @version    		Ver: 2.0.9 2014-11-22 19:53
  * 
  */
 
@@ -53,8 +53,11 @@
 			$this->_mysqlResult = $mysqliResult;
 			$this->_mysqli		= $mysqli;
 
-			$this->_position 	= 0;
-			$this->_loadFirstRowCache();
+			if($mysqliResult instanceof mysqli_result)
+			{
+				$this->_position 	= 0;
+				$this->_loadFirstRowCache();
+			}
 		}
 
 		public function isEmpty()
