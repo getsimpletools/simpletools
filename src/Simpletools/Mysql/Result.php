@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.9 2014-11-22 19:53
+ * @version    		Ver: 2.0.10 2014-11-22 20:21
  * 
  */
 
@@ -53,7 +53,7 @@
 			$this->_mysqlResult = $mysqliResult;
 			$this->_mysqli		= $mysqli;
 
-			if($mysqliResult instanceof mysqli_result)
+			if(is_object($mysqliResult))
 			{
 				$this->_position 	= 0;
 				$this->_loadFirstRowCache();
