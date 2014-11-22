@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.4 2014-11-21 18:29
+ * @version    		Ver: 2.0.8 2014-11-22 17:20
  *
  */
 
@@ -194,6 +194,21 @@
 		public function setViewProperty($key,$value)
 		{
 			$this->_view->{$key} = $value;
+		}
+
+		public function getActiveRoutingNamespaceDir()
+		{
+			return str_replace('\\',DIRECTORY_SEPARATOR,$this->_activeRoutingNamespace);
+		}
+
+		public function getActiveRoutingNamespaceUrlPath()
+		{
+			return '/'.$this->_activeRoutingNamespaceUrlPath;
+		}
+
+		public function getActiveRoutingNamespace($useDirectorySeparator=false)
+		{
+			return $this->_activeRoutingNamespace;
 		}
 	}
 		

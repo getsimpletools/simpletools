@@ -31,16 +31,18 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.6 2014-11-22 15:40
+ * @version    		Ver: 2.0.8 2014-11-22 19:20
  * 
  */
 
 	namespace Simpletools\Mysql;
 
-	class QueryBuilder
+	class QueryBuilder implements \Iterator
 	{
 		protected $_query 	= '';
 		protected $_mysql 	= '';
+		
+		protected $_result   = null;
 
 		public function __construct($table,$mysql,$columns=array())
 		{
@@ -120,6 +122,18 @@
 			return $this;
 		}
 
+		public function &delete()
+		{
+			$this->_query['type'] = "DELETE FROM";
+
+			$args = func_get_args();
+			if(count($args)==1) $args = $args[0];
+
+			$this->_query['where'][] 	= $args;
+			
+			return $this;
+		}
+
 		public function &insert($data)
 		{
 			$this->_query['type'] = "INSERT";
@@ -145,7 +159,9 @@
 
 		public function run()
 		{
-			return $this->_mysql->query($this->getQuery());
+			if($this->_result) return $this->_result;
+
+			return $this->_result = $this->_mysql->query($this->getQuery());
 		}
 
 		public function get($id,$column='id')
@@ -417,6 +433,78 @@
 
 			return $this;
 		}
+
+		/*
+		* AUTO RUNNNERS
+		*/
+
+		public function __get($name)
+		{
+			$this->run();
+			return $this->_result->{$name};
+		}
+
+		public function getAffectedRows()
+		{
+			$this->run();
+			return $this->_result->getAffectedRows();
+		}
+
+		public function getInsertedId()
+		{
+			$this->run();
+			return $this->_result->getInsertedId();
+		}
+
+		public function isEmpty()
+		{
+			$this->run();
+			return $this->_result->isEmpty();
+		}
+
+		public function fetch()
+		{
+			$this->run();
+			return $this->_result->fetch();
+		}
+
+		public function fetchAll()
+		{
+			$this->run();
+			return $this->_result->fetchAll();
+		}
+
+		public function length()
+		{
+			$this->run();
+			return $this->_result->length();
+		}
+
+		public function rewind()
+		{
+			$this->run();
+			$this->_result->rewind();
+		}
+
+		public function current() 
+		{
+	        return $this->_result->current();
+	    }
+
+	    public function key() 
+	    {
+	        return $this->_result->key();
+	    }
+
+	    public function next() 
+	    {
+	    	return $this->_result->next();
+	    }
+
+	    public function valid() 
+	    {
+	        return $this->_result->valid();
+	    }
 
 	}
 		

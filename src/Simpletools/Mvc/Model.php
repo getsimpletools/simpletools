@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.7 2014-11-22 15:57
+ * @version    		Ver: 2.0.8 2014-11-22 18:14
  *
  */
 
@@ -139,20 +139,24 @@
 					$obj = \Simpletools\Mysql\Client::getInstance();
 										
 					self::$_instance->objects[$class] = $obj->getInstanceOfModel($model,$initArgs,$namespace);
-					return self::$_instance->objects[$class];
 				}
 				else
 				{
-					call_user_func_array(array($obj,'init'),$initArgs);
+					if(method_exists($obj,'init')) 
+					{
+						call_user_func_array(array($obj,'init'),$initArgs);
+					}
 
 					self::$_instance->objects[$class] = $obj;
-					return $obj;
+				}
+
+				if(method_exists(self::$_instance->objects[$class],'setActiveRoutingNamespace')) 
+				{
+					self::$_instance->objects[$class]->setActiveRoutingNamespace(self::$_instance->_activeRoutingNamespace);
 				}
 			}
-			else
-			{
-				return self::$_instance->objects[$class];
-			}
+			
+			return self::$_instance->objects[$class];
 		}
 	}
 
