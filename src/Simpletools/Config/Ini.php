@@ -33,11 +33,13 @@
  * @description		Simple ini files interpreter.
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.3 2014-11-19 18:35
+ * @version    		Ver: 2.0.6 2014-11-22 10:30
  * 
  */
 
-	namespace Simpletools;
+	namespace Simpletools\Config;
+
+	use Simpletools\Config;
 
 	class Ini
 	{
@@ -78,7 +80,7 @@
 		{	
 			if(empty(self::$__instance)) 
 			{
-			   new \Simpletools\Ini($settings);
+			   new Ini($settings);
 		    }
 
 		    $settings['uri_mvc_app_position'] = isset($settings['uri_mvc_app_position']) ? $settings['uri_mvc_app_position'] : 0;

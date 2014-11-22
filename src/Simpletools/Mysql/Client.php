@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.6 2014-11-22 10:27
  * 
  */
 
@@ -763,9 +763,10 @@
 			if($obj instanceof \Simpletools\Mysql\Model)
 				$obj->setMysqliClass($this->_settings['custom_mysqli_class_name']);
 			
-			//depracated
-			if(method_exists($obj,'ini')) $obj->ini($initArgs);
-			if(method_exists($obj,'init')) $obj->init($initArgs);
+			if(method_exists($obj,'init')) 
+			{
+				call_user_func_array(array($obj,'init'),$initArgs);
+			}
 			
 			return $obj;
 		}
