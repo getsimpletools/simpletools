@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.11 2014-11-23 17:29
  *
  */
 
@@ -852,9 +852,9 @@
 		public function isAction($action=null)
 		{
 			if(!$action)
-				$action	= Simpletools\Mvc\Tools::getCorrectActionName($this->getParam('action')).'Action';
+				$action	= Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
 			else
-				$action	= Simpletools\Mvc\Tools::getCorrectActionName($action).'Action';
+				$action	= Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
 				
 			return method_exists($this,$action);
 		}

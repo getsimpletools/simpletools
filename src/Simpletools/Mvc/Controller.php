@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.8 2014-11-22 17:20
+ * @version    		Ver: 2.0.11 2014-11-23 17:28
  *
  */
 
@@ -94,23 +94,74 @@
 		
 		public function render($controller,$view=null)
 		{
+			if(!$this->_view_enabled) return;
+
 			$this->_autoRender = false;
 			
 			if($view === null) 
 			{
 				$view = $controller;
-				$controller = \Simpletools\Mvc\Tools::getCorrectControllerName($this->getParam('controller'));
+				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($this->getParam('controller'));
 			}
 			else if(
 				stripos($controller,'.') !== false ||
 				stripos($controller,'-') !== false ||
 				stripos($controller,' ') !== false
 			)
-				$controller = \Simpletools\Mvc\Tools::getCorrectControllerName($controller);
+				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
 			else
 				$controller = ucfirst($controller);
 			
-			parent::_render($controller,$view);
+			/**/
+			$namespace 			= $this->_activeRoutingNamespace;
+
+			$n = substr($controller,0,1);
+			if($n=='\\' OR $n == '/')
+			{
+				$controller 		= trim(str_replace('/','\\',$controller),'\\');
+				$_path 				= explode('\\',$controller);
+				$controller 		= array_pop($_path);
+				$namespace 			= implode('\\',$_path);
+			}
+
+			if($namespace)
+			{
+				$namespacePath 		= str_replace('\\', DIRECTORY_SEPARATOR, $namespace)."/";
+
+				if(strtolower($view) == 'error')
+				{
+					$path = $this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt();
+					
+					if(!realpath($path))
+					{
+						$namespacePath  = '';
+					}
+				}
+			}
+			else
+			{
+				$namespacePath 		= '';
+			}
+			
+			$v 				= realpath($this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt());
+			
+			if($v)
+			{
+				$this->_autoRender = false;
+				$this->_view->render($v);
+			}
+			else
+			{
+				if($view != 'error')
+				{
+					$this->error('v404');
+				}
+				else
+				{
+					trigger_error("<u>SimpleMVC ERROR</u> - There is a missing Error View.", E_USER_ERROR);
+					exit;
+				}
+			}
 		}
 		
 		public function forward($controller,$action=null,$params=false)
@@ -132,12 +183,12 @@
 					stripos($controller,'-') !== false ||
 					stripos($controller,' ') !== false
 				)
-					$controller = \Simpletools\Mvc\Tools::getCorrectActionName($controller);
+					$controller = \Simpletools\Mvc\Etc::getCorrectActionName($controller);
 				else
 					$controller = lcfirst($controller);
 					
 				$action = $controller;				
-				$controller = \Simpletools\Mvc\Tools::getCorrectControllerName($this->getParam('controller'));
+				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($this->getParam('controller'));
 			}
 			else 
 			{	
@@ -146,7 +197,7 @@
 					stripos($controller,'-') !== false ||
 					stripos($controller,' ') !== false
 				)
-					$controller = \Simpletools\Mvc\Tools::getCorrectControllerName($controller);
+					$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
 				else
 					$controller = ucfirst($controller);
 					
@@ -155,7 +206,7 @@
 					stripos($action,'-') !== false ||
 					stripos($action,' ') !== false
 				)
-					$action = \Simpletools\Mvc\Tools::getCorrectActionName($action);
+					$action = \Simpletools\Mvc\Etc::getCorrectActionName($action);
 				else
 					$action = lcfirst($action);
 			}
@@ -209,6 +260,17 @@
 		public function getActiveRoutingNamespace($useDirectorySeparator=false)
 		{
 			return $this->_activeRoutingNamespace;
+		}
+
+		//views rendering function
+		public function enableView()
+		{
+			$this->_view_enabled = true;
+		}
+		
+		public function disableView()
+		{
+			$this->_view_enabled = false;
 		}
 	}
 		

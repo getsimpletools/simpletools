@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.8 2014-11-22 19:20
+ * @version    		Ver: 2.0.11 2014-11-23 14:38
  * 
  */
 
@@ -174,7 +174,14 @@
 
 		public function _escape($value)
 		{
-			return $this->_mysql->escape($value);
+			if($value instanceof \Simpletools\Mysql\SQL)
+			{
+				return (string) $value;
+			}
+			else
+			{
+				return '"'.$this->_mysql->escape($value).'"';
+			}	
 		}
 
 		private function _prepareQuery($query, array $args)
@@ -188,7 +195,11 @@
 						$arg = str_replace('?','<--SimpleMySQL-QuestionMark-->',$arg);
 					}
 					
-					$arg = "'".$this->_escape($arg)."'";
+					$arg = $this->_escape($arg);
+				}
+				elseif($arg instanceof \Simpletools\Mysql\SQL)
+				{
+					$arg = (string) $arg;
 				}
 				
 				if($arg === null)
@@ -258,7 +269,7 @@
 
 				foreach($this->_query['data'] as $key => $value)
 				{
-					$set[] = $key.' = "'.$this->_escape($value).'"';
+					$set[] = $key.' = '.$this->_escape($value);
 				}
 
 				$query[] = implode(', ',$set);
@@ -272,7 +283,7 @@
 
 				foreach($this->_query['onDuplicateData'] as $key => $value)
 				{
-					$set[] = $key.' = "'.$this->_escape($value).'"';
+					$set[] = $key.' = '.$this->_escape($value);
 				}
 
 				$query[] = implode(', ',$set);
@@ -287,14 +298,14 @@
 					foreach($this->_query['where'] as $operands)
 					{
 						if(!isset($operands[2]))
-							$query[] = $operands[0]." = ".'"'.$this->_escape($operands[1]).'"';
+							$query[] = $operands[0]." = ".$this->_escape($operands[1]);
 						else
-							$query[] = $operands[0]." ".$operands[1]." ".'"'.$this->_escape($operands[2]).'"';
+							$query[] = $operands[0]." ".$operands[1]." ".$this->_escape($operands[2]);
 					}
 				}
 				else
 				{
-					$query[] = 'id = "'.$this->_escape($this->_query['where']).'"';
+					$query[] = 'id = '.$this->_escape($this->_query['where']);
 				}
 			}
 
@@ -407,6 +418,16 @@
 			return $this;
 		}
 
+		public function &where()
+		{
+			$args = func_get_args();
+			if(count($args)==1) $args = $args[0];
+
+			$this->_query['where'][] 	= $args;
+
+			return $this;
+		}
+
 		public function &alternatively()
 		{
 			$args = func_get_args();
@@ -506,6 +527,24 @@
 	        return $this->_result->valid();
 	    }
 
+	}
+
+	/*
+	* Helper for raw queries, dependent on QueryBuilder
+	*/
+	class Sql
+	{
+		protected $_statement = '';
+
+		public function __construct($statement)
+		{
+			$this->_statement = $statement;
+		}
+
+		public function __toString()
+		{
+			return $this->_statement;
+		}
 	}
 		
 ?>
