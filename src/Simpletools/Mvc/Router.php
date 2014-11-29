@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.11 2014-11-23 17:29
+ * @version    		Ver: 2.0.12 2014-11-29 18:01
  *
  */
 
@@ -110,8 +110,14 @@
 					$this->registerRoutingNamespaces($settings['routingNamespaces']);
 				}
 
-				$this->_params 	= $this->getParams(true);
+				if(isset($settings['customRoutes']))
+				{
+					$this->_customRoutes = array();
+					$this->_addCustomRoutes($settings['customRoutes']);
+				}
 				
+				$this->_params 	= $this->getParams(true);
+
 				$this->_view->setParams($this->_params,$this->_shifts_params);
 					
 				new \Simpletools\Mvc\Model($this->_appDir,$this->_activeRoutingNamespace);
@@ -120,6 +126,58 @@
 			{
 				trigger_error("<br />You must to specify correct directory to application folder as an argument of SimpleMVC object constructor to be able to use SimpleMVC framework<br />", E_USER_ERROR);
 			}
+		}
+
+		protected $_customRoutes 			= false;
+		protected $_activeCustomRouteArgs	= false;
+		protected $_httpMethods				= array(
+			"OPTIONS"	=> "OPTIONS",
+			"GET"		=> "GET",
+			"HEAD"		=> "HEAD",
+			"POST"		=> "POST",
+			"PUT"		=> "PUT",
+			"DELETE"	=> "DELETE",
+			"TRACE"		=> "TRACE",
+			"CONNECT"	=> "CONNECT",
+		);
+
+		protected function _addCustomRoutes($routes,$method='ANY')
+		{
+			foreach($routes as $route=>$invoke)
+			{
+				$httpMethod = isset($this->_httpMethods[$route]) ? $this->_httpMethods[$route] : false;
+				
+				if($httpMethod)
+				{
+					$this->_addCustomRoutes($invoke,$httpMethod);
+				}
+				else
+				{
+					$this->_customRoutes[$method][$route]	= $this->_parseCustomRoutes($route,$invoke);
+				}
+			}
+		}
+
+		protected function _parseCustomRoutes($path,$invoke)
+		{
+			preg_match_all('/\{(.*?)\}/', $path, $matches);
+			
+			if(isset($matches[0]))
+			{
+				$path = str_replace(array('\*','\^','\?'),array('.*','^','?'),preg_quote($path,'/'));
+				$map = array();
+				foreach($matches[0] as $index => $match)
+				{
+					$path = str_replace(preg_quote($match),'([A-Za-z0-9\-_]*)',$path);
+					$map[] = $matches[1][$index];
+				}
+			}
+		
+			return array(
+				'pattern'	=> '/'.$path.'$/',
+				'map'		=> $map,
+				'invoke'	=> $invoke
+			);
 		}
 
 		public function registerRoutingNamespaces($namespaces)
@@ -288,12 +346,7 @@
 				}
 			}
 			
-			require_once($_c);
-			
-			if(class_exists($className))
-				$this->forward('Error','error');
-			else
-				trigger_error("<u>SimpleMVC ERROR</u> - Incorrect ErrorController implementation.", E_USER_ERROR);
+			$this->forward('Error','error');
 		}
 		
 		private function &_getEnv()
@@ -318,6 +371,34 @@
 			
 			return $env;
 		}
+
+		private function _callReflectionMethod($controller, $methodName, array $args = array()) 
+        { 
+	    	$reflection = new \ReflectionMethod($controller, $methodName); 
+
+	        $pass = array(); 
+	        foreach($reflection->getParameters() as $param) 
+	        { 
+	        	$name = $param->getName();
+	        	if(isset($args[$name])) 
+	        	{ 
+	        		$pass[] = $args[$name]; 
+	        	} 
+	        	else 
+	        	{ 
+	        		try
+	        		{
+	          			$pass[] = $param->getDefaultValue(); 
+	          		}
+	          		catch(\Exception $e)
+	          		{
+	          			$pass[] = null;
+	          		}
+	          	} 
+	        }
+
+	        return $reflection->invokeArgs($controller, $pass); 
+	    } 
 		
 		private function forwardDispatch($controller,$action,$params=false)
 		{				
@@ -340,10 +421,6 @@
 					
 					$this->_classes[$className] = new $className($this->_getEnv());
 					
-					//depracated soon
-					if(method_exists($this->_classes[$className],'ini') && !$this->_forwarded)
-						$this->_classes[$className]->ini();
-					
 					if(method_exists($this->_classes[$className],'init') && !$this->_forwarded)
 						$this->_classes[$className]->init();
 					
@@ -353,7 +430,14 @@
 						
 						if(method_exists($this->_classes[$className],$actionMethod))
 						{
-							$this->_classes[$className]->$actionMethod();
+							if($this->_activeCustomRouteArgs)
+							{
+								$this->_callReflectionMethod($this->_classes[$className],$actionMethod,$this->_activeCustomRouteArgs);
+							}
+							else
+							{
+								$this->_classes[$className]->$actionMethod();
+							}
 						}
 						else
 						{
@@ -425,7 +509,10 @@
 				($_c = realpath($path))
 			)
 			{
-				if($_c) require_once($_c);
+				if(!isset($this->_classes[$className]) && $_c)
+				{
+					require($_c);
+				}
 
 				if(class_exists($className))
 				{	
@@ -433,21 +520,7 @@
 					{
 						$this->_classes[$className] = new $className($this->_getEnv());
 						
-						//depracated soon
-						if(method_exists($this->_classes[$className],'ini')) $this->_forwarded = false;
-						
 						if(method_exists($this->_classes[$className],'init')) $this->_forwarded = false;
-					}
-					
-					//depracted soon
-					if(method_exists($this->_classes[$className],'ini') && !$this->_forwarded)
-					{
-						if($this->_current_controller != $controller) 
-						{
-							$this->_classes[$className]->ini();
-							$this->_current_controller = $controller;
-						}
-						$this->_forwarded = true;
 					}
 					
 					if(method_exists($this->_classes[$className],'init') && !$this->_forwarded)
@@ -468,9 +541,17 @@
 						{
 							$this->_classes[$className]->$actionMethod();
 						}
+						elseif($className!='ErrorController') 
+						{
+							return $this->error('a404');
+						}
+						elseif($actionMethod=='errorAction')
+						{
+							throw new \Exception("Missing errorAction() under ErrorController", 1);
+						}
 						else
 						{
-							if($this->_autoRender) return $this->error('a404');
+							throw new \Exception("Missing correct error handling structure", 1);
 						}
 					}
 
@@ -588,13 +669,16 @@
 			if(($p = stripos($SERVER_REQUEST_URI,'#')) !== false)
 				$SERVER_REQUEST_URI = substr($SERVER_REQUEST_URI,0,$p);
 			
-			//$params = explode('/',trim($SERVER_REQUEST_URI,'/'));
 			$params = explode('/',rtrim(substr($SERVER_REQUEST_URI,1),'/'));
 
 			if(count($this->_routingNamespaces))
 			{
-				$params_ = array_map('\Simpletools\Mvc\Etc::getCorrectControllerName',$params);
-
+				$params_ = array();
+				foreach($params as $param)
+				{
+					$params_[] = \Simpletools\Mvc\Etc::getCorrectControllerName($param);
+				}
+				
 				$length  = count($params);
 				while($length)
 				{
@@ -622,7 +706,42 @@
 					$this->_shifts_params[] = array_shift($params);
 				}
 			}
-			
+
+			if($this->_customRoutes)
+			{
+				$METHOD = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+				
+				$routes = isset($this->_customRoutes[$METHOD]) ? $this->_customRoutes[$METHOD] : array(); 
+				$routes = isset($this->_customRoutes['ANY']) ? array_merge($this->_customRoutes['ANY'],$routes) : $routes;
+
+				foreach($routes as $route)
+				{
+					if(preg_match($route['pattern'], $SERVER_REQUEST_URI, $matches))
+					{
+						$invoke = explode('@',$route['invoke']);
+
+						$invoke[0] 	= str_replace('Controller','',$invoke[0]);
+						$invoke[1] 	= isset($invoke[1]) ? str_replace('Action','',$invoke[1]) : null;
+
+						$controller = implode('-',preg_split('/(?<=\\w)(?=[A-Z])/', $invoke[0]));
+						
+						$_params['associative']['controller'] 	= $controller;
+						$_params['associative']['action'] 		= isset($invoke[1]) ? $invoke[1] : $this->_settings['defaultAction'];
+					
+						array_shift($matches);
+
+						foreach($matches as $i=>$m)
+						{
+							if(!isset($route['map'][$i])) continue;
+
+							$this->_activeCustomRouteArgs[$route['map'][$i]] = $m;
+						}
+						
+						return $_params;
+					}
+				}				
+			}
+
 			if(count($params))
 			{
 				$index = count($params)-1;
@@ -852,9 +971,9 @@
 		public function isAction($action=null)
 		{
 			if(!$action)
-				$action	= Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
+				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
 			else
-				$action	= Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
+				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
 				
 			return method_exists($this,$action);
 		}
