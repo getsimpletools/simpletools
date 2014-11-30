@@ -31,7 +31,7 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.6 2014-11-22 10:27
+ * @version    		Ver: 2.0.13 2014-11-30 11:21
  * 
  */
 
@@ -756,14 +756,14 @@
 				$path = $this->_modelDir.'/'.$modelName.'.php';
 			}
 
-			if(!class_exists($class)) require_once($path);
+			if(!class_exists($class)) require($path);
 			
 			$obj = new $class($this->_settings);
 			
 			if($obj instanceof \Simpletools\Mysql\Model)
 				$obj->setMysqliClass($this->_settings['custom_mysqli_class_name']);
 			
-			if(method_exists($obj,'init')) 
+			if(is_callable(array($obj,'init')))
 			{
 				call_user_func_array(array($obj,'init'),$initArgs);
 			}

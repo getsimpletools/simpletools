@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.8 2014-11-22 18:14
+ * @version    		Ver: 2.0.13 2014-11-30 11:19
  *
  */
 
@@ -127,7 +127,7 @@
 						}
 					}	
 
-					require_once($p);
+					require($p);
 				}
 				
 				$obj = new $class();
@@ -142,7 +142,7 @@
 				}
 				else
 				{
-					if(method_exists($obj,'init')) 
+					if(is_callable(array($obj,'init')))
 					{
 						call_user_func_array(array($obj,'init'),$initArgs);
 					}
@@ -150,7 +150,7 @@
 					self::$_instance->objects[$class] = $obj;
 				}
 
-				if(method_exists(self::$_instance->objects[$class],'setActiveRoutingNamespace')) 
+				if(is_callable(array(self::$_instance->objects[$class],'setActiveRoutingNamespace')))
 				{
 					self::$_instance->objects[$class]->setActiveRoutingNamespace(self::$_instance->_activeRoutingNamespace);
 				}

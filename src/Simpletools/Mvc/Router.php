@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.12 2014-11-29 18:01
+ * @version    		Ver: 2.0.13 2014-11-30 11:09
  *
  */
 
@@ -421,14 +421,17 @@
 					
 					$this->_classes[$className] = new $className($this->_getEnv());
 					
-					if(method_exists($this->_classes[$className],'init') && !$this->_forwarded)
+					if(is_callable(array($this->_classes[$className],'init')))
+					{
 						$this->_classes[$className]->init();
-					
+					}
+
 					if(!$this->_forwarded && $this->_autoRender)
 					{
 						$actionMethod = $action.'Action';
+						$this->_forwarded = true;
 						
-						if(method_exists($this->_classes[$className],$actionMethod))
+						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
 							if($this->_activeCustomRouteArgs)
 							{
@@ -519,11 +522,10 @@
 					if(!isset($this->_classes[$className]))
 					{
 						$this->_classes[$className] = new $className($this->_getEnv());
-						
-						if(method_exists($this->_classes[$className],'init')) $this->_forwarded = false;
+						$this->_forwarded = false;
 					}
 					
-					if(method_exists($this->_classes[$className],'init') && !$this->_forwarded)
+					if(is_callable(array($this->_classes[$className],'init')) && !$this->_forwarded)
 					{
 						if($this->_current_controller != $controller) 
 						{
@@ -537,7 +539,7 @@
 					{
 						$actionMethod = $action.'Action';
 						
-						if(method_exists($this->_classes[$className],$actionMethod))
+						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
 							$this->_classes[$className]->$actionMethod();
 						}
@@ -966,16 +968,6 @@
 		{
 			if($this->_errorCode !== false) return true;
 			else return false;
-		}
-		
-		public function isAction($action=null)
-		{
-			if(!$action)
-				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
-			else
-				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
-				
-			return method_exists($this,$action);
 		}
 
 		public function setViewProperty($key,$value)

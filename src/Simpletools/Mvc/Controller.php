@@ -32,7 +32,7 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.12 2014-11-29 17:12
+ * @version    		Ver: 2.0.13 2014-11-30 11:07
  *
  */
 
@@ -329,11 +329,10 @@
 					if(!isset($this->_classes[$className]))
 					{
 						$this->_classes[$className] = new $className($this->_getEnv());
-						
-						if(method_exists($this->_classes[$className],'init')) $this->_forwarded = false;
+						$this->_forwarded = false;
 					}
 					
-					if(method_exists($this->_classes[$className],'init') && !$this->_forwarded)
+					if(is_callable(array($this->_classes[$className],'init')) && !$this->_forwarded)
 					{
 						if($this->_current_controller != $controller) 
 						{
@@ -347,7 +346,7 @@
 					{
 						$actionMethod = $action.'Action';
 						
-						if(method_exists($this->_classes[$className],$actionMethod))
+						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
 							$this->_classes[$className]->$actionMethod();
 						}
@@ -493,6 +492,16 @@
 		public function disableView()
 		{
 			$this->_view_enabled = false;
+		}
+
+		public function isAction($action=null)
+		{
+			if(!$action)
+				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
+			else
+				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
+				
+			return is_callable(array($this,$action));
 		}
 	}
 		
