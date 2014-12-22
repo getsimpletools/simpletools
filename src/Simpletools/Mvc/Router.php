@@ -32,13 +32,13 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.13 2014-11-30 11:09
+ * @version    		Ver: 2.0.14 2014-12-22 16:38
  *
  */
 
 	namespace Simpletools\Mvc;
 
-	class Router
+	class Router extends \Simpletools\Mvc\Etc
 	{
 		//anti dupliate content settings
 		const NOSLASH_NOINDEX 			= 1;
@@ -210,11 +210,6 @@
 		public function getActiveRoutingNamespace($useDirectorySeparator=false)
 		{
 			return $this->_activeRoutingNamespace;
-		}
-		
-		public function setParams($params)
-		{
-			$this->_params = $params;
 		}
 		
 		public static function &getInstance($dir=false)
@@ -928,40 +923,6 @@
 		public function url(Array $urls, $slashEnd=false, $https=false, $absolute=false)
 		{
 			return $this->_view->url($urls, $absolute, $https, $slashEnd);	
-		}
-		
-		//------------ ADDITIONAL FUNCTIONS -----------
-		public function isPost($id=false)
-		{
-			return $this->_view->isPost($id);
-		}
-		
-		public function isQuery($id=false)
-		{
-			return $this->_view->isQuery($id);
-		}
-		
-		public function isRequest($id=false)
-		{
-			return $this->_view->isRequest($id);
-		}
-		
-		//return $_GET method key=>value
-		public function getQuery($id=null)
-		{
-			return $this->_view->getQuery($id);
-		}
-		
-		//return $_POST method key=>value
-		public function getPost($id=null)
-		{
-			return $this->_view->getPost($id);
-		}
-		
-		//return $_REQUEST method key=>value
-		public function getRequest($id=null)
-		{
-			return $this->_view->getRequest($id);
 		}
 		
 		public function isError404()
