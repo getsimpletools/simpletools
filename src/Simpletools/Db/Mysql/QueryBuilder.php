@@ -31,11 +31,11 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.11 2014-11-23 14:38
+ * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
-	namespace Simpletools\Mysql;
+	namespace Simpletools\Db\Mysql;
 
 	class QueryBuilder implements \Iterator
 	{
@@ -46,9 +46,9 @@
 
 		public function __construct($table,$mysql,$columns=array())
 		{
-			if (!($mysql instanceof \Simpletools\Mysql\Client))
+			if (!($mysql instanceof \Simpletools\Db\Mysql\Client))
 			{
-				throw new \Exception("2nd construct argument is not an instance of \Simpletools\Mysql\Client", 404);
+				throw new \Exception("2nd construct argument is not an instance of \Simpletools\Db\Mysql\Client", 404);
 			}
 
 			if(count($columns))
@@ -174,7 +174,7 @@
 
 		public function _escape($value)
 		{
-			if($value instanceof \Simpletools\Mysql\SQL)
+			if($value instanceof \Simpletools\Db\Mysql\SQL)
 			{
 				return (string) $value;
 			}
@@ -197,7 +197,7 @@
 					
 					$arg = $this->_escape($arg);
 				}
-				elseif($arg instanceof \Simpletools\Mysql\SQL)
+				elseif($arg instanceof \Simpletools\Db\Mysql\SQL)
 				{
 					$arg = (string) $arg;
 				}

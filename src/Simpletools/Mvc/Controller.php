@@ -32,13 +32,15 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.13 2014-11-30 11:07
  *
  */
 
 	namespace Simpletools\Mvc;
 
-	class Controller extends \Simpletools\Mvc\Etc
+	/**
+	* MVC Controller
+	*/
+	class Controller extends \Simpletools\Mvc\Common
 	{			
 		protected static $_instance = null;
 				
@@ -101,14 +103,14 @@
 			if($view === null) 
 			{
 				$view = $controller;
-				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($this->getParam('controller'));
+				$controller = self::getCorrectControllerName($this->getParam('controller'));
 			}
 			else if(
 				stripos($controller,'.') !== false ||
 				stripos($controller,'-') !== false ||
 				stripos($controller,' ') !== false
 			)
-				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
+				$controller = self::getCorrectControllerName($controller);
 			else
 				$controller = ucfirst($controller);
 			
@@ -245,12 +247,12 @@
 					stripos($controller,'-') !== false ||
 					stripos($controller,' ') !== false
 				)
-					$controller = \Simpletools\Mvc\Etc::getCorrectActionName($controller);
+					$controller = self::getCorrectActionName($controller);
 				else
 					$controller = lcfirst($controller);
 					
 				$action = $controller;				
-				$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($this->getParam('controller'));
+				$controller = self::getCorrectControllerName($this->getParam('controller'));
 			}
 			else 
 			{	
@@ -259,7 +261,7 @@
 					stripos($controller,'-') !== false ||
 					stripos($controller,' ') !== false
 				)
-					$controller = \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
+					$controller = self::getCorrectControllerName($controller);
 				else
 					$controller = ucfirst($controller);
 					
@@ -268,7 +270,7 @@
 					stripos($action,'-') !== false ||
 					stripos($action,' ') !== false
 				)
-					$action = \Simpletools\Mvc\Etc::getCorrectActionName($action);
+					$action = self::getCorrectActionName($action);
 				else
 					$action = lcfirst($action);
 			}
@@ -497,9 +499,9 @@
 		public function isAction($action=null)
 		{
 			if(!$action)
-				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($this->getParam('action')).'Action';
+				$action	= self::getCorrectActionName($this->getParam('action')).'Action';
 			else
-				$action	= \Simpletools\Mvc\Etc::getCorrectActionName($action).'Action';
+				$action	= self::getCorrectActionName($action).'Action';
 				
 			return is_callable(array($this,$action));
 		}

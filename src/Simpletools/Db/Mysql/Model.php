@@ -31,15 +31,15 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.13 2014-11-30 11:21
+ * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
-	namespace Simpletools\Mysql;
+	namespace Simpletools\Db\Mysql;
 
-	use \Simpletools\Mysql\QueryBuilder;
+	use \Simpletools\Db\Mysql\QueryBuilder;
 
-	class Model extends \Simpletools\Mysql\Client
+	class Model extends \Simpletools\Db\Mysql\Client
 	{
 		public function __construct($settings=false)
 		{
@@ -59,5 +59,4 @@
 			return new QueryBuilder($table,$this,$args);
 		}
 	}
-		
 ?>

@@ -32,11 +32,11 @@
  * @description		Efficient Autoloading Class, based on the SPL
  * @copyright  		Copyright (c) 2013 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.15 2014-12-30 23:36
  * 
  */
 
-	namespace Simpletools;
+	namespace Simpletools\Autoload;
 
 	class Loader
 	{

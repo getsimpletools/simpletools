@@ -33,14 +33,14 @@
  * @description		Session & Cookies Handler
  * @copyright  		Copyright (c) 2011 Marcin Rosinski. (http://www.getsimpletools.com/)
  * @license    		BSD
- * @version    		Ver: 2.0.3 2014-11-19 18:38
+ * @version    		Ver: 2.0.15 2014-12-30 23:36
  * 
  */
 
-	namespace Simpletools;
+	namespace Simpletools\Store;
 
 	class Session
-	{		
+	{
 		private static $default_return = 'exception';
 		private static $settings = array(
 				'cookie_expire' 					=> 2592000,
@@ -52,13 +52,13 @@
 				'cookie_auto_serialize'				=> false,
 				'autostart_if_session_cookie_set' 	=> false
 		);
-		
+
 		const MASTER_COOKIE_SELF_SIGN 	= '::ST-MCookie';
-				
+
 		public static function register($id,$data,$cookie=false)
 		{
 			if(!isset(self::$settings['cookie_domain'])) self::$settings['cookie_domain'] = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : false;
-			
+
 			if(!$cookie && session_id() == '')
 			{
 				if(isset(self::$settings['session_auto_start'])){session_start();}

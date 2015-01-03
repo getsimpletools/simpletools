@@ -31,11 +31,11 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.13 2014-11-30 11:21
+ * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
-	namespace Simpletools\Mysql;
+	namespace Simpletools\Db\Mysql;
 
 	class Client
 	{
@@ -114,7 +114,7 @@
 		{
 			 if(empty(self::$_instance) && $settings) 
 			 {
-			     self::$_instance = new \Simpletools\Mysql\Client($settings);
+			     self::$_instance = new \Simpletools\Db\Mysql\Client($settings);
 		     }
 		     
 		   	 return self::$_instance;	
@@ -123,7 +123,7 @@
 		public static function &settings($settings)
 		{
 			if(empty(self::$_instance)) 
-			    new \Simpletools\Mysql\Client($settings);
+			    new \Simpletools\Db\Mysql\Client($settings);
 		    else
 		    	self::$_instance->setSettings($settings);
 		    	
@@ -496,7 +496,7 @@
 			else if(!is_array($args) && $args !== self::_noArgs)
 				$args = array($args);
 			else if($args === self::_noArgs)
-				throw new \Exception("Please specify arguments for prepare() and/or execute() methods of \Simpletools\Mysql class.",10001);
+				throw new \Exception("Please specify arguments for prepare() and/or execute() methods of \Simpletools\Db\Mysql class.",10001);
 			
 			if(!$this->isConnected())
 			{
@@ -519,7 +519,7 @@
 			else if(!is_array($args) && $args !== self::_noArgs)
 				$args = array($args);
 			else if($args === self::_noArgs)
-				throw new \Exception("Please specify arguments for prepare() and/or execute() methods of \Simpletools\Mysql class.",10001);
+				throw new \Exception("Please specify arguments for prepare() and/or execute() methods of \Simpletools\Db\Mysql class.",10001);
 			
 			if(!$this->isConnected())
 			{
@@ -619,7 +619,7 @@
 				//die($this->_mysqli->error);
 			}
 			
-			return new \Simpletools\Mysql\Result($result,$this->_mysqli);
+			return new \Simpletools\Db\Mysql\Result($result,$this->_mysqli);
 		}
 			
 		//escaping string against sql injection
@@ -760,7 +760,7 @@
 			
 			$obj = new $class($this->_settings);
 			
-			if($obj instanceof \Simpletools\Mysql\Model)
+			if($obj instanceof \Simpletools\Db\Mysql\Model)
 				$obj->setMysqliClass($this->_settings['custom_mysqli_class_name']);
 			
 			if(is_callable(array($obj,'init')))
@@ -831,7 +831,7 @@
 			$settings['iteratorDirection'] 	= $matches[2];
 			$settings['params']				= $params;
 
-			return new \Simpletools\Mysql\Iterator($this,$settings);
+			return new \Simpletools\Db\Mysql\Iterator($this,$settings);
 		}
 	}
 

@@ -38,12 +38,15 @@
 
 	namespace Simpletools\Mvc;
 
+	/**
+	* MVC Model
+	*/
 	class Model
 	{
 		protected $_appDir 		= '';
 		private static $_instance = null;
 		protected $_activeRoutingNamespace = '';
-		
+
 		public function __construct($appDir,$_activeRoutingNamespace='')
 		{
 			self::$_instance 							= $this;
@@ -132,11 +135,11 @@
 				
 				$obj = new $class();
 	
-				if($obj instanceof \Simpletools\Mysql\Model)
+				if($obj instanceof \Simpletools\Db\Mysql\Model)
 				{
 					unset($obj);
 
-					$obj = \Simpletools\Mysql\Client::getInstance();
+					$obj = \Simpletools\Db\Mysql\Client::getInstance();
 										
 					self::$_instance->objects[$class] = $obj->getInstanceOfModel($model,$initArgs,$namespace);
 				}

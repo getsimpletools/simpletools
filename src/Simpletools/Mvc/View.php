@@ -32,33 +32,35 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.3 2014-11-21 18:29
  *
  */
 
 	namespace Simpletools\Mvc;
 
-	class View extends \Simpletools\Mvc\Etc
-	{	
+	/**
+	* MVC View
+	*/
+	class View extends \Simpletools\Mvc\Common
+	{
 		protected $_shifted_params 	= 0;
 		protected static $_instance 	= null;
 		protected $_view_ext			= 'phtml';
-				
+
 		public function __construct($view_extension='phtml')
 		{
 			$this->_view_ext = $view_extension;
-			
-			if (empty(self::$_instance)) 
+
+			if (empty(self::$_instance))
 			{
 				self::$_instance = &$this;
 			}
 		}
-		
+
 		public function getViewExt()
 		{
 			return $this->_view_ext;
 		}
-		
+
 		public static function &getInstance()
 		{
 			if (!empty(self::$_instance)) 
@@ -70,22 +72,22 @@
 				throw new \Exception('Asking for instance before instance has been created. This method should be use after SimpleMVC::dispatch() only',123);
 			}
 		}
-		
+
 		public function registerObject($objectName,&$object)
 		{
 			$this->{$objectName} = &$object;
 		}
-		
+
 		public function render($dir)
 		{
 			require($dir);
 		}
-		
+
 		public function url(Array $urls, $absolute=false, $https=false, $slashEnd=false)
 		{
 			$counter = 0;
 			$url = null;
-			
+
 			if(is_array($this->_shifted_params) && count($this->_shifted_params))
 			{
 				foreach($this->_shifted_params as $p)
@@ -93,7 +95,7 @@
 					$url .= '/'.$p;
 				}
 			}
-			
+
 			if(isset($urls['controller']))
 			{
 				foreach($urls as $key => $value)
@@ -112,12 +114,12 @@
 			{
 				foreach($urls as $value)
 				{
-					
+
 					$url .= '/'.$value;
-					
+
 				}
 			}
-			
+
 			if($absolute)
 			{
 				if($https)
@@ -128,18 +130,17 @@
 				{
 					$protocol = 'http://';
 				}
-				
+
 				$url = $protocol.$_SERVER['SERVER_NAME'].$url;
 			}
-			
+
 			if($slashEnd)
 			{
 				$url .= '/';
 			}
-			
+
 			return $url;
 		}
 	}
-	
-	
+
 ?>

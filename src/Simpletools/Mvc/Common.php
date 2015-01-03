@@ -3,7 +3,7 @@
  * Simpletools Framework.
  * Copyright (c) 2009, Marcin Rosinski. (https://www.getsimpletools.com/)
  * All rights reserved.
- * 
+ *
  * LICENCE
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -11,14 +11,14 @@
  *
  * - 	Redistributions of source code must retain the above copyright notice, 
  * 		this list of conditions and the following disclaimer.
- * 
+ *
  * -	Redistributions in binary form must reproduce the above copyright notice, 
  * 		this list of conditions and the following disclaimer in the documentation and/or other 
  * 		materials provided with the distribution.
- * 
+ *
  * -	Neither the name of the Simpletools nor the names of its contributors may be used to 
  * 		endorse or promote products derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
  * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
@@ -27,36 +27,50 @@
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF 
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * @framework		Simpletools
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.3 2014-11-21 18:29
  *
  */
 
 	namespace Simpletools\Mvc;
 
-	class Etc
+	/**
+	* MVC Common Methods
+	*/
+	class Common
 	{
+		/**
+		* Action name normaliser
+		*
+		* @param string $action Action name to normalise
+		* @return string Normalised action name
+		*/
 		public static function getCorrectActionName($action)
 		{
 			$action = strtolower($action);
 			$action = str_replace(array('-','.'),' ',$action);
 			$action = str_replace(' ','',ucwords($action));
-			
+
 			//$action = (string)(strtolower(substr($action,0,1)).substr($action,1));
 			return lcfirst($action);
 		}
-		
+
+		/**
+		* Controller name normaliser
+		*
+		* @param string $controller Controller name to normalise
+		* @return string Normalised controller name
+		*/
 		public static function getCorrectControllerName($controller)
 		{
 			$controller = strtolower($controller);
 			$controller = str_replace(array('-','.'),' ',$controller);
 			$controller = ucwords($controller);
 			$controller = str_replace(' ','',$controller);
-			
+
 			return $controller;
 		}
 
@@ -68,10 +82,10 @@
 			}
 			else
 			{
-				return isset($_POST[$id]) ? $_POST[$id] : false;	
+				return isset($_POST[$id]) ? $_POST[$id] : false;
 			}
 		}
-		
+
 		public function isQuery($id=false)
 		{
 			if(!$id)
@@ -83,7 +97,7 @@
 				return isset($_GET[$id]) ? $_GET[$id] : false;	
 			}
 		}
-		
+
 		public function isRequest($id=false)
 		{
 			if(!$id)
@@ -95,58 +109,119 @@
 				return isset($_REQUEST[$id]) ? $_REQUEST[$id] : false;
 			}
 		}
-		
+
 		//return $_GET method key=>value
 		public function getQuery($id=null)
 		{
 			if($id==null) return $_GET;
-			return isset($_GET[$id]) ? $_GET[$id] : null;	
+			return isset($_GET[$id]) ? $_GET[$id] : null;
 		}
-		
+
 		//return $_POST method key=>value
 		public function getPost($id=null)
 		{
 			if($id==null) return $_POST;
-			return isset($_POST[$id]) ? $_POST[$id] : null;	
+			return isset($_POST[$id]) ? $_POST[$id] : null;
 		}
-		
+
 		//return $_POST method key=>value
 		public function getRequest($id=null)
 		{
 			if($id==null) return $_REQUEST;
-			return isset($_REQUEST[$id]) ? $_REQUEST[$id] : null;	
+			return isset($_REQUEST[$id]) ? $_REQUEST[$id] : null;
 		}
 
-
+		/**
+		* Returns all params by type
+		*
+		* @param string $type Type of the params to return, accepted values - associative or number
+		* @return array Returns all params a per specified type
+		*/
 		public function returnParams($type)
 		{
-			return $this->_params[$type];
+			return isset($this->_params[$type]) ? $this->_params[$type] : array();
 		}
-		
+
 		public function setParams(&$params,&$shifted_params)
 		{
 			$this->_params = &$params;
 			$this->_shifted_params = &$shifted_params;
 		}
-		
-		public function isParam($id)
+
+		/**
+		* Is URL Param by key name
+		*
+		* @param string $key Name of the requested param
+		* @return boolean Returns true or false
+		*
+		*/
+		public function isParam($key)
 		{
-			return isset($this->_params['associative'][$id]) ? true : false;
+			return isset($this->_params['associative'][$key]) ? true : false;
 		}
-		
-		public function getParam($id)
+
+		/**
+		* Get URL Param by key name
+		*
+		* @param string $key Name of the requested param
+		* @return mixed Returns requested param value or all params if key is not specified or null if key doesn't exist
+		*
+		*/
+		public function getParam($key='')
 		{
-			return isset($this->_params['associative'][$id]) ? $this->_params['associative'][$id] : null;
+			if(!$key) return $this->_params['associative'];
+
+			return isset($this->_params['associative'][$key]) ? (string) $this->_params['associative'][$key] : null;
 		}
-		
-		public function getParam_($id)
+
+		/**
+		* Get URL Param by index
+		*
+		* @param int $index Position of the param starting from 0
+		* @return string Returns requested param value
+		*
+		* @deprecated 2.0.15 Use getParamByIndex() instead
+		*/
+		public function getParam_($index)
 		{
-			return isset($this->_params['number'][$id]) ? (string) $this->_params['number'][$id] : null;
+			return $this->getParamByIndex($index);
 		}
-		
-		public function isParam_($id)
+
+		/**
+		* Get URL Param by index
+		*
+		* @param int $index Position of the param starting from 0
+		* @return string Returns requested param value
+		*
+		*/
+		public function getParamByIndex($index)
 		{
-			return isset($this->_params['number'][$id]) ? true : false;
+			return isset($this->_params['number'][$index]) ? (string) $this->_params['number'][$index] : null;
+		}
+
+		/**
+		* Is Param by index
+		*
+		* @param int $index Position of the param starting from 0
+		* @return boolean Returns true or false
+		*
+		* @deprecated 2.0.15 Use isParamByIndex() instead
+		*/
+		public function isParam_($index)
+		{
+			return $this->isParamByIndex($index);
+		}
+
+		/**
+		* Is Param by index
+		*
+		* @param int $index Position of the param starting from 0
+		* @return boolean Returns true or false
+		*
+		*/
+		public function isParamByIndex($index)
+		{
+			return isset($this->_params['number'][$index]) ? true : false;
 		}
 
 
@@ -154,12 +229,12 @@
 		{
 			$this->redirect($location,false,false,$type);
 		}
-		
+
 		public function redirect($params, $addslash=false, $protocol=false, $type=301, $HTTP_GET='')
 		{
 			$url	=	null;
 			$https 	= 	isset($_SERVER['HTTPS']) ? true : false;
-			
+
 			if(is_array($params))
 			{
 				if($protocol)

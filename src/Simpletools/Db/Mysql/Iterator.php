@@ -31,11 +31,11 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.3 2014-11-21 18:29
+ * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
-	namespace Simpletools\Mysql;
+	namespace Simpletools\Db\Mysql;
 
 	class Iterator implements \Iterator
 	{

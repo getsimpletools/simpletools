@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Simpletools Framework.
  * Copyright (c) 2009, Marcin Rosinski. (https://www.getsimpletools.com/)
  * All rights reserved.
@@ -32,22 +32,24 @@
  * @description		MVC framework
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (https://www.getsimpletools.com/)
  * @license    		(BSD)
- * @version    		Ver: 2.0.14 2014-12-22 16:38
  *
  */
 
 	namespace Simpletools\Mvc;
 
-	class Router extends \Simpletools\Mvc\Etc
+	/**
+	* MVC Router
+	*/
+	class Router extends \Simpletools\Mvc\Common
 	{
 		//anti dupliate content settings
 		const NOSLASH_NOINDEX 			= 1;
 		const SLASH_NOINDEX				= 2;
 		const NOSLASH_INDEX				= 3;
 		const SLASH_INDEX				= 4;
-		
+
 		private $_duplicate_content		= 0;
-		
+
 		//settings properties
 		protected $_appDir 				= '';
 		protected $_forwarded   		= false;
@@ -57,19 +59,19 @@
 		protected $_error				= null;
 		protected $_classes    			= array();
 		protected $_404_error_header 	= true;
-		
+
 		//instance holder
 		private static $_instance		= null;
 		protected $_shifts_params 		= false;
-		
+
 		//custom objects
 		protected $_objects					= false;
-		
+
 		//routing namespaces
 		protected $_routingNamespaces				= array();
 		protected $_activeRoutingNamespace			= '';
 		protected $_activeRoutingNamespaceUrlPath 	= '';
-			
+
 		private $_settings 				= array(
 			'defaultController' 					=> 'index',
 			'defaultAction'							=> 'index',
@@ -79,11 +81,11 @@
 			'overrideController'					=> false,
 			'overrideAction'						=> 'index'
 		);
-		
+
 		//view object
 		protected $_view			= '';
 		protected $_view_enabled	= true;
-			
+
 		public function __construct(array $settings=null)
 		{
 			if(
@@ -98,13 +100,13 @@
 				$this->_settings['uri_app_position'] 						= isset($settings['uri_app_position']) ? (integer) $settings['uri_app_position'] : 0;
 				$this->_settings['redirect_missing_location_to_default'] 	= isset($settings['redirect_missing_location_to_default']) ? (boolean) $settings['redirect_missing_location_to_default'] : false;
 				$this->_settings['use_subdomain'] 							= isset($settings['use_subdomain']) ? $settings['use_subdomain'] : false;
-				
+
 				$this->_settings['overrideController'] 						= isset($settings['overrideController']) ? $settings['overrideController'] : false;
 				$this->_settings['overrideAction'] 							= isset($settings['overrideAction']) ? $settings['overrideAction'] : $this->_settings['overrideAction'];
-								
+
 				$this->_404_error_header									= isset($settings['404_error_header']) ? (boolean) $settings['404_error_header'] : true;
 				$this->_duplicate_content									= isset($settings['duplicate_content']) ? (int) $settings['duplicate_content'] : 0;
-				
+
 				if(isset($settings['routingNamespaces']))
 				{
 					$this->registerRoutingNamespaces($settings['routingNamespaces']);
@@ -115,11 +117,11 @@
 					$this->_customRoutes = array();
 					$this->_addCustomRoutes($settings['customRoutes']);
 				}
-				
+
 				$this->_params 	= $this->getParams(true);
 
 				$this->_view->setParams($this->_params,$this->_shifts_params);
-					
+
 				new \Simpletools\Mvc\Model($this->_appDir,$this->_activeRoutingNamespace);
 			}
 			else
@@ -146,7 +148,7 @@
 			foreach($routes as $route=>$invoke)
 			{
 				$httpMethod = isset($this->_httpMethods[$route]) ? $this->_httpMethods[$route] : false;
-				
+
 				if($httpMethod)
 				{
 					$this->_addCustomRoutes($invoke,$httpMethod);
@@ -158,10 +160,20 @@
 			}
 		}
 
+		/**
+		* Custom routes parser
+		*
+		* Internal custom routes parser/compiler
+		*
+		* @param string $path Uri path to match against
+		* @param array $invoke Action to perform if $path matches current URI.
+		*
+		* @return array Array of compiled custom routes
+		*/
 		protected function _parseCustomRoutes($path,$invoke)
 		{
 			preg_match_all('/\{(.*?)\}/', $path, $matches);
-			
+
 			if(isset($matches[0]))
 			{
 				$path = str_replace(array('\*','\^','\?'),array('.*','^','?'),preg_quote($path,'/'));
@@ -172,7 +184,7 @@
 					$map[] = $matches[1][$index];
 				}
 			}
-		
+
 			return array(
 				'pattern'	=> '/'.$path.'$/',
 				'map'		=> $map,
@@ -184,13 +196,13 @@
 		{
 			foreach($namespaces as $namespace)
 			{
-				$namespace  = str_replace('/','\\',$namespace); 
+				$namespace  = str_replace('/','\\',$namespace);
 				$namespace 	= explode('\\',$namespace);
-				
+
 				$_namespace = array();
 				foreach($namespace as $n)
 				{
-					$_namespace[] = \Simpletools\Mvc\Etc::getCorrectControllerName($n);
+					$_namespace[] = self::getCorrectControllerName($n);
 				}
 
 				$this->_routingNamespaces[implode('\\',$_namespace)] = 1;
@@ -211,13 +223,13 @@
 		{
 			return $this->_activeRoutingNamespace;
 		}
-		
-		public static function &getInstance($dir=false)
+
+		public static function &getInstance(array $settings=null)
 		{
 			 if (empty(self::$_instance))
-			     self::$_instance = new \Simpletools\Mvc\Router($dir);
+			     self::$_instance = new \Simpletools\Mvc\Router($settings);
 		     
-		   	 return self::$_instance;					
+		   	 return self::$_instance;
 		}
 		
 		public static function &settings(array $settings)
@@ -248,7 +260,7 @@
 		
 		//controller dispatcher
 		public function &dispatch($dir_emulate=false)
-		{						
+		{
 			/*
 			 * subdomain usage only
 			 */
@@ -263,7 +275,7 @@
 				{
 					$old_action 		= $this->getParam('action');
 					$old_controller		= $this->getParam('controller');
-					
+
 					$this->setParam('controller',$this->_settings['use_subdomain']['controller']);
 					$this->setParam('action',$this->_settings['use_subdomain']['action']);
 					$this->setParam('subdomain',$subdomain);
@@ -397,8 +409,8 @@
 		
 		private function forwardDispatch($controller,$action,$params=false)
 		{				
-			$controller 		= \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
-			$action				= \Simpletools\Mvc\Etc::getCorrectActionName($action);
+			$controller 		= self::getCorrectControllerName($controller);
+			$action				= self::getCorrectActionName($action);
 
 			$namespace 			= $this->_activeRoutingNamespace;
 
@@ -650,7 +662,7 @@
 		
 		public function isController($controller)
 		{
-			$controller 		= \Simpletools\Mvc\Etc::getCorrectControllerName($controller);
+			$controller 		= self::getCorrectControllerName($controller);
 			$className			= $controller.'Controller';
 			
 			return (isset($this->_classes[$className]) || realpath($this->_appDir.'/controllers/'.$controller.'Controller.php'));
@@ -673,7 +685,7 @@
 				$params_ = array();
 				foreach($params as $param)
 				{
-					$params_[] = \Simpletools\Mvc\Etc::getCorrectControllerName($param);
+					$params_[] = self::getCorrectControllerName($param);
 				}
 				
 				$length  = count($params);
@@ -707,8 +719,8 @@
 			if($this->_customRoutes)
 			{
 				$METHOD = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
-				
-				$routes = isset($this->_customRoutes[$METHOD]) ? $this->_customRoutes[$METHOD] : array(); 
+
+				$routes = isset($this->_customRoutes[$METHOD]) ? $this->_customRoutes[$METHOD] : array();
 				$routes = isset($this->_customRoutes['ANY']) ? array_merge($this->_customRoutes['ANY'],$routes) : $routes;
 
 				foreach($routes as $route)
@@ -721,10 +733,10 @@
 						$invoke[1] 	= isset($invoke[1]) ? str_replace('Action','',$invoke[1]) : null;
 
 						$controller = implode('-',preg_split('/(?<=\\w)(?=[A-Z])/', $invoke[0]));
-						
+
 						$_params['associative']['controller'] 	= $controller;
 						$_params['associative']['action'] 		= isset($invoke[1]) ? $invoke[1] : $this->_settings['defaultAction'];
-					
+
 						array_shift($matches);
 
 						foreach($matches as $i=>$m)
@@ -870,56 +882,29 @@
 					else if(strlen($uri_path) > 1 && substr($uri_path,-1) != '/'){
 						$this->redirect($_params['associative'],true,false,301,$GET);
 					}
-					
+
 					break;
 				}
 			}
 		}
-		
-		public function returnParams($type)
-		{
-			return $this->_params[$type];
-		}
-		
-		public function isParam($id)
-		{
-			return isset($this->_params['associative'][$id]) ? true : false;
-		}
-		
-		public function getParam($id=null)
-		{
-			if(!$id) return $this->_params['associative'];
-			
-			return isset($this->_params['associative'][$id]) ? (string) $this->_params['associative'][$id] : null;
-		}
-		
+
 		public function setParam($id,$value)
 		{
 			$this->_params['associative'][$id] = $value;
 		}
-		
+
 		public function getDisplayedParam($id)
 		{
 			$params = $this->getParams();
 			return isset($params['associative'][$id]) ? (string) $params['associative'][$id] : null;
 		}
-		
-		public function getParam_($id)
-		{
-			return isset($this->_params['number'][$id]) ? (string) $this->_params['number'][$id] : null;
-		}
-		
-		public function isParam_($id)
-		{
-			return isset($this->_params['number'][$id]) ? true : false;
-		}
-		
+
 		public function getDisplayedParam_($id)
 		{
 			$params = $this->getParams();
 			return isset($params['number'][$id]) ? (string) $params['number'][$id] : null;
 		}
-		
+
 		public function url(Array $urls, $slashEnd=false, $https=false, $absolute=false)
 		{
 			return $this->_view->url($urls, $absolute, $https, $slashEnd);	
