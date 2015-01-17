@@ -311,7 +311,7 @@
 			self::$settings['cookie_httponly']  	= isset($options['cookie_httponly']) ? (boolean) $options['cookie_httponly'] : false;
 			self::$settings['cookie_auto_serialize']= isset($options['cookie_auto_serialize']) ? (boolean) $options['cookie_auto_serialize'] : false;
 			
-			self::$default_return = isset($options['defaultReturn']) ? $options['defaultReturn'] : (isset($options['default_return']) ? $options['default_return'] : 'Exception');
+			self::$default_return = (array_key_exists('defaultReturn',$options)) ? $options['defaultReturn'] : ((array_key_exists('default_return',$options)) ? $options['default_return'] : 'Exception');
 			
 			if(self::$settings['cookies_to_sessions'])
 			{
