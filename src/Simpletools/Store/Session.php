@@ -119,6 +119,13 @@
 			}
 		}
 
+		public static function is($key)
+		{
+			self::_autoStart();
+
+			return isset($_SESSION[$key]);
+		}
+
 		//depracted
 		public static function load($id='')
 		{
