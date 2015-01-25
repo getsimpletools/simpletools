@@ -269,7 +269,14 @@
 
 				foreach($this->_query['data'] as $key => $value)
 				{
-					$set[] = $key.' = '.$this->_escape($value);
+					if(is_null($value))
+					{
+						$set[] = $key.' = NULL';
+					}
+					else
+					{
+						$set[] = $key.' = '.$this->_escape($value);
+					}
 				}
 
 				$query[] = implode(', ',$set);
