@@ -648,37 +648,44 @@
 				}
 			}
 		}
-		
+
 		protected function _getSubdomain()
 		{
 			$domain = $_SERVER['SERVER_NAME'];
 			$sub = trim(str_ireplace($this->_settings['use_subdomain']['domain'],'',$domain),'.');
-			
+
 			if(strtolower($sub) == 'www' || '')
 				return null;
-				
+
 			return $sub;
 		}
-		
+
 		public function isController($controller)
 		{
 			$controller 		= self::getCorrectControllerName($controller);
 			$className			= $controller.'Controller';
-			
+
 			return (isset($this->_classes[$className]) || realpath($this->_appDir.'/controllers/'.$controller.'Controller.php'));
 		}
-		
+
 		public function getParams($fix_duplicate_content=false)
 		{
 			$_params = array();
-			
+
 			//to avoid notice errors if running from command line
 			$SERVER_REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? parse_url('http://simpletools.php'.$_SERVER['REQUEST_URI'],PHP_URL_PATH) : null;
 
 			if(($p = stripos($SERVER_REQUEST_URI,'#')) !== false)
 				$SERVER_REQUEST_URI = substr($SERVER_REQUEST_URI,0,$p);
-			
+
 			$params = explode('/',rtrim(substr($SERVER_REQUEST_URI,1),'/'));
+
+			//sanitasation
+			foreach($params as $index => $param)
+			{
+				//$params[$index] = $param = preg_replace('/[^a-z0-9\-\/\.]/i','',urldecode($param));
+				$params[$index] = $param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
+			}
 
 			if(count($this->_routingNamespaces))
 			{
@@ -687,7 +694,7 @@
 				{
 					$params_[] = self::getCorrectControllerName($param);
 				}
-				
+
 				$length  = count($params);
 				while($length)
 				{

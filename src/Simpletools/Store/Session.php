@@ -42,10 +42,11 @@
 	{
 		private static $default_return = 'exception';
 		private static $settings = array(
-			'autostart_if_session_cookie_set' 	=> false,
-			'session_auto_start'				=> true
+			'autostart_if_session_cookie_set' 			=> false,
+			'session_auto_start'						=> true
 		);
-		private static $_sessionStarted	= false;
+		private static $_sessionStarted					= false;
+		private static $_regenerateSessionIdEverySec 	= 600;
 
 		public static function register($id,$data)
 		{
@@ -135,7 +136,9 @@
 		public static function settings(array $options)
 		{
 			self::$settings['autostart_if_session_cookie_set'] 	= isset($options['autostartIfSessionCookieSet']) ? (boolean) $options['autostartIfSessionCookieSet'] : self::$settings['autostart_if_session_cookie_set'];
+
 			self::$settings['session_auto_start'] 	= isset($options['session_auto_start']) ? (boolean) $options['sessionAutoStart'] : self::$settings['session_auto_start'];
+			self::$_regenerateSessionIdEverySec 	= isset($options['regenerateSessionIdEverySec']) ? (int) $options['regenerateSessionIdEverySec'] : self::$_regenerateSessionIdEverySec;
 
 			/*
 			if(self::$settings['autostart_if_session_cookie_set'])
@@ -149,6 +152,11 @@
 
 		protected static function _autoStart()
 		{
+			if(self::$_sessionStarted)
+			{
+				return;
+			}
+
 			if(!self::$_sessionStarted && session_id() == '')
 			{
 				if(self::$settings['session_auto_start']){session_start();self::$_sessionStarted = true;}
@@ -159,6 +167,17 @@
 			else
 			{
 				self::$_sessionStarted = true;
+			}
+
+			$now = time();
+			if(!isset($_SESSION['__regenerateSessionIdEverySec']) OR $_SESSION['__regenerateSessionIdEverySec']<$now)
+			{
+				if(isset($_SESSION['__regenerateSessionIdEverySec']) && $_SESSION['__regenerateSessionIdEverySec']<$now)
+				{
+					session_regenerate_id(true);
+				}
+
+				$_SESSION['__regenerateSessionIdEverySec'] = time()+self::$_regenerateSessionIdEverySec;
 			}
 		}
 	}

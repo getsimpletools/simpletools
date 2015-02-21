@@ -74,7 +74,15 @@
 			return $controller;
 		}
 
-		public function isPost($id=false)
+		/**
+		* HTTP POST checker
+		*
+		* @param string $id POST key to check
+		* @param int $filter Filter type - http://php.net/manual/en/filter.filters.sanitize.php
+		* @param array $filterOptions Filter options
+		* @return mixed boolean if no filter is set
+		*/
+		public function isPost($id=false,$filter=null,$filterOptions=array())
 		{
 			if(!$id)
 			{
@@ -82,11 +90,26 @@
 			}
 			else
 			{
-				return isset($_POST[$id]) ? $_POST[$id] : false;
+				if(isset($_POST[$id]))
+				{
+					return $filter ? filter_var($_POST[$id],$filter,$filterOptions) : true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 
-		public function isQuery($id=false)
+		/**
+		* HTTP GET checker
+		*
+		* @param string $id GET key to check
+		* @param int $filter Filter type - http://php.net/manual/en/filter.filters.sanitize.php
+		* @param array $filterOptions Filter options
+		* @return mixed boolean if no filter is set
+		*/
+		public function isQuery($id=false,$filter=null,$filterOptions=array())
 		{
 			if(!$id)
 			{
@@ -94,11 +117,26 @@
 			}
 			else
 			{
-				return isset($_GET[$id]) ? $_GET[$id] : false;	
+				if(isset($_GET[$id]))
+				{
+					return $filter ? filter_var($_GET[$id],$filter,$filterOptions) : true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 
-		public function isRequest($id=false)
+		/**
+		* HTTP REQUEST checker
+		*
+		* @param string $id REQUEST key to check
+		* @param int $filter Filter type - http://php.net/manual/en/filter.filters.sanitize.php
+		* @param array $filterOptions Filter options
+		* @return mixed boolean if no filter is set
+		*/
+		public function isRequest($id=false,$filter=null,$filterOptions=array())
 		{
 			if(!$id)
 			{
@@ -106,29 +144,57 @@
 			}
 			else
 			{
-				return isset($_REQUEST[$id]) ? $_REQUEST[$id] : false;
+				if(isset($_REQUEST[$id]))
+				{
+					return $filter ? filter_var($_REQUEST[$id],$filter,$filterOptions) : true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 
-		//return $_GET method key=>value
-		public function getQuery($id=null)
+		/**
+		* HTTP GET getter
+		*
+		* @param string $id GET key to return
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param array $sanitizeFilterOptions Sanitize Filter options
+		* @return mixed GET value or values if $id is not provided
+		*/
+		public function getQuery($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_GET;
-			return isset($_GET[$id]) ? $_GET[$id] : null;
+			return isset($_GET[$id]) ? filter_var(urldecode($_GET[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
-		//return $_POST method key=>value
-		public function getPost($id=null)
+		/**
+		* HTTP POST getter
+		*
+		* @param string $id POST key to return
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param array $sanitizeFilterOptions Sanitize Filter options
+		* @return mixed POST value or values if $id is not provided
+		*/
+		public function getPost($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_POST;
-			return isset($_POST[$id]) ? $_POST[$id] : null;
+			return isset($_POST[$id]) ? filter_var(urldecode($_POST[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
-		//return $_POST method key=>value
-		public function getRequest($id=null)
+		/**
+		* HTTP REQUEST getter
+		*
+		* @param string $id REQUEST key to return
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param array $sanitizeFilterOptions Sanitize Filter options
+		* @return mixed REQUEST value or values if $id is not provided
+		*/
+		public function getRequest($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_REQUEST;
-			return isset($_REQUEST[$id]) ? $_REQUEST[$id] : null;
+			return isset($_REQUEST[$id]) ? filter_var(urldecode($_REQUEST[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
 		/**
@@ -223,7 +289,6 @@
 		{
 			return isset($this->_params['number'][$index]) ? true : false;
 		}
-
 
 		public function location($location,$type=302)
 		{
