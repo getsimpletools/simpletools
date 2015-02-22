@@ -166,7 +166,7 @@
 		public function getQuery($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_GET;
-			return isset($_GET[$id]) ? filter_var(urldecode($_GET[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
+			return isset($_GET[$id]) ? filter_var($_GET[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
 		/**
@@ -180,7 +180,7 @@
 		public function getPost($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_POST;
-			return isset($_POST[$id]) ? filter_var(urldecode($_POST[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
+			return isset($_POST[$id]) ? filter_var($_POST[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
 		/**
@@ -194,7 +194,7 @@
 		public function getRequest($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_REQUEST;
-			return isset($_REQUEST[$id]) ? filter_var(urldecode($_REQUEST[$id]),$sanitizeFilter,$sanitizeFilterOptions) : null;
+			return isset($_REQUEST[$id]) ? filter_var($_REQUEST[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
 		}
 
 		/**

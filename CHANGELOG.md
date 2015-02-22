@@ -1,3 +1,8 @@
+### 2.0.20 (2015-02-22)
+
+  1. **Simpletools/Mvc/Common**
+    1. Fixed double url decoding
+
 ### 2.0.19 (2015-02-21)
 
   1. **Simpletools/Mvc/Common**
