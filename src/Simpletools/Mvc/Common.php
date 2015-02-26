@@ -166,7 +166,28 @@
 		public function getQuery($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_GET;
-			return isset($_GET[$id]) ? filter_var($_GET[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
+
+			if(isset($_GET[$id]))
+			{
+				if(is_array($_GET[$id]))
+				{
+					$RETURN = array();
+					foreach($_GET[$id] as $index => $value)
+					{
+						$RETURN[$index] = filter_var($value,$sanitizeFilter,$sanitizeFilterOptions);
+					}
+
+					return $RETURN;
+				}
+				else
+				{
+					return filter_var($_GET[$id],$sanitizeFilter,$sanitizeFilterOptions);
+				}
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		/**
@@ -180,7 +201,28 @@
 		public function getPost($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_POST;
-			return isset($_POST[$id]) ? filter_var($_POST[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
+			
+			if(isset($_POST[$id]))
+			{
+				if(is_array($_POST[$id]))
+				{
+					$RETURN = array();
+					foreach($_POST[$id] as $index => $value)
+					{
+						$RETURN[$index] = filter_var($value,$sanitizeFilter,$sanitizeFilterOptions);
+					}
+
+					return $RETURN;
+				}
+				else
+				{
+					return filter_var($_POST[$id],$sanitizeFilter,$sanitizeFilterOptions);
+				}
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		/**
@@ -194,7 +236,28 @@
 		public function getRequest($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_REQUEST;
-			return isset($_REQUEST[$id]) ? filter_var($_REQUEST[$id],$sanitizeFilter,$sanitizeFilterOptions) : null;
+			
+			if(isset($_REQUEST[$id]))
+			{
+				if(is_array($_REQUEST[$id]))
+				{
+					$RETURN = array();
+					foreach($_REQUEST[$id] as $index => $value)
+					{
+						$RETURN[$index] = filter_var($value,$sanitizeFilter,$sanitizeFilterOptions);
+					}
+
+					return $RETURN;
+				}
+				else
+				{
+					return filter_var($_REQUEST[$id],$sanitizeFilter,$sanitizeFilterOptions);
+				}
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		/**

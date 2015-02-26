@@ -1,3 +1,8 @@
+### 2.0.21 (2015-02-26)
+
+  1. **Simpletools/Mvc/Common**
+    1. Fixed sanitasation for array GET, POST and REQUEST
+
 ### 2.0.20 (2015-02-22)
 
   1. **Simpletools/Mvc/Common**
