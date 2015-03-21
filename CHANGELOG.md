@@ -1,3 +1,18 @@
+### 2.0.22 (2015-03-20)
+
+  1. **Simpletools/Mysql/QueryBuilder**
+    1. Fixed sort and limit imploder function
+
+### 2.0.21 (2015-02-26)
+
+  1. **Simpletools/Mvc/Common**
+    1. Fixed sanitasation for array GET, POST and REQUEST
+
+### 2.0.20 (2015-02-22)
+
+  1. **Simpletools/Mvc/Common**
+    1. Fixed double url decoding
+
 ### 2.0.19 (2015-02-21)
 
   1. **Simpletools/Mvc/Common**
