@@ -269,7 +269,12 @@
 				$query[] = $this->_query['table'];
 			}
 
-			if($this->_query['type']=='INSERT' OR $this->_query['type']=='UPDATE' OR $this->_query['type']=='INSERT IGNORE')
+			if(
+				$this->_query['type']=='INSERT' OR
+				$this->_query['type']=='UPDATE' OR
+				$this->_query['type']=='INSERT IGNORE' OR
+				$this->_query['type']=='INSERT DELAYED'
+			)
 			{
 				$query[] = 'SET';
 

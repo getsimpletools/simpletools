@@ -1,3 +1,8 @@
+### 2.0.24 (2015-03-21)
+
+  1. **Simpletools/Mysql/QueryBuilder**
+    1. Fixed ->insertDelayed method, missing executor
+
 ### 2.0.23 (2015-03-21)
 
   1. **Simpletools/Mysql/QueryBuilder**
