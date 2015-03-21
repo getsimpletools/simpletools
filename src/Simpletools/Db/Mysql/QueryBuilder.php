@@ -347,7 +347,7 @@
 						$groupBy[] = $column;
 					}
 
-					$query[] = imploder(', ',$groupBy);
+					$query[] = implode(', ',$groupBy);
 				}
 			}
 
@@ -368,7 +368,7 @@
 						$sort[] = $column;
 					}
 
-					$query[] = imploder(', ',$sort);
+					$query[] = implode(', ',$sort);
 				}
 			}
 
