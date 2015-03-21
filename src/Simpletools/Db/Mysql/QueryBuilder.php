@@ -122,6 +122,14 @@
 			return $this;
 		}
 
+		public function &insertDelayed($data)
+		{
+			$this->_query['type'] = "INSERT DELAYED";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
 		public function &delete()
 		{
 			$this->_query['type'] = "DELETE FROM";

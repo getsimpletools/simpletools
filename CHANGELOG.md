@@ -1,4 +1,9 @@
-### 2.0.22 (2015-03-20)
+### 2.0.23 (2015-03-21)
+
+  1. **Simpletools/Mysql/QueryBuilder**
+    1. Added ->insertDelayed method
+
+### 2.0.22 (2015-03-21)
 
   1. **Simpletools/Mysql/QueryBuilder**
     1. Fixed sort and limit imploder function
