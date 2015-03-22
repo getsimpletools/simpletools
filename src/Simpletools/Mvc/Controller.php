@@ -46,18 +46,19 @@
 				
 		public function __construct($env)
 		{
-			$this->_appDir 				= &$env->appDir;
-			$this->_view				= &$env->view;
-			$this->_autoRender			= &$env->autoRender;
-			$this->_forwarded  			= &$env->forwarded;
-			$this->_params				= &$env->params;
-			$this->_objects				= &$env->objects;
-			$this->_errorCode			= &$env->errorCode;
-			$this->_shifts_params		= &$env->shifts_params;
-			$this->_classes				= &$env->classes;
-			$this->_current_controller 	= &$env->current_controller;
-			$this->_404_error_header	= &$env->_404_error_header;
-			$this->_view_enabled		= &$env->view_enabled;
+			$this->_appDir 					= &$env->appDir;
+			$this->_view					= &$env->view;
+			$this->_autoRender				= &$env->autoRender;
+			$this->_forwarded  				= &$env->forwarded;
+			$this->_params					= &$env->params;
+			$this->_objects					= &$env->objects;
+			$this->_errorCode				= &$env->errorCode;
+			$this->_shifts_params			= &$env->shifts_params;
+			$this->_classes					= &$env->classes;
+			$this->_current_controller 		= &$env->current_controller;
+			$this->_404_error_header		= &$env->_404_error_header;
+			$this->_view_enabled			= &$env->view_enabled;
+			$this->_enableRouterHooks				= &$env->_enableRouterHooks;
 
 			$this->_routingNamespaces				= &$env->routingNamespaces;
 			$this->_activeRoutingNamespace			= &$env->activeRoutingNamespace;
@@ -327,41 +328,87 @@
 				}
 
 				if(class_exists($className))
-				{	
+				{
 					if(!isset($this->_classes[$className]))
 					{
 						$this->_classes[$className] = new $className($this->_getEnv());
 						$this->_forwarded = false;
 					}
-					
+
+					if($this->_enableRouterHooks)
+					{
+						\Simpletools\Mvc\RouterHook::fire('beforeForwardController',array('controller'=>$controller,'action'=>$action));
+					}
+
 					if(is_callable(array($this->_classes[$className],'init')) && !$this->_forwarded)
 					{
+						if($this->_enableRouterHooks)
+						{
+							\Simpletools\Mvc\RouterHook::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Mvc\RouterHook::fire('beforeForwardControllerInit',array('controller'=>$controller,'action'=>$action));
+						}
+
 						if($this->_current_controller != $controller) 
 						{
 							$this->_classes[$className]->init();
 							$this->_current_controller = $controller;
 						}
 						$this->_forwarded = true;
+
+						if($this->_enableRouterHooks)
+						{
+							\Simpletools\Mvc\RouterHook::fire('afterForwardControllerInit',array('controller'=>$controller,'action'=>$action));
+						}
 					}
-					
+
+					if($this->_enableRouterHooks)
+					{
+						\Simpletools\Mvc\RouterHook::fire('afterForwardController',array('controller'=>$controller,'action'=>$action));
+					}
+
 					if($this->_autoRender)
 					{
 						$actionMethod = $action.'Action';
-						
+
 						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
+							if($this->_enableRouterHooks)
+							{
+								\Simpletools\Mvc\RouterHook::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
+							}
+
 							$this->_classes[$className]->$actionMethod();
+
+							if($this->_enableRouterHooks)
+							{
+								\Simpletools\Mvc\RouterHook::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
+							}
 						}
-						elseif($className!='ErrorController') 
+						elseif($className!='ErrorController')
 						{
+							if($this->_enableRouterHooks)
+							{
+								\Simpletools\Mvc\RouterHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+							}
+
 							return $this->error('a404');
 						}
 						elseif($actionMethod=='errorAction')
 						{
+							if($this->_enableRouterHooks)
+							{
+								\Simpletools\Mvc\RouterHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+							}
+
 							throw new \Exception("Missing errorAction() under ErrorController", 1);
 						}
 						else
 						{
+							if($this->_enableRouterHooks)
+							{
+								\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+							}
+
 							throw new \Exception("Missing correct error handling structure", 1);
 						}
 					}
@@ -374,71 +421,25 @@
 				}
 				else
 				{
+					if($this->_enableRouterHooks)
+					{
+						\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+					}
+
 					$this->error('c405');
 				}
 			}
 			else
 			{
+				if($this->_enableRouterHooks)
+				{
+					\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+				}
+
 				$this->error('c404');
 			}
 		}
 
-		protected function _render($controller,$view=null)
-		{
-			if(!$this->_view_enabled) return;
-
-			/**/
-			$namespace 			= $this->_activeRoutingNamespace;
-
-			$n = substr($controller,0,1);
-			if($n=='\\' OR $n == '/')
-			{
-				$controller 		= trim(str_replace('/','\\',$controller),'\\');
-				$_path 				= explode('\\',$controller);
-				$controller 		= array_pop($_path);
-				$namespace 			= implode('\\',$_path);
-			}
-
-			if($namespace)
-			{
-				$namespacePath 		= str_replace('\\', DIRECTORY_SEPARATOR, $namespace)."/";
-
-				if(strtolower($view) == 'error')
-				{
-					$path = $this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt();
-					
-					if(!realpath($path))
-					{
-						$namespacePath  = '';
-					}
-				}
-			}
-			else
-			{
-				$namespacePath 		= '';
-			}
-			
-			$v 				= realpath($this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt());
-			
-			if($v)
-			{
-				$this->_autoRender = false;
-				$this->_view->render($v);
-			}
-			else
-			{
-				if($view != 'error')
-				{
-					$this->error('v404');
-				}
-				else
-				{
-					trigger_error("<u>SimpleMVC ERROR</u> - There is a missing Error View.", E_USER_ERROR);
-					exit;
-				}
-			}
-		}
-		
 		public function setNewParams($controller,$action,$params)
 		{
 			unset($this->_params['number']);
