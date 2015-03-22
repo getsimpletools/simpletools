@@ -1,3 +1,10 @@
+### 2.0.25 (2015-03-22)
+
+  1. **Simpletools/Mvc/RoutingHook**
+    1. Added RoutingHook class allowing to attach callables under routing events such us dispatchStart, dispatchEnd, beforeControllerInit etc.
+  1. **Simpletools/Store/Session**
+    1. Fixed warnings being sent in case of double session init
+
 ### 2.0.24 (2015-03-21)
 
   1. **Simpletools/Mysql/QueryBuilder**

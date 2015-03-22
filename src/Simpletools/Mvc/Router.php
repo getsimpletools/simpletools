@@ -108,7 +108,7 @@
 				$this->_404_error_header									= isset($settings['404_error_header']) ? (boolean) $settings['404_error_header'] : true;
 				$this->_duplicate_content									= isset($settings['duplicate_content']) ? (int) $settings['duplicate_content'] : 0;
 
-				$this->_enableRouterHooks									= isset($settings['enableRouterHooks']) ? (bool) $settings['enableRouterHooks'] : false;
+				$this->_routingHooks									= isset($settings['routingHooks']) ? (bool) $settings['routingHooks'] : false;
 
 				if(isset($settings['routingNamespaces']))
 				{
@@ -264,14 +264,14 @@
 		//controller dispatcher
 		public function &dispatch($dir_emulate=false)
 		{
-			if($this->_enableRouterHooks)
+			if($this->_routingHooks)
 			{
-				\Simpletools\Mvc\RouterHook::setEnv(array(
+				\Simpletools\Mvc\RoutingHook::setEnv(array(
 					'routingNamespace'	=> $this->_activeRoutingNamespace,
 					'router'			=> &$this
 				));
 
-				\Simpletools\Mvc\RouterHook::fire('dispatchStart');
+				\Simpletools\Mvc\RoutingHook::fire('dispatchStart');
 			}
 
 			/*
@@ -384,7 +384,7 @@
 			$env->current_controller	= &$this->_current_controller;
 			$env->_404_error_header		= &$this->_404_error_header;
 			$env->view_enabled			= &$this->_view_enabled;
-			$env->_enableRouterHooks			= &$this->_enableRouterHooks;
+			$env->_routingHooks			= &$this->_routingHooks;
 
 			$env->routingNamespaces				= &$this->_routingNamespaces;
 			$env->activeRoutingNamespace 		= &$this->_activeRoutingNamespace;
@@ -442,9 +442,9 @@
 
 					$this->_classes[$className] = new $className($this->_getEnv());
 
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
 					}
 
 					if(is_callable(array($this->_classes[$className],'init')))
@@ -452,9 +452,9 @@
 						$this->_classes[$className]->init();
 					}
 
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('afterControllerInit',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('afterControllerInit',array('controller'=>$controller,'action'=>$action));
 					}
 
 					if(!$this->_forwarded && $this->_autoRender)
@@ -464,9 +464,9 @@
 
 						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
 							}
 
 							if($this->_activeCustomRouteArgs)
@@ -478,16 +478,16 @@
 								$this->_classes[$className]->$actionMethod();
 							}
 
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
 							}
 						}
 						else
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
 							}
 
 							if($this->_autoRender) $this->error('a404');
@@ -497,9 +497,9 @@
 				}
 				else
 				{
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
 					}
 
 					$this->error('c405');
@@ -512,17 +512,17 @@
 			}
 			else
 			{
-				if($this->_enableRouterHooks)
+				if($this->_routingHooks)
 				{
-					\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+					\Simpletools\Mvc\RoutingHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
 				}
 
 				$this->error('c404');
 			}
 
-			if($this->_enableRouterHooks)
+			if($this->_routingHooks)
 			{
-				\Simpletools\Mvc\RouterHook::fire('dispatchEnd');
+				\Simpletools\Mvc\RoutingHook::fire('dispatchEnd');
 			}
 		}
 
@@ -653,9 +653,9 @@
 			/**/
 			$namespace 			= $this->_activeRoutingNamespace;
 
-			if($this->_enableRouterHooks)
+			if($this->_routingHooks)
 			{
-				\Simpletools\Mvc\RouterHook::fire('beforeRenderView',array('controller'=>$controller,'view'=>$view));
+				\Simpletools\Mvc\RoutingHook::fire('beforeRenderView',array('controller'=>$controller,'view'=>$view));
 			}
 
 			$n = substr($controller,0,1);
@@ -693,27 +693,27 @@
 				$this->_autoRender = false;
 				$this->_view->render($v);
 
-				if($this->_enableRouterHooks)
+				if($this->_routingHooks)
 				{
-					\Simpletools\Mvc\RouterHook::fire('afterRenderView',array('controller'=>$controller,'view'=>$view));
+					\Simpletools\Mvc\RoutingHook::fire('afterRenderView',array('controller'=>$controller,'view'=>$view));
 				}
 			}
 			else
 			{
 				if($view != 'error')
 				{
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Mvc\RoutingHook::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					$this->error('v404');
 				}
 				else
 				{
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Mvc\RoutingHook::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					trigger_error("<u>SimpleMVC ERROR</u> - There is a missing Error View.", E_USER_ERROR);
@@ -1003,9 +1003,9 @@
 
 		public function __destruct()
 		{
-			if($this->_enableRouterHooks)
+			if($this->_routingHooks)
 			{
-				\Simpletools\Mvc\RouterHook::fire('routerDestruct');
+				\Simpletools\Mvc\RoutingHook::fire('routerDestruct');
 			}
 		}
 	}

@@ -41,7 +41,7 @@
 	/**
 	* Hook
 	*/
-	class RouterHook
+	class RoutingHook
 	{
 		protected static $_listeners = array();
 		protected static $_env = array();

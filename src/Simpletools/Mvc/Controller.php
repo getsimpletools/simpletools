@@ -58,7 +58,7 @@
 			$this->_current_controller 		= &$env->current_controller;
 			$this->_404_error_header		= &$env->_404_error_header;
 			$this->_view_enabled			= &$env->view_enabled;
-			$this->_enableRouterHooks				= &$env->_enableRouterHooks;
+			$this->_routingHooks				= &$env->_routingHooks;
 
 			$this->_routingNamespaces				= &$env->routingNamespaces;
 			$this->_activeRoutingNamespace			= &$env->activeRoutingNamespace;
@@ -335,17 +335,17 @@
 						$this->_forwarded = false;
 					}
 
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('beforeForwardController',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('beforeForwardController',array('controller'=>$controller,'action'=>$action));
 					}
 
 					if(is_callable(array($this->_classes[$className],'init')) && !$this->_forwarded)
 					{
-						if($this->_enableRouterHooks)
+						if($this->_routingHooks)
 						{
-							\Simpletools\Mvc\RouterHook::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
-							\Simpletools\Mvc\RouterHook::fire('beforeForwardControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Mvc\RoutingHook::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Mvc\RoutingHook::fire('beforeForwardControllerInit',array('controller'=>$controller,'action'=>$action));
 						}
 
 						if($this->_current_controller != $controller) 
@@ -355,15 +355,15 @@
 						}
 						$this->_forwarded = true;
 
-						if($this->_enableRouterHooks)
+						if($this->_routingHooks)
 						{
-							\Simpletools\Mvc\RouterHook::fire('afterForwardControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Mvc\RoutingHook::fire('afterForwardControllerInit',array('controller'=>$controller,'action'=>$action));
 						}
 					}
 
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('afterForwardController',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('afterForwardController',array('controller'=>$controller,'action'=>$action));
 					}
 
 					if($this->_autoRender)
@@ -372,41 +372,41 @@
 
 						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
 							}
 
 							$this->_classes[$className]->$actionMethod();
 
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
 							}
 						}
 						elseif($className!='ErrorController')
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
 							}
 
 							return $this->error('a404');
 						}
 						elseif($actionMethod=='errorAction')
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
 							}
 
 							throw new \Exception("Missing errorAction() under ErrorController", 1);
 						}
 						else
 						{
-							if($this->_enableRouterHooks)
+							if($this->_routingHooks)
 							{
-								\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Mvc\RoutingHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
 							}
 
 							throw new \Exception("Missing correct error handling structure", 1);
@@ -421,9 +421,9 @@
 				}
 				else
 				{
-					if($this->_enableRouterHooks)
+					if($this->_routingHooks)
 					{
-						\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Mvc\RoutingHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
 					}
 
 					$this->error('c405');
@@ -431,9 +431,9 @@
 			}
 			else
 			{
-				if($this->_enableRouterHooks)
+				if($this->_routingHooks)
 				{
-					\Simpletools\Mvc\RouterHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+					\Simpletools\Mvc\RoutingHook::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
 				}
 
 				$this->error('c404');
