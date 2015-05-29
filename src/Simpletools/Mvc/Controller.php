@@ -415,7 +415,7 @@
 
 					if($this->_autoRender)
 					{
-						$this->_render($orgController,$action);
+						$this->render($orgController,$action);
 					}
 
 				}
