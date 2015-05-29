@@ -1,3 +1,8 @@
+### 2.0.26 (2015-05-29)
+
+  1. **Simpletools/Mvc/Controller**
+    1. Fixed ->_render type method
+
 ### 2.0.25 (2015-03-22)
 
   1. **Simpletools/Mvc/RoutingHook**
