@@ -40,7 +40,7 @@ namespace Simpletools\Http\Multi;
 
 use Simpletools\Http\Multi\Request;
 
-	class SimpleMUrl
+	class Request
 	{
 		private $_requested_url 	= null;
 		private $_effective_url 	= null;
