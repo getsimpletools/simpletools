@@ -31,7 +31,6 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
@@ -50,15 +49,24 @@
 		private 		$_mysqli		= null;
 		
 		const 			_noArgs			= '$--SimpleMySQL--n0-aRg5--';
+
+		protected 		$_connectionName= 'default';
 		
-		public function __construct(array $settings=null)
+		public function __construct(array $settings=null,$connectionName='default')
 		{
 			$this->setSettings($settings);
+
+			$this->_connectionName = $connectionName;
 			
-			if(empty(self::$_instance)) 
+			if(!isset(self::$_instance[$connectionName])) 
 			{
-				self::$_instance = &$this;
+				self::$_instance[$connectionName] = &$this;
 			}
+		}
+
+		public function getConnectionName()
+		{
+			return $this->_connectionName;
 		}
 		
 		public function setSettings($settings)
@@ -66,10 +74,12 @@
 			$settings['charset_type']	= isset($settings['charset']) ? $settings['charset'] : (isset($settings['charset_type']) ? $settings['charset_type'] : null);
 
 			$this->_settings	= $settings;
-			$this->_settings['die_on_error'] = isset($settings['die_on_error']) ? (boolean) $settings['die_on_error'] : true;
-			$this->_settings['custom_mysqli_class_name'] = isset($settings['custom_mysqli_class_name']) ? (string) $settings['custom_mysqli_class_name'] : false;
+
+			$this->_settings['time_zone'] 					= isset($settings['timezone']) ? $settings['timezone'] : @$settings['time_zone'];
+			$this->_settings['die_on_error']				= isset($settings['die_on_error']) ? (boolean) $settings['die_on_error'] : true;
+			$this->_settings['custom_mysqli_class_name'] 	= isset($settings['custom_mysqli_class_name']) ? (string) $settings['custom_mysqli_class_name'] : false;
 			
-			$this->_settings['connect_error_filepath'] = isset($settings['connect_error_filepath']) ? $settings['connect_error_filepath'] : false;
+			$this->_settings['connect_error_filepath'] 		= isset($settings['connect_error_filepath']) ? $settings['connect_error_filepath'] : false;
 			
 			
 			if(isset($settings['model_dir']))
@@ -91,8 +101,11 @@
 			
 			if(!$this->isConnected())
 			{
-				$this->connect();
-				if(!$this->isConnected()) return false;
+				$this->_credentials['db'] = $db;
+				return true;
+				
+				//$this->connect();
+				//if(!$this->isConnected()) return false;
 			}
 			
 			$this->_current_db = $db;
@@ -112,22 +125,34 @@
 		
 		public static function &getInstance($settings=false)
 		{
-			 if(empty(self::$_instance) && $settings) 
-			 {
-			     self::$_instance = new \Simpletools\Db\Mysql\Client($settings);
-		     }
-		     
-		   	 return self::$_instance;	
+			$connectionName = (isset($settings['connectionName']) ? $settings['connectionName'] : 'default');
+			if(is_string($settings))
+			{
+				$connectionName = $settings;
+			}
+
+			if(!is_string($settings) && !isset(self::$_instance[$connectionName]) && $settings) 
+			{
+			    new \Simpletools\Db\Mysql\Client($settings,$connectionName);
+		    }
+		    elseif(is_string($settings) && !isset(self::$_instance[$connectionName]))
+		    {
+		    	throw new \Exception('No mysql settings defined with connectionName '.$connectionName);
+		    }
+
+		   	return self::$_instance[$connectionName];
 		}
 		
 		public static function &settings($settings)
 		{
-			if(empty(self::$_instance)) 
-			    new \Simpletools\Db\Mysql\Client($settings);
+			$connectionName = (isset($settings['connectionName']) ? $settings['connectionName'] : 'default');
+
+			if(!isset(self::$_instance[$connectionName]))
+			    new \Simpletools\Db\Mysql\Client($settings,$connectionName);
 		    else
-		    	self::$_instance->setSettings($settings);
+		    	self::$_instance[$connectionName]->setSettings($settings);
 		    	
-		    return self::$_instance;
+		    return self::$_instance[$connectionName];
 		}
 		
 		public function setNewConnectionDetails($credentials, $user=false, $pass=false, $db=false)
@@ -149,7 +174,7 @@
 			$this->_credentials['port'] 	= isset($settings['port']) ? $settings['port'] : 3306;
 		}
 		
-		public function __desctruct()
+		public function __destruct()
 		{
 			$this->close();
 		}
@@ -216,37 +241,52 @@
 			$this->_mysqli = new $mysqli_class();
 			$this->_mysqli->init();
 			$this->setTimeout();
-			
+
+
+			$_credentials = '';
 			if(!$credentials)
 			{
-				if(!$this->_credentials['host']) throw new \Exception('Please specify connection settings before',111);
-				$this->_current_db = $this->_credentials['db'];
-				@$this->_mysqli->real_connect($this->_credentials['host'], $this->_credentials['user'], $this->_credentials['pass'], $this->_credentials['db'],$this->_credentials['port']);
+				$_credentials['db']			= $this->_credentials['db'];
+				$_credentials['host']		= $this->_credentials['host'];
+				$_credentials['user']		= $this->_credentials['user'];
+				$_credentials['pass']		= $this->_credentials['pass'];
+				$_credentials['port']		= $this->_credentials['port'];
+			}
+			elseif(is_array($credentials))
+			{
+				$_credentials['db']			= isset($credentials['db']) ? $credentials['db'] : null;
+				$_credentials['host']		= $credentials['host'];
+				$_credentials['user']		= $credentials['user'];
+				$_credentials['pass']		= $credentials['pass'];
+				$_credentials['port']		= isset($credentials['port']) ? $credentials['port'] : 3306;	
 			}
 			else
 			{
-				if(is_array($credentials))
-				{
-					if(isset($credentials['db']))
-					{
-						$this->_current_db = $credentials['db'];
-						@$this->_mysqli->real_connect($credentials['host'], $credentials['user'], $credentials['pass'], $credentials['db'], isset($credentials['db']) ? $credentials['db'] : 3306);
-					}
-					else
-					{
-						@$this->_mysqli->real_connect($credentials['host'], $credentials['user'], $credentials['pass'],null,isset($credentials['db']) ? $credentials['db'] : 3306);
-					}
-				}
-				else
-				{
-					$this->_current_db = $db;
-					@$this->_mysqli->real_connect($credentials, $user, $pass, $db, $port);
-				}
+				$_credentials['db']			= $db;
+				$_credentials['host']		= $credentials;
+				$_credentials['user']		= $user;
+				$_credentials['pass']		= $pass;
+				$_credentials['port']		= $port;
 			}
-			
+
+			if(!$_credentials['host'])
+			{
+				throw new \Exception('Please specify connection settings before',111);
+			}
+
+			$this->_current_db = $_credentials['db'];
+
+			@$this->_mysqli->real_connect(
+				$_credentials['host'], 
+				$_credentials['user'], 
+				$_credentials['pass'], 
+				$_credentials['db'],
+				$_credentials['port']
+			);
+
 			if(mysqli_connect_errno()) 
 			{
-				if(isset($_SERVER['SERVER_PROTOCOL'])){header($_SERVER['SERVER_PROTOCOL'].' 503 Service Unavailable');}
+				//if(isset($_SERVER['SERVER_PROTOCOL'])){header($_SERVER['SERVER_PROTOCOL'].' 503 Service Unavailable');}
 				
 				if(
 					$die_on_error === true || 
@@ -263,7 +303,7 @@
 						//echo "Connection error: ", mysqli_connect_error(),"
 					    //  <br/>Please correct your details and try again.";
 
-					    throw new \Exception("Connect Error: ".mysqli_connect_error(),mysqli_connect_errno());
+					    throw new \Exception("Connect Error (".$this->_connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
 					}
 					
 				}
@@ -279,7 +319,7 @@
 						//echo "Connection error: ", mysqli_connect_error(),"
 						 // <br/>Please correct your details and try again.";
 
-						throw new \Exception("Connect Error: ".mysqli_connect_error(),mysqli_connect_errno());
+						throw new \Exception("Connect Error (".$this->_connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
 					}
 					
 				}
@@ -450,8 +490,11 @@
 		//mysql close connection
 		public function close()
 		{
-			$this->_mysqli->close();
-			$this->_connected = false;
+			if($this->isConnected())
+			{
+				$this->_mysqli->close();
+				$this->_connected = false;
+			}
 		}
 			
 		public function getConnectionStatus()
@@ -756,9 +799,12 @@
 				$path = $this->_modelDir.'/'.$modelName.'.php';
 			}
 
-			if(!class_exists($class)) require($path);
+			if(!class_exists($class) && !@include($path))
+			{
+				throw new \Exception("Couldn't find model located under: ".$path."; Please specify modelsDir or check your settings.");
+			}
 			
-			$obj = new $class($this->_settings);
+			$obj = new $class($this->_settings,$this->getConnectionName());
 			
 			if($obj instanceof \Simpletools\Db\Mysql\Model)
 				$obj->setMysqliClass($this->_settings['custom_mysqli_class_name']);

@@ -34,33 +34,78 @@
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
  *
  */
-	namespace Simpletools\Event;
+	namespace Simpletools\Events;
 
-	use Simpletools\Event\Event;
+	use Simpletools\Events\Event;
 
 	class Event
 	{
 		protected static $_listeners = array();
 
-		public static function listen($event,$handler)
+		public static function on($event,$handler)
 		{
-			self::$_listeners[$event][] = $handler;
+			$id 							= uniqid();
+			self::$_listeners[$event][$id] 	= $handler;
+
+			return $id;
 		}
 
-		public static function fire($event)
+		private static function _callReflection($callable, array $args = array()) 
+        {
+        	if(is_array($callable))
+	    	{
+			    $reflection 	= new \ReflectionMethod($callable[0], $callable[1]);
+			}
+			elseif(is_string($callable))
+			{
+			    $reflection 	= new \ReflectionFunction($callable);
+			}
+			elseif(is_a($callable, 'Closure') || is_callable($callable, '__invoke')) 
+			{
+			    $objReflector 	= new \ReflectionObject($callable);
+			    $reflection    	= $objReflector->getMethod('__invoke');
+			}
+
+	        $pass = array();
+	        foreach($reflection->getParameters() as $param)
+	        {
+	        	$name = $param->getName();
+	        	if(isset($args[$name]))
+	        	{
+	        		$pass[] = $args[$name];
+	        	}
+	        	else
+	        	{
+	        		try
+	        		{
+	          			$pass[] = $param->getDefaultValue();
+	          		}
+	          		catch(\Exception $e)
+	          		{
+	          			$pass[] = null;
+	          		}
+	          	}
+	        }
+
+	        return $reflection->invokeArgs($callable, $pass); 
+	    }
+
+		public static function fire($event,$args=array())
 		{
 			if(isset(self::$_listeners[$event]))
 			{
-				foreach(self::$_listeners[$event] as $handler)
+				foreach(self::$_listeners[$event] as $id => $handler)
 				{
-					if(is_string($handler))
+					if(is_callable($handler))
 					{
+						$res = self::_callReflection($handler,$args);
+						if($res===false)
+						{
+							break;
+						}
+					}
 
-					}
-					elseif(is_callable($handler))
-					{
-						$handler();
-					}
+					self::unqueue($id);
 				}
 			}
 		}
@@ -70,14 +115,14 @@
 
 		}
 
-		public static function unqueue()
+		public static function unqueue($event)
 		{
-
+			unset(self::$_listeners[$event]);
 		}
 
 		public static function forget($event)
 		{
-
+			unset(self::$_listeners[$event]);
 		}
 	}
 

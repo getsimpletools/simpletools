@@ -311,8 +311,10 @@
 		*
 		* @deprecated 2.0.15 Use getParamByIndex() instead
 		*/
-		public function getParam_($index)
+		public function getParam_($index='')
 		{
+			if(!$index) return $this->_params['number'];
+
 			return $this->getParamByIndex($index);
 		}
 
@@ -323,8 +325,10 @@
 		* @return string Returns requested param value
 		*
 		*/
-		public function getParamByIndex($index)
+		public function getParamByIndex($index='')
 		{
+			if(!$index) return $this->_params['number'];
+			
 			return isset($this->_params['number'][$index]) ? (string) $this->_params['number'][$index] : null;
 		}
 

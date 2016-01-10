@@ -137,9 +137,10 @@
 	
 				if($obj instanceof \Simpletools\Db\Mysql\Model)
 				{
+					$connectionName = $obj->getConnectionName();
 					unset($obj);
 
-					$obj = \Simpletools\Db\Mysql\Client::getInstance();
+					$obj = \Simpletools\Db\Mysql\Client::getInstance($connectionName);
 										
 					self::$_instance->objects[$class] = $obj->getInstanceOfModel($model,$initArgs,$namespace);
 				}

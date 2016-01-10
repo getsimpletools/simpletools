@@ -31,7 +31,6 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
@@ -41,11 +40,13 @@
 
 	class Model extends \Simpletools\Db\Mysql\Client
 	{
-		public function __construct($settings=false)
+		public function __construct($settings=false,$connectionName='default')
 		{
+			$this->_connectionName = $connectionName;
+			
 			if($settings)
 			{
-				parent::__construct($settings);
+				parent::__construct($settings,$connectionName);
 			}
 		}
 
@@ -57,6 +58,11 @@
 		public function __call($table,$args)
 		{
 			return new QueryBuilder($table,$this,$args);
+		}
+
+		public function getConnectionName()
+		{
+			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
 		}
 	}
 ?>

@@ -31,7 +31,6 @@
  * @framework		Simpletools
  * @copyright  		Copyright (c) 2009 Marcin Rosinski. (http://www.getsimpletools.com)
  * @license    		http://www.opensource.org/licenses/bsd-license.php - BSD
- * @version    		Ver: 2.0.15 2014-12-31 10:45
  * 
  */
 
@@ -79,11 +78,124 @@
 			return $this;
 		}
 
+		protected $_currentJoinIndex = 0;
+
+		public function &join($tableName,$direction='left')
+		{
+			if($tableName instanceof \Simpletools\Db\Mysql\QueryBuilder)
+			{
+				$tableName = '('.$tableName->getQuery().')';
+			}
+
+			$this->_query['join'][$this->_currentJoinIndex] = [
+				'table'			=> $tableName,
+				'direction'		=> $direction
+			];
+
+			return $this;
+		}
+
+		public function &leftJoin($tableName)
+		{
+			return $this->join($tableName,'left');
+		}
+
+		public function &rightJoin($tableName)
+		{
+			return $this->join($tableName,'right');
+		}
+
+		public function &innerJoin($tableName)
+		{
+			return $this->join($tableName,'inner');
+		}
+
+		protected function _on($args,$glue='')
+		{
+			if($args instanceof \Simpletools\Db\Mysql\SQL)
+			{
+				$this->_query['join'][$this->_currentJoinIndex]['on'] = (string) $args;
+			}
+			else
+			{
+				$operand 	= '=';
+				$left 		= $args[0];
+
+				if(count($args)>2)
+				{
+					$operand 	= $args[1];
+					$right 		= $args[2];
+				}
+				else
+				{
+					$right 		= $args[1];
+				}
+
+				if($glue)
+				{
+					$this->_currentJoinIndex--;
+					$glue = ' '.$glue.' ';
+				}
+				else
+				{
+					$this->_query['join'][$this->_currentJoinIndex]['on'] = '';
+				}
+
+				$this->_query['join'][$this->_currentJoinIndex]['on'] .= $glue.$left.' '.$operand.' '.$right;
+			}
+
+			$this->_currentJoinIndex++;
+
+			return $this;
+		}
+
+		public function &on()
+		{
+			$args = func_get_args();
+			if(count($args)==1) $args = $args[0];
+
+			$this->_on($args,'');
+			
+			return $this;
+		}
+
+		public function &orOn()
+		{
+			$args = func_get_args();
+			if(count($args)==1) $args = $args[0];
+
+			$this->_on($args,'OR');
+
+			return $this;
+		}
+
+		public function &andOn()
+		{
+			$args = func_get_args();
+			if(count($args)==1) $args = $args[0];
+
+			$this->_on($args,'AND');
+
+			return $this;
+		}
+
+		public function &using()
+		{
+			$this->_currentJoinIndex++;
+
+			return $this;
+		}
+
 		public function &db($db)
 		{
 			$this->_query['db'] = $db;
 
 			return $this;
+		}
+
+		public function &inDb($db)
+		{
+			return $this->db($db);
 		}
 
 		public function &group()
@@ -172,12 +284,13 @@
 			return $this->_result = $this->_mysql->query($this->getQuery());
 		}
 
-		public function get($id,$column='id')
+		public function &get($id,$column='id')
 		{
 			$this->_query['type']		= "SELECT";
 			$this->_query['where'][] 	= array($column,$id);
 
-			return $this->run();
+			return $this;
+			//return $this->run();
 		}
 
 		public function _escape($value)
@@ -185,6 +298,14 @@
 			if($value instanceof \Simpletools\Db\Mysql\SQL)
 			{
 				return (string) $value;
+			}
+			elseif(is_numeric($value))
+			{
+				return $value;
+			}
+			elseif(is_bool($value))
+			{
+				return (int) $value;
 			}
 			else
 			{
@@ -239,6 +360,11 @@
 		   	return substr_replace($haystack, $replace, $pos, strlen($needle));
 		}
 
+		public function &test()
+		{
+			return $this;
+		}
+
 		public function getQuery()
 		{
 			if(!isset($this->_query['type']))
@@ -262,11 +388,40 @@
 
 			if(isset($this->_query['db']))
 			{
-				$query[] = $this->_query['db'].'.'.$this->_query['table'];
+				$query[] = $this->escapeKey($this->_query['db']).'.'.$this->escapeKey($this->_query['table']);
 			}
 			else
 			{
-				$query[] = $this->_query['table'];
+				$query[] = $this->escapeKey($this->_query['table']);
+			}
+
+			if(isset($this->_query['as']))
+			{
+				$query[] = 'as '.$this->escapeKey($this->_query['as']);
+			}
+
+			if(isset($this->_query['join']))
+			{
+				foreach($this->_query['join'] as $join)
+				{
+					$syntax 	= strtoupper($join['direction']).' JOIN '.$join['table'];
+
+					if(isset($join['as']))
+					{
+						$syntax .= ' as '.$join['as'];
+					}
+
+					if(isset($join['on']))
+					{
+						$syntax .= ' ON ('.$join['on'].')';
+					}
+					elseif(isset($join['using']))
+					{
+						$syntax .= ' USING ('.$join['using'].')';
+					}
+
+					$query[] 	= $syntax;
+				}
 			}
 
 			if(
@@ -284,11 +439,11 @@
 				{
 					if(is_null($value))
 					{
-						$set[] = $key.' = NULL';
+						$set[] = $this->escapeKey($key).' = NULL';
 					}
 					else
 					{
-						$set[] = $key.' = '.$this->_escape($value);
+						$set[] = $this->escapeKey($key).' = '.$this->_escape($value);
 					}
 				}
 
@@ -303,7 +458,7 @@
 
 				foreach($this->_query['onDuplicateData'] as $key => $value)
 				{
-					$set[] = $key.' = '.$this->_escape($value);
+					$set[] = $this->escapeKey($key).' = '.$this->_escape($value);
 				}
 
 				$query[] = implode(', ',$set);
@@ -318,9 +473,29 @@
 					foreach($this->_query['where'] as $operands)
 					{
 						if(!isset($operands[2]))
-							$query[] = $operands[0]." = ".$this->_escape($operands[1]);
+						{
+							$query[] = $this->escapeKey($operands[0])." = ".$this->_escape($operands[1]);
+						}
 						else
-							$query[] = $operands[0]." ".$operands[1]." ".$this->_escape($operands[2]);
+						{
+							$operands[1] = strtoupper($operands[1]);
+							
+							if($operands[1] == "IN" AND is_array($operands[2]))
+							{
+								$operands_ = array();
+
+								foreach($operands[2] as $op)
+								{
+									$operands_[] = $this->_escape($op);
+								}
+
+								$query[] = $this->escapeKey($operands[0])." ".$operands[1]." (".implode(",",$operands_).')';
+							}
+							else
+							{
+								$query[] = $this->escapeKey($operands[0])." ".$operands[1]." ".$this->_escape($operands[2]);
+							}
+						}
 					}
 				}
 				else
@@ -399,6 +574,27 @@
 			return implode(' ',$query);
 		}
 
+		/*
+		* Prevent SQL Injection on database name, table name, field names
+		*/
+		public function escapeKey($key)
+		{
+			if(strpos($key,'.')===false)
+			{
+				return "`".str_replace("`","",$key)."`";
+			}
+			else
+			{
+				$keys = explode('.',$key);
+				foreach($keys as $index => $key)
+				{
+					$keys[$index] = "`".str_replace("`","",$key)."`";
+				}
+
+				return implode('.',$keys);
+			}
+		}
+
 		public function &whereSql($statement,$vars=null)
 		{
 			$this->_query['whereSql'] = array('statement'=>$statement,'vars'=>$vars);
@@ -475,10 +671,19 @@
 			return $this;
 		}
 
+		public function &aka($as)
+		{
+			if(!isset($this->_query['join']))
+				$this->_query['as'] 									= $as;
+			else
+				$this->_query['join'][$this->_currentJoinIndex]['as'] 	= $as;
+
+			return $this;
+		}
+
 		/*
 		* AUTO RUNNNERS
 		*/
-
 		public function __get($name)
 		{
 			$this->run();
@@ -507,6 +712,12 @@
 		{
 			$this->run();
 			return $this->_result->fetch();
+		}
+
+		public function getFirstRow()
+		{
+			$this->run();
+			return $this->_result->getFirstRow();
 		}
 
 		public function fetchAll()

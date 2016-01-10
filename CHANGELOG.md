@@ -1,3 +1,18 @@
+### 2.0.27 (2016-01-10)
+  1. **Simpletools/Mvc/RoutingHook**
+    1. Removed replaced with Simpletools/Events/Event
+  2. **Simpletools/Mvc/Router**
+    1. Replaced RoutingHook with Simpletools/Events/Event
+    2. Improved routing name performance
+  3. **Simpletools/Mysql/QueryBuilder**
+    1. Added join handler and on table name, db, column SQL injection prevention
+  4. **Simpletools/Mysql/Client**
+    1. Added multiple connection handler
+  5. **Simpletools/Mysql/Model**
+    1. Added multiple connection handler
+  6. **Simpletools/Mvc/Model**
+    1. Added multiple connection handler
+
 ### 2.0.26 (2015-05-29)
 
   1. **Simpletools/Mvc/Controller**
@@ -7,7 +22,7 @@
 
   1. **Simpletools/Mvc/RoutingHook**
     1. Added RoutingHook class allowing to attach callables under routing events such us dispatchStart, dispatchEnd, beforeControllerInit etc.
-  1. **Simpletools/Store/Session**
+  2. **Simpletools/Store/Session**
     1. Fixed warnings being sent in case of double session init
 
 ### 2.0.24 (2015-03-21)
