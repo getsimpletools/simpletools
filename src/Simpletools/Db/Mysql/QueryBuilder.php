@@ -36,6 +36,8 @@
 
 	namespace Simpletools\Db\Mysql;
 
+	use Simpletools\Db\Mysql\FullyQualifiedQuery;
+
 	class QueryBuilder implements \Iterator
 	{
 		protected $_query 	= '';
@@ -82,12 +84,16 @@
 
 		public function &join($tableName,$direction='left')
 		{
+			$tableType = 'table';
+
 			if($tableName instanceof \Simpletools\Db\Mysql\QueryBuilder)
 			{
 				$tableName = '('.$tableName->getQuery().')';
+				$tableType = 'query';
 			}
 
 			$this->_query['join'][$this->_currentJoinIndex] = [
+				'tableType'		=> $tableType,
 				'table'			=> $tableName,
 				'direction'		=> $direction
 			];
@@ -188,7 +194,18 @@
 
 		public function &db($db)
 		{
-			$this->_query['db'] = $db;
+			if(isset($this->_query['db']) OR isset($this->_query['join']))
+			{
+				$join = @$this->_query['join'][$this->_currentJoinIndex];
+				if($join && $join['tableType']=='table')
+				{
+					$this->_query['join'][$this->_currentJoinIndex]['db'] = $db;
+				}
+			}
+			else
+			{
+				$this->_query['db'] = $db;
+			}
 
 			return $this;
 		}
@@ -242,6 +259,22 @@
 			return $this;
 		}
 
+		public function &insertLowPriority($data)
+		{
+			$this->_query['type'] = "INSERT LOW_PRIORITY";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
+		public function &insertHighPriority($data)
+		{
+			$this->_query['type'] = "INSERT HIGH_PRIORITY";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
 		public function &delete()
 		{
 			$this->_query['type'] = "DELETE FROM";
@@ -272,6 +305,30 @@
 		public function &update($data)
 		{
 			$this->_query['type'] = "UPDATE";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
+		public function &replace($data)
+		{
+			$this->_query['type'] = "REPLACE";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
+		public function &replaceDelayed($data)
+		{
+			$this->_query['type'] = "REPLACE DELAYED";
+			$this->_query['data'] = $data;
+
+			return $this;
+		}
+
+		public function &replaceLowPriority($data)
+		{
+			$this->_query['type'] = "REPLACE LOW_PRIORITY";
 			$this->_query['data'] = $data;
 
 			return $this;
@@ -371,7 +428,22 @@
 				$this->_query['type']		= "SELECT";
 
 			if(!isset($this->_query['columns']))
+			{
 				$this->_query['columns']		= "*";
+			}
+			
+			if(!is_array($this->_query['columns']))
+			{
+				$this->_query['columns'] = explode(',',$this->_query['columns']);
+			}
+
+			if(is_array($this->_query['columns']))
+			{
+				foreach($this->_query['columns'] as $idx => $column)
+				{
+					$this->_query['columns'][$idx] = $this->escapeKey(trim($column));
+				}
+			}
 
 			$query 		= array();
 			$query[] 	= $this->_query['type'];
@@ -381,19 +453,33 @@
 				$query[] = is_array($this->_query['columns']) ? implode(', ',$this->_query['columns']) : $this->_query['columns'];
 				$query[] = 'FROM';
 			}
-			elseif($this->_query['type']=='INSERT' OR $this->_query['type']=='INSERT IGNORE')
+			elseif(
+				$this->_query['type']=='INSERT' OR 
+				$this->_query['type']=='INSERT IGNORE' OR $this->_query['type']=='INSERT LOW_PRIORITY' OR
+				$this->_query['type']=='INSERT HIGH_PRIORITY' OR $this->_query['type']=='INSERT DELAYED'
+			)
 			{
 				$query[] = 'INTO';
 			}
 
-			if(isset($this->_query['db']))
+			if(strpos($this->_query['table'],'.')===false)
 			{
+				if(!isset($this->_query['db']))
+				{
+					$this->_query['db'] = $this->_mysql->getCurrentDb();
+					if(!$this->_query['db'])
+					{
+						throw new \Exception("Please set your Database name under connect settings or using ->setDb", 1);
+					}
+				}
+				
 				$query[] = $this->escapeKey($this->_query['db']).'.'.$this->escapeKey($this->_query['table']);
 			}
 			else
 			{
 				$query[] = $this->escapeKey($this->_query['table']);
 			}
+
 
 			if(isset($this->_query['as']))
 			{
@@ -404,7 +490,16 @@
 			{
 				foreach($this->_query['join'] as $join)
 				{
-					$syntax 	= strtoupper($join['direction']).' JOIN '.$join['table'];
+					$db = isset($join['db']) ? $join['db'] : $this->_mysql->getCurrentDb();
+
+					if(strpos($join['table'],'.')===false)
+					{
+						$syntax 	= strtoupper($join['direction']).' JOIN '.$this->escapeKey($db.'.'.$join['table']);
+					}
+					else
+					{
+						$syntax 	= strtoupper($join['direction']).' JOIN '.$this->escapeKey($join['table']);
+					}
 
 					if(isset($join['as']))
 					{
@@ -424,12 +519,19 @@
 				}
 			}
 
-			if(
-				$this->_query['type']=='INSERT' OR
-				$this->_query['type']=='UPDATE' OR
-				$this->_query['type']=='INSERT IGNORE' OR
-				$this->_query['type']=='INSERT DELAYED'
-			)
+			$setTypes = array(
+				'INSERT' 				=> 1,
+				'UPDATE' 				=> 1,
+				'REPLACE' 				=> 1,
+				'REPLACE DELAYED'		=> 1,
+				'REPLACE LOW_PRIORITY'	=> 1,
+				'INSERT IGNORE'			=> 1,
+				'INSERT LOW_PRIORITY'	=> 1,
+				'INSERT HIGH_PRIORITY'	=> 1,
+				'INSERT DELAYED'		=> 1
+			);
+
+			if(isset($setTypes[$this->_query['type']]))
 			{
 				$query[] = 'SET';
 
@@ -571,7 +673,7 @@
 			}
 
 			$this->_query = array();
-			return implode(' ',$query);
+			return new FullyQualifiedQuery(implode(' ',$query));
 		}
 
 		/*

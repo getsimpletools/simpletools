@@ -36,6 +36,9 @@
 
 	namespace Simpletools\Db\Mysql;
 
+	use Simpletools\Db\Mysql\Connection;
+	use Simpletools\Db\Mysql\FullyQualifiedQuery;
+
 	class Client
 	{
 		protected 		$_credentials 	= false;
@@ -45,11 +48,11 @@
 		private			$_query			= '';
 		private static	$_instance 		= null;
 		private 		$_settings 		= null;
-		private 		$_current_db 	= null;
 		private 		$_mysqli		= null;
 		
 		const 			_noArgs			= '$--SimpleMySQL--n0-aRg5--';
 
+		protected 		$_current_db 	= null;
 		protected 		$_connectionName= 'default';
 		
 		public function __construct(array $settings=null,$connectionName='default')
@@ -97,8 +100,13 @@
 		
 		public function setDb($db)
 		{
-			if($this->_current_db==$db){return true;}
-			
+			$this->_current_db = $db;
+
+			//echo 'SET DB: '.$this->_current_db."--\n";
+
+			return true;
+
+			/*
 			if(!$this->isConnected())
 			{
 				$this->_credentials['db'] = $db;
@@ -110,16 +118,19 @@
 			
 			$this->_current_db = $db;
 			return $this->_mysqli->select_db($db);
+			*/
 		}
 		
 		public function getCurrentDb()
 		{
+			/*
 			if(!$this->isConnected())
 			{
 				$this->connect();
 				if(!$this->isConnected()) return false;
 			}
-			
+			*/
+
 			return $this->_current_db;
 		}
 		
@@ -167,11 +178,15 @@
 		
 		public function setCredentials($settings)
 		{
-			$this->_credentials['host'] 	= isset($settings['host']) ? $settings['host'] : 'localhost';
-			$this->_credentials['user']	 	= isset($settings['user']) ? $settings['user'] : null;
-			$this->_credentials['pass'] 	= isset($settings['pass']) ? $settings['pass'] : null;
-			$this->_credentials['db'] 		= isset($settings['db']) ? $settings['db'] : null;
-			$this->_credentials['port'] 	= isset($settings['port']) ? $settings['port'] : 3306;
+			$this->_credentials['host'] 		= isset($settings['host']) ? $settings['host'] : 'localhost';
+			$this->_credentials['user']	 		= isset($settings['user']) ? $settings['user'] : null;
+			$this->_credentials['pass'] 		= isset($settings['pass']) ? $settings['pass'] : null;
+			$this->_credentials['db'] 			= isset($settings['db']) ? $settings['db'] : null;
+			$this->_current_db = $this->_credentials['db'];
+			
+			$this->_credentials['port'] 		= isset($settings['port']) ? $settings['port'] : 3306;
+			$this->_credentials['compression'] 	= isset($settings['compression']) ? (boolean) $settings['compression'] : false;
+			$this->_credentials['ssl'] 			= isset($settings['ssl']) ? (boolean) $settings['ssl'] : false;
 		}
 		
 		public function __destruct()
@@ -186,7 +201,7 @@
 		
 		public function getMysqliClass()
 		{
-			return (($this->_settings['custom_mysqli_class_name'] === false) ? 'mysqli' : $this->_settings['custom_mysqli_class_name']);
+			return (($this->_settings['custom_mysqli_class_name'] === false) ? '\Simpletools\Db\Mysql\Driver' : $this->_settings['custom_mysqli_class_name']);
 		}
 		
 		public function setTimeout($time=10)
@@ -196,7 +211,7 @@
 				if($this->_settings['custom_mysqli_class_name'] != false) 
 					$mysqli_class = $this->_settings['custom_mysqli_class_name'];
 				else
-					$mysqli_class = 'mysqli';
+					$mysqli_class = '\Simpletools\Db\Mysql\Driver';
 			
 				$this->_mysqli = new $mysqli_class();
 				$this->_mysqli->init();
@@ -213,7 +228,7 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			$this->prepare('SET time_zone = ?')->execute($timezone,false);
+			$this->query(new FullyQualifiedQuery('SET time_zone = "'.$this->escape($timezone).'"'));
 		}
 		
 		public function getTimezone()
@@ -232,33 +247,27 @@
 		public function connect($credentials=false, $user=false, $pass=false, $db=false, $port=3306, $die_on_error=null)
 		{
 			if($this->isConnected()) return true;
-			
-			$mysqli_class = 'mysqli';
-			
-			if($this->_settings['custom_mysqli_class_name'] != false) 
-				$mysqli_class = $this->_settings['custom_mysqli_class_name'];
-			
-			$this->_mysqli = new $mysqli_class();
-			$this->_mysqli->init();
-			$this->setTimeout();
-
 
 			$_credentials = '';
 			if(!$credentials)
 			{
-				$_credentials['db']			= $this->_credentials['db'];
-				$_credentials['host']		= $this->_credentials['host'];
-				$_credentials['user']		= $this->_credentials['user'];
-				$_credentials['pass']		= $this->_credentials['pass'];
-				$_credentials['port']		= $this->_credentials['port'];
+				$_credentials['db']				= $this->_credentials['db'];
+				$_credentials['host']			= $this->_credentials['host'];
+				$_credentials['user']			= $this->_credentials['user'];
+				$_credentials['pass']			= $this->_credentials['pass'];
+				$_credentials['port']			= $this->_credentials['port'];
+				$_credentials['compression']	= $this->_credentials['compression'];
+				$_credentials['ssl']			= $this->_credentials['ssl'];
 			}
 			elseif(is_array($credentials))
 			{
-				$_credentials['db']			= isset($credentials['db']) ? $credentials['db'] : null;
-				$_credentials['host']		= $credentials['host'];
-				$_credentials['user']		= $credentials['user'];
-				$_credentials['pass']		= $credentials['pass'];
-				$_credentials['port']		= isset($credentials['port']) ? $credentials['port'] : 3306;	
+				$_credentials['db']				= isset($credentials['db']) ? $credentials['db'] : null;
+				$_credentials['host']			= $credentials['host'];
+				$_credentials['user']			= $credentials['user'];
+				$_credentials['pass']			= $credentials['pass'];
+				$_credentials['port']			= isset($credentials['port']) ? $credentials['port'] : 3306;	
+				$_credentials['compression']	= isset($credentials['compression']) ? (boolean) $credentials['compression'] : false;
+				$_credentials['ssl']			= isset($credentials['ssl']) ? (boolean) $credentials['ssl'] : false;
 			}
 			else
 			{
@@ -274,14 +283,47 @@
 				throw new \Exception('Please specify connection settings before',111);
 			}
 
-			$this->_current_db = $_credentials['db'];
+			if(($connector = Connection::getOne($this->_connectionName)))
+			{
+				$this->_mysqli 		= &$connector;
+				$this->_connected 	= true;
+
+				return true;
+			}
+			
+			$mysqli_class = '\Simpletools\Db\Mysql\Driver';
+			
+			if($this->_settings['custom_mysqli_class_name'] != false) 
+				$mysqli_class = $this->_settings['custom_mysqli_class_name'];
+			
+			$this->_mysqli = new $mysqli_class();
+			$this->_mysqli->init();
+			$this->setTimeout();
+
+			if(isset($_credentials['db']) && $_credentials['db'])
+			{
+				$this->_current_db 						= $_credentials['db'];
+			}
+
+			$flags = null;
+			if($_credentials['compression'])
+			{
+				$flags = MYSQLI_CLIENT_COMPRESS;
+			}
+
+			if($_credentials['ssl'])
+			{
+				$flags = (isset($flags) ? ($flags|MYSQLI_CLIENT_SSL) : MYSQLI_CLIENT_SSL);
+			}
 
 			@$this->_mysqli->real_connect(
 				$_credentials['host'], 
 				$_credentials['user'], 
 				$_credentials['pass'], 
 				$_credentials['db'],
-				$_credentials['port']
+				$_credentials['port'],
+				null,
+				$flags
 			);
 
 			if(mysqli_connect_errno()) 
@@ -340,6 +382,8 @@
 					$this->setTimezone($this->_settings['time_zone']);
 				}
 			}
+
+			Connection::setOne($this->_connectionName,$this->_mysqli);
 			
 			return $this->_connected;
 		}
@@ -492,7 +536,11 @@
 		{
 			if($this->isConnected())
 			{
-				$this->_mysqli->close();
+				if(!$this->_mysqli->isClosed())
+				{
+					$this->_mysqli->close();
+				}
+
 				$this->_connected = false;
 			}
 		}
@@ -626,7 +674,7 @@
 		   	return substr_replace($haystack, $replace, $pos, strlen($needle));
 		}
 		
-		public function query($query,$die_on_error=null)
+		public function query($query)
 		{
 			if(!$this->isConnected())
 			{
@@ -634,11 +682,21 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			return $this->_query($query,$die_on_error);
+			return $this->_query($query);
 		}
 		
-		private function _query($query,$die_on_error=null)
-		{			
+		private function _query($query)
+		{	
+			if(
+				!($query instanceof FullyQualifiedQuery) &&
+				$this->_mysqli->getDb()!=$this->_current_db && $this->_current_db
+			)
+			{
+				//echo "change DB $this->_current_db\n";
+				$this->_mysqli->select_db($this->_current_db);
+			}
+
+			//echo $query.'  - '.$this->_current_db." - \n\n";
 			$result = @$this->_mysqli->query($query);
 			
 			/*
@@ -653,9 +711,7 @@
 			}
 
 			if(
-				!$result &&
-				($die_on_error === null && $this->_settings['die_on_error']) OR
-				$die_on_error
+				!$result
 			)
 			{
 				throw new \Exception($this->_mysqli->error,$this->_mysqli->errno);

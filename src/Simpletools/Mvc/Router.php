@@ -93,9 +93,9 @@
 		public function __construct(array $settings=null)
 		{
 			if(
-					(isset($settings['applicationDir']) && is_dir($settings['applicationDir']))
+					(isset($settings['applicationDir']) && ($settings['applicationDir']))
 				OR
-					(isset($settings['application_dir']) && is_dir($settings['application_dir']))
+					(isset($settings['application_dir']) && ($settings['application_dir']))
 			)
 			{
 				$vext														= isset($settings['view_extension']) ? $settings['view_extension'] : 'phtml';

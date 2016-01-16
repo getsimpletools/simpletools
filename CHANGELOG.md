@@ -1,3 +1,22 @@
+### 2.0.28 (2016-01-16)
+  1. **Simpletools/Db/Mysql/Connection**
+    1. Added Connection manager to enable shared connections between models or instances
+  1. **Simpletools/Db/Mysql/FullyQualifiedQuery**
+    1. Added FullyQualifiedQuery to prevent unnecessary databases switches
+  1. **Simpletools/Db/Mysql/Driver**
+    1. Added Driver extending mysqli extensions to enable current database tracking
+  1. **Simpletools/Db/Mysql/Client**
+    1. Replaced mysqli with Simpletools/Db/Mysql/Driver
+    2. Enabled connection manager - Simpletools/Db/Mysql/Connection - to handle connection pools
+    3. Added Simpletools/Db/Mysql/FullyQualifiedQuery on setTimezone
+    4. Added config option - compression - enabling to enable connection compression
+    5. Added config option - ssl - enabling ssl connection
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Updated ->getQuery to return Simpletools/Db/Mysql/FullyQualifiedQuery which can be cast as string instead of just string
+    2. Added full DB qualification for every query to prevent unnecessary DB switches
+  1. **Simpletools/Db/Mvc/Router**
+    1. Disabled is_dir check for the applicationDir - not needed - generates extra IO call
+
 ### 2.0.27 (2016-01-10)
   1. **Simpletools/Mvc/RoutingHook**
     1. Removed replaced with Simpletools/Events/Event
