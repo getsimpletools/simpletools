@@ -431,8 +431,8 @@
 			{
 				$this->_query['columns']		= "*";
 			}
-			
-			if(!is_array($this->_query['columns']))
+
+			if(!is_array($this->_query['columns']) && !($this->_query['columns'] instanceof Sql))
 			{
 				$this->_query['columns'] = explode(',',$this->_query['columns']);
 			}
@@ -691,14 +691,14 @@
 			}
 			elseif(strpos($key,'.')===false)
 			{
-				return "`".str_replace("`","",$key)."`";
+				return "`".trim(str_replace("`","",$key))."`";
 			}
 			else
 			{
 				$keys = explode('.',$key);
 				foreach($keys as $index => $key)
 				{
-					$keys[$index] = "`".str_replace("`","",$key)."`";
+					$keys[$index] = "`".trim(str_replace("`","",$key))."`";
 				}
 
 				return implode('.',$keys);
