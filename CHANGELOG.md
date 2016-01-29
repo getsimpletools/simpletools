@@ -1,3 +1,7 @@
+### 2.0.30 (2016-01-29)
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed fullqualification of some select queries
+
 ### 2.0.29 (2016-01-29)
   1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed fullqualification of Where statements with AND, OR

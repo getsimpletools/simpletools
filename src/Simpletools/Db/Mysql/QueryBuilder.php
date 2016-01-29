@@ -441,16 +441,7 @@
 			{
 				foreach($this->_query['columns'] as $idx => $column)
 				{
-					$col = trim($column);
-
-					if($col!='*')
-					{
-						$this->_query['columns'][$idx] = $this->escapeKey($col);
-					}
-					else
-					{
-						$this->_query['columns'][$idx] = '*';
-					}
+					$this->_query['columns'][$idx] = $this->escapeKey($column);
 				}
 			}
 
@@ -690,7 +681,15 @@
 		*/
 		public function escapeKey($key)
 		{
-			if(strpos($key,'.')===false)
+			if($key instanceof Sql)
+			{
+				return (string) $key;
+			}
+			elseif(trim($key)=='*')
+			{
+				return '*';
+			}
+			elseif(strpos($key,'.')===false)
 			{
 				return "`".str_replace("`","",$key)."`";
 			}
