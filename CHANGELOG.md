@@ -1,3 +1,8 @@
+### 2.0.29 (2016-01-29)
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed fullqualification of Where statements with AND, OR
+    2. Fixed fullqualification of select for *
+
 ### 2.0.28 (2016-01-16)
   1. **Simpletools/Db/Mysql/Connection**
     1. Added Connection manager to enable shared connections between models or instances

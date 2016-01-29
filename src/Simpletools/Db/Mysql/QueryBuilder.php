@@ -441,7 +441,16 @@
 			{
 				foreach($this->_query['columns'] as $idx => $column)
 				{
-					$this->_query['columns'][$idx] = $this->escapeKey(trim($column));
+					$col = trim($column);
+
+					if($col!='*')
+					{
+						$this->_query['columns'][$idx] = $this->escapeKey($col);
+					}
+					else
+					{
+						$this->_query['columns'][$idx] = '*';
+					}
 				}
 			}
 
@@ -576,7 +585,7 @@
 					{
 						if(!isset($operands[2]))
 						{
-							$query[] = $this->escapeKey($operands[0])." = ".$this->_escape($operands[1]);
+							$query[] = @$operands[-1].' '.$this->escapeKey($operands[0])." = ".$this->_escape($operands[1]);
 						}
 						else
 						{
@@ -591,11 +600,11 @@
 									$operands_[] = $this->_escape($op);
 								}
 
-								$query[] = $this->escapeKey($operands[0])." ".$operands[1]." (".implode(",",$operands_).')';
+								$query[] = @$operands[-1].' '.$this->escapeKey($operands[0])." ".$operands[1]." (".implode(",",$operands_).')';
 							}
 							else
 							{
-								$query[] = $this->escapeKey($operands[0])." ".$operands[1]." ".$this->_escape($operands[2]);
+								$query[] = @$operands[-1].' '.$this->escapeKey($operands[0])." ".$operands[1]." ".$this->_escape($operands[2]);
 							}
 						}
 					}
@@ -749,7 +758,9 @@
 		public function &alternatively()
 		{
 			$args = func_get_args();
-			$args[0] = 'OR '.$args[0];
+
+			$args[-1] 	= 'OR';
+			$args[0] 	= $args[0];
 			
 			$this->_query['where'][] 	= $args;
 
@@ -759,7 +770,9 @@
 		public function &also()
 		{
 			$args = func_get_args();
-			$args[0] = 'AND '.$args[0];
+
+			$args[-1] 	= 'AND';
+			$args[0] 	= $args[0];
 			
 			$this->_query['where'][] 	= $args;
 
