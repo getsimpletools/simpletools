@@ -1,3 +1,7 @@
+### 2.0.31 (2016-01-29)
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed empty spaces on fullqualification
+
 ### 2.0.30 (2016-01-29)
   1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed fullqualification of some select queries
