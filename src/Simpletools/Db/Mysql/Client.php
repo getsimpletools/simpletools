@@ -536,10 +536,12 @@
 		{
 			if($this->isConnected())
 			{
+				/* Moved under Driver
 				if(!$this->_mysqli->isClosed())
 				{
 					$this->_mysqli->close();
 				}
+				*/
 
 				$this->_connected = false;
 			}

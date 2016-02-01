@@ -1,3 +1,9 @@
+### 2.0.32 (2016-02-01)
+  1. **Simpletools/Db/Mysql/Driver**
+    1. Introduced destructor
+  1. **Simpletools/Db/Mysql/Client**
+    1. Moved destructor under Driver
+
 ### 2.0.31 (2016-01-29)
   1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed empty spaces on fullqualification

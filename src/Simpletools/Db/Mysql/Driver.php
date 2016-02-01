@@ -68,6 +68,11 @@ class Driver extends \mysqli
 	{
 		return $this->_db;
 	}
+
+	public function __destruct()
+	{
+		$this->close();
+	}
 }
 
 ?>
