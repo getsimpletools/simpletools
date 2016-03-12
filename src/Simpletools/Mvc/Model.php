@@ -134,30 +134,23 @@
 				}
 				
 				$obj = new $class();
-	
-				if($obj instanceof \Simpletools\Db\Mysql\Model)
-				{
-					$connectionName = $obj->getConnectionName();
-					unset($obj);
 
-					$obj = \Simpletools\Db\Mysql\Client::getInstance($connectionName);
-										
-					self::$_instance->objects[$class] = $obj->getInstanceOfModel($model,$initArgs,$namespace);
+				if(is_callable(array($obj,'injectDependency')))
+				{
+					$obj->injectDependency();
 				}
-				else
+				
+				if(is_callable(array($obj,'init')))
 				{
-					if(is_callable(array($obj,'init')))
-					{
-						call_user_func_array(array($obj,'init'),$initArgs);
-					}
-
-					self::$_instance->objects[$class] = $obj;
+					call_user_func_array(array($obj,'init'),$initArgs);
 				}
 
-				if(is_callable(array(self::$_instance->objects[$class],'setActiveRoutingNamespace')))
+				if(is_callable(array($obj,'setActiveRoutingNamespace')))
 				{
-					self::$_instance->objects[$class]->setActiveRoutingNamespace(self::$_instance->_activeRoutingNamespace);
+					$obj->setActiveRoutingNamespace(self::$_instance->_activeRoutingNamespace);
 				}
+
+				self::$_instance->objects[$class] = $obj;
 			}
 			
 			return self::$_instance->objects[$class];

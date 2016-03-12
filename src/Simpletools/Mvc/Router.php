@@ -286,7 +286,7 @@
 		{
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('dispatchStart');
+				\Simpletools\Events\Event::trigger('dispatchStart');
 			}
 
 			/*
@@ -461,7 +461,7 @@
 
 						if($this->_routingEvents)
 						{
-							\Simpletools\Events\Event::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Events\Event::trigger('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
 						}
 
 						if(!$this->_forwarded)
@@ -473,7 +473,7 @@
 
 							if($this->_routingEvents)
 							{
-								\Simpletools\Events\Event::fire('afterControllerInit',array('controller'=>$controller,'action'=>$action));
+								\Simpletools\Events\Event::trigger('afterControllerInit',array('controller'=>$controller,'action'=>$action));
 							}
 
 							if(!$this->_forwarded && $this->_autoRender)
@@ -485,7 +485,7 @@
 								{
 									if($this->_routingEvents)
 									{
-										\Simpletools\Events\Event::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
+										\Simpletools\Events\Event::trigger('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
 									}
 
 									if($this->_activeCustomRouteArgs)
@@ -499,14 +499,14 @@
 
 									if($this->_routingEvents)
 									{
-										\Simpletools\Events\Event::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
+										\Simpletools\Events\Event::trigger('afterControllerAction',array('controller'=>$controller,'action'=>$action));
 									}
 								}
 								else
 								{
 									if($this->_routingEvents)
 									{
-										\Simpletools\Events\Event::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
+										\Simpletools\Events\Event::trigger('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
 									}
 
 									if($this->_autoRender) $this->error('a404');
@@ -519,7 +519,7 @@
 					{
 						if($this->_routingEvents)
 						{
-							\Simpletools\Events\Event::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Events\Event::trigger('missingControllerError',array('controller'=>$controller,'action'=>$action));
 						}
 
 						$this->error('c405');
@@ -534,7 +534,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Events\Event::trigger('missingControllerError',array('controller'=>$controller,'action'=>$action));
 					}
 
 					$this->error('c404');
@@ -543,7 +543,7 @@
 
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('dispatchEnd');
+				\Simpletools\Events\Event::trigger('dispatchEnd');
 			}
 		}
 
@@ -686,7 +686,7 @@
 
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('beforeRenderView',array('controller'=>$controller,'view'=>$view));
+				\Simpletools\Events\Event::trigger('beforeRenderView',array('controller'=>$controller,'view'=>$view));
 			}
 
 			$n = substr($controller,0,1);
@@ -726,7 +726,7 @@
 
 				if($this->_routingEvents)
 				{
-					\Simpletools\Events\Event::fire('afterRenderView',array('controller'=>$controller,'view'=>$view));
+					\Simpletools\Events\Event::trigger('afterRenderView',array('controller'=>$controller,'view'=>$view));
 				}
 			}
 			else
@@ -735,7 +735,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Events\Event::trigger('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					$this->error('v404');
@@ -744,7 +744,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Events\Event::trigger('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					trigger_error("<u>SimpleMVC ERROR</u> - There is a missing Error View.", E_USER_ERROR);
@@ -1040,7 +1040,7 @@
 		{
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('routerDestruct');
+				\Simpletools\Events\Event::trigger('routerDestruct');
 			}
 		}
 	}

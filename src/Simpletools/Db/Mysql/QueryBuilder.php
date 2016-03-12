@@ -712,6 +712,13 @@
 			return $this;
 		}
 
+		public function &truncate()
+		{
+			$this->_query['type']		= "TRUNCATE";
+
+			return $this;
+		}
+
 		public function &select($columns)
 		{
 			$this->_query['type']		= "SELECT";

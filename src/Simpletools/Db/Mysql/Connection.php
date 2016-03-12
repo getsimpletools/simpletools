@@ -42,11 +42,6 @@ class Connection
 
 	);
 
-	public static function setDb($name)
-	{
-
-	}
-
 	public static function getOne($name)
 	{
 		return isset(self::$_connectors[$name]) ? self::$_connectors[$name] : null;

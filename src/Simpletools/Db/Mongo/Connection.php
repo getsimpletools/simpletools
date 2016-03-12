@@ -34,82 +34,23 @@
  * 
  */
 
-	namespace Simpletools\Db\Mysql;
+namespace Simpletools\Db\Mongo;
 
-	use \Simpletools\Db\Mysql\QueryBuilder;
+class Connection
+{
+	protected static $_connectors = array(
 
-	class Model extends \Simpletools\Db\Mysql\Client
+	);
+
+	public static function getOne($name)
 	{
-		public function __construct($settings=false,$connectionName='default')
-		{
-			$this->___connectionName 	= $connectionName;
-			$this->___current_db 		= defined('static::CURRENT_DB') ? static::CURRENT_DB : '';
-			
-			if($settings)
-			{
-				parent::__construct($settings,$connectionName);
-			}
-		}
-
-		public function __get($table)
-		{
-			$query = new QueryBuilder($table,$this);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
-		public function __call($table,$args)
-		{
-			$query = new QueryBuilder($table,$this,$args);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
-		protected $___tmpDb = '';
-
-		public function db($db)
-		{
-			$this->___tmpDb = $db;
-
-			return $this;
-		}
-
-		protected function ___switchTmpDb($query)
-		{
-			if($this->___tmpDb)
-			{
-				$query->inDb($this->___tmpDb);
-				$this->___tmpDb = '';
-			}
-		}
-
-		public function table($table)
-		{
-			$args 	= func_get_args();
-			$table 	= array_shift($args);
-
-			$query = new QueryBuilder($table,$this,$args);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
-		public function getConnectionName()
-		{
-			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
-		}
-
-		public function getClient()
-		{
-			return \Simpletools\Db\Mysql\Client::getInstance($this->getConnectionName());
-		}
-
-		public function injectDependency()
-		{
-			$this->setSettings($this->getClient()->getSettings());
-		}
-					
+		return isset(self::$_connectors[$name]) ? self::$_connectors[$name] : null;
 	}
+
+	public static function setOne($name,$connector)
+	{
+		self::$_connectors[$name] = $connector;
+	}
+}
+
 ?>

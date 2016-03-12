@@ -1,3 +1,20 @@
+### 2.1.1 (2016-03-12)
+  1. **Simpletools/Db/Mysql/Model**
+    1. Introduced `table()` method in case of keys conflicts
+    2. Introduced `db()` method to setup per query db
+    3. Introduced `injectDependency()` to improve in Mvc models loading
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Introduced truncate() method
+  1. **Simpletools/Mvc/Model**
+    1. Improved Simpletools classes dependency injections
+  1. **Simpletools/Mvc/Router**
+    1. Refactored internal Events trigger-er from `fire()` to `trigger()`
+  1. **Simpletools/Db/Mongo**
+    1. Introduced Mongo Client library with QueryBuilder
+  1. **Simpletools/Events/Event**
+    1. Introduced queue
+    2. Improved events stacking
+
 ### 2.0.32 (2016-02-01)
   1. **Simpletools/Db/Mysql/Driver**
     1. Introduced destructor

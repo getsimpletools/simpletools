@@ -34,11 +34,9 @@
  * 
  */
 
-	namespace Simpletools\Db\Mysql;
+	namespace Simpletools\Db\Mongo;
 
-	use \Simpletools\Db\Mysql\QueryBuilder;
-
-	class Model extends \Simpletools\Db\Mysql\Client
+	class Model extends \Simpletools\Db\Mongo\Client
 	{
 		public function __construct($settings=false,$connectionName='default')
 		{
@@ -51,51 +49,6 @@
 			}
 		}
 
-		public function __get($table)
-		{
-			$query = new QueryBuilder($table,$this);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
-		public function __call($table,$args)
-		{
-			$query = new QueryBuilder($table,$this,$args);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
-		protected $___tmpDb = '';
-
-		public function db($db)
-		{
-			$this->___tmpDb = $db;
-
-			return $this;
-		}
-
-		protected function ___switchTmpDb($query)
-		{
-			if($this->___tmpDb)
-			{
-				$query->inDb($this->___tmpDb);
-				$this->___tmpDb = '';
-			}
-		}
-
-		public function table($table)
-		{
-			$args 	= func_get_args();
-			$table 	= array_shift($args);
-
-			$query = new QueryBuilder($table,$this,$args);
-			$this->___switchTmpDb($query);
-
-			return $query;
-		}
-
 		public function getConnectionName()
 		{
 			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
@@ -103,7 +56,7 @@
 
 		public function getClient()
 		{
-			return \Simpletools\Db\Mysql\Client::getInstance($this->getConnectionName());
+			return \Simpletools\Db\Mongo\Client::getInstance($this->getConnectionName());
 		}
 
 		public function injectDependency()

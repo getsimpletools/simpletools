@@ -41,83 +41,89 @@
 
 	class Client
 	{
-		protected 		$_credentials 	= false;
-		protected 		$_connected 	= false;
-		protected 		$_modelDir 		= '';
-		protected		$_quotes_on 	= '';
-		private			$_query			= '';
-		private static	$_instance 		= null;
-		private 		$_settings 		= null;
-		private 		$_mysqli		= null;
+		protected 			$___credentials		= false;
+		protected 			$___connected 		= false;
+		protected 			$___modelDir 		= '';
+		protected			$___quotes_on 		= '';
+		protected			$___query			= '';
+		protected static 	$___instance 		= null;
+		protected 			$___settings 		= null;
+		protected 			$___mysqli			= null;
+		protected 			$___args 			= '';
 		
-		const 			_noArgs			= '$--SimpleMySQL--n0-aRg5--';
+		const 				_noArgs				= '$--SimpleMySQL--n0-aRg5--';
 
-		protected 		$_current_db 	= null;
-		protected 		$_connectionName= 'default';
+		protected 			$___current_db 		= null;
+		protected 			$___connectionName	= 'default';
 		
 		public function __construct(array $settings=null,$connectionName='default')
 		{
 			$this->setSettings($settings);
 
-			$this->_connectionName = $connectionName;
+			$this->___connectionName = $connectionName;
 			
-			if(!isset(self::$_instance[$connectionName])) 
+			if(!isset(self::$___instance[$connectionName])) 
 			{
-				self::$_instance[$connectionName] = &$this;
+				self::$___instance[$connectionName] = &$this;
 			}
 		}
 
 		public function getConnectionName()
 		{
-			return $this->_connectionName;
+			return $this->___connectionName;
+		}
+
+		public function getSettings()
+		{
+			return $this->___settings;
 		}
 		
 		public function setSettings($settings)
 		{
 			$settings['charset_type']	= isset($settings['charset']) ? $settings['charset'] : (isset($settings['charset_type']) ? $settings['charset_type'] : null);
 
-			$this->_settings	= $settings;
+			$this->___settings	= $settings;
 
-			$this->_settings['time_zone'] 					= isset($settings['timezone']) ? $settings['timezone'] : @$settings['time_zone'];
-			$this->_settings['die_on_error']				= isset($settings['die_on_error']) ? (boolean) $settings['die_on_error'] : true;
-			$this->_settings['custom_mysqli_class_name'] 	= isset($settings['custom_mysqli_class_name']) ? (string) $settings['custom_mysqli_class_name'] : false;
+			$this->___settings['time_zone'] 					= isset($settings['timezone']) ? $settings['timezone'] : @$settings['time_zone'];
+			$this->___settings['die_on_error']				= isset($settings['die_on_error']) ? (boolean) $settings['die_on_error'] : true;
+			$this->___settings['custom_mysqli_class_name'] 	= isset($settings['custom_mysqli_class_name']) ? (string) $settings['custom_mysqli_class_name'] : false;
 			
-			$this->_settings['connect_error_filepath'] 		= isset($settings['connect_error_filepath']) ? $settings['connect_error_filepath'] : false;
+			$this->___settings['connect_error_filepath'] 		= isset($settings['connect_error_filepath']) ? $settings['connect_error_filepath'] : false;
 			
 			
 			if(isset($settings['model_dir']))
 			{
-				$this->_modelDir = $settings['model_dir'];
+				$this->___modelDir = $settings['model_dir'];
 			}
 			elseif(isset($settings['modelsDir']))
 			{
-				$this->_modelDir = $settings['modelsDir'];
+				$this->___modelDir = $settings['modelsDir'];
 			}
-					
+
 			$this->setCredentials($settings);
 			$this->quotes_on = (get_magic_quotes_gpc()==1 || get_magic_quotes_runtime()==1) ? true : false ;
 		}
 		
 		public function setDb($db)
 		{
-			$this->_current_db = $db;
+			$this->___current_db = $db;
 
-			//echo 'SET DB: '.$this->_current_db."--\n";
+			//echo 'SET DB: '.$this->___current_db."--\n";
 
 			return true;
 
 			/*
 			if(!$this->isConnected())
 			{
-				$this->_credentials['db'] = $db;
+				$this->___credentials['db'] = $db;
 				return true;
 				
 				//$this->connect();
 				//if(!$this->isConnected()) return false;
 			}
 			
-			$this->_current_db = $db;
-			return $this->_mysqli->select_db($db);
+			$this->___current_db = $db;
+			return $this->___mysqli->select_db($db);
 			*/
 		}
 		
@@ -131,7 +137,7 @@
 			}
 			*/
 
-			return $this->_current_db;
+			return $this->___current_db;
 		}
 		
 		public static function &getInstance($settings=false)
@@ -142,33 +148,33 @@
 				$connectionName = $settings;
 			}
 
-			if(!is_string($settings) && !isset(self::$_instance[$connectionName]) && $settings) 
+			if(!is_string($settings) && !isset(self::$___instance[$connectionName]) && $settings) 
 			{
-			    new \Simpletools\Db\Mysql\Client($settings,$connectionName);
+			    new self($settings,$connectionName);
 		    }
-		    elseif(is_string($settings) && !isset(self::$_instance[$connectionName]))
+		    elseif(is_string($settings) && !isset(self::$___instance[$connectionName]))
 		    {
 		    	throw new \Exception('No mysql settings defined with connectionName '.$connectionName);
 		    }
 
-		   	return self::$_instance[$connectionName];
+		   	return self::$___instance[$connectionName];
 		}
 		
 		public static function &settings($settings)
 		{
 			$connectionName = (isset($settings['connectionName']) ? $settings['connectionName'] : 'default');
 
-			if(!isset(self::$_instance[$connectionName]))
+			if(!isset(self::$___instance[$connectionName]))
 			    new \Simpletools\Db\Mysql\Client($settings,$connectionName);
 		    else
-		    	self::$_instance[$connectionName]->setSettings($settings);
+		    	self::$___instance[$connectionName]->setSettings($settings);
 		    	
-		    return self::$_instance[$connectionName];
+		    return self::$___instance[$connectionName];
 		}
 		
 		public function setNewConnectionDetails($credentials, $user=false, $pass=false, $db=false)
 		{
-			if($this->_connected)
+			if($this->___connected)
 			{
 				$this->close();
 			}
@@ -178,15 +184,20 @@
 		
 		public function setCredentials($settings)
 		{
-			$this->_credentials['host'] 		= isset($settings['host']) ? $settings['host'] : 'localhost';
-			$this->_credentials['user']	 		= isset($settings['user']) ? $settings['user'] : null;
-			$this->_credentials['pass'] 		= isset($settings['pass']) ? $settings['pass'] : null;
-			$this->_credentials['db'] 			= isset($settings['db']) ? $settings['db'] : null;
-			$this->_current_db = $this->_credentials['db'];
-			
-			$this->_credentials['port'] 		= isset($settings['port']) ? $settings['port'] : 3306;
-			$this->_credentials['compression'] 	= isset($settings['compression']) ? (boolean) $settings['compression'] : false;
-			$this->_credentials['ssl'] 			= isset($settings['ssl']) ? (boolean) $settings['ssl'] : false;
+			$this->___credentials['host'] 		= isset($settings['host']) ? $settings['host'] : 'localhost';
+			$this->___credentials['user']	 		= isset($settings['user']) ? $settings['user'] : null;
+			$this->___credentials['pass'] 		= isset($settings['pass']) ? $settings['pass'] : null;
+			$this->___credentials['db'] 			= isset($settings['db']) ? $settings['db'] : null;
+
+			//could be already defined e.g. under model
+			if(!$this->___current_db)
+			{
+				$this->___current_db = $this->___credentials['db'];
+			}
+
+			$this->___credentials['port'] 		= isset($settings['port']) ? $settings['port'] : 3306;
+			$this->___credentials['compression'] 	= isset($settings['compression']) ? (boolean) $settings['compression'] : false;
+			$this->___credentials['ssl'] 			= isset($settings['ssl']) ? (boolean) $settings['ssl'] : false;
 		}
 		
 		public function __destruct()
@@ -196,28 +207,28 @@
 		
 		public function setMysqliClass($class=false)
 		{
-			$this->_settings['custom_mysqli_class_name'] = $class;
+			$this->___settings['custom_mysqli_class_name'] = $class;
 		}
 		
 		public function getMysqliClass()
 		{
-			return (($this->_settings['custom_mysqli_class_name'] === false) ? '\Simpletools\Db\Mysql\Driver' : $this->_settings['custom_mysqli_class_name']);
+			return (($this->___settings['custom_mysqli_class_name'] === false) ? '\Simpletools\Db\Mysql\Driver' : $this->___settings['custom_mysqli_class_name']);
 		}
 		
 		public function setTimeout($time=10)
 		{
-			if($this->_mysqli === null)
+			if($this->___mysqli === null)
 			{
-				if($this->_settings['custom_mysqli_class_name'] != false) 
-					$mysqli_class = $this->_settings['custom_mysqli_class_name'];
+				if($this->___settings['custom_mysqli_class_name'] != false) 
+					$mysqli_class = $this->___settings['custom_mysqli_class_name'];
 				else
 					$mysqli_class = '\Simpletools\Db\Mysql\Driver';
 			
-				$this->_mysqli = new $mysqli_class();
-				$this->_mysqli->init();
+				$this->___mysqli = new $mysqli_class();
+				$this->___mysqli->init();
 			}
 			
-			return $this->_mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT,$time);
+			return $this->___mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT,$time);
 		}
 		
 		public function setTimezone($timezone)
@@ -251,13 +262,13 @@
 			$_credentials = '';
 			if(!$credentials)
 			{
-				$_credentials['db']				= $this->_credentials['db'];
-				$_credentials['host']			= $this->_credentials['host'];
-				$_credentials['user']			= $this->_credentials['user'];
-				$_credentials['pass']			= $this->_credentials['pass'];
-				$_credentials['port']			= $this->_credentials['port'];
-				$_credentials['compression']	= $this->_credentials['compression'];
-				$_credentials['ssl']			= $this->_credentials['ssl'];
+				$_credentials['db']				= $this->___credentials['db'];
+				$_credentials['host']			= $this->___credentials['host'];
+				$_credentials['user']			= $this->___credentials['user'];
+				$_credentials['pass']			= $this->___credentials['pass'];
+				$_credentials['port']			= $this->___credentials['port'];
+				$_credentials['compression']	= $this->___credentials['compression'];
+				$_credentials['ssl']			= $this->___credentials['ssl'];
 			}
 			elseif(is_array($credentials))
 			{
@@ -283,26 +294,26 @@
 				throw new \Exception('Please specify connection settings before',111);
 			}
 
-			if(($connector = Connection::getOne($this->_connectionName)))
+			if(($connector = Connection::getOne($this->___connectionName)))
 			{
-				$this->_mysqli 		= &$connector;
-				$this->_connected 	= true;
+				$this->___mysqli 		= &$connector;
+				$this->___connected 	= true;
 
 				return true;
 			}
 			
 			$mysqli_class = '\Simpletools\Db\Mysql\Driver';
 			
-			if($this->_settings['custom_mysqli_class_name'] != false) 
-				$mysqli_class = $this->_settings['custom_mysqli_class_name'];
+			if($this->___settings['custom_mysqli_class_name'] != false) 
+				$mysqli_class = $this->___settings['custom_mysqli_class_name'];
 			
-			$this->_mysqli = new $mysqli_class();
-			$this->_mysqli->init();
+			$this->___mysqli = new $mysqli_class();
+			$this->___mysqli->init();
 			$this->setTimeout();
 
 			if(isset($_credentials['db']) && $_credentials['db'])
 			{
-				$this->_current_db 						= $_credentials['db'];
+				$this->___current_db 						= $_credentials['db'];
 			}
 
 			$flags = null;
@@ -316,7 +327,7 @@
 				$flags = (isset($flags) ? ($flags|MYSQLI_CLIENT_SSL) : MYSQLI_CLIENT_SSL);
 			}
 
-			@$this->_mysqli->real_connect(
+			@$this->___mysqli->real_connect(
 				$_credentials['host'], 
 				$_credentials['user'], 
 				$_credentials['pass'], 
@@ -335,9 +346,9 @@
 					(isset($credentials['die_on_error']) && $credentials['die_on_error'] === true)
 				)
 				{
-					if($this->_settings['connect_error_filepath'] && realpath($this->_settings['connect_error_filepath']))
+					if($this->___settings['connect_error_filepath'] && realpath($this->___settings['connect_error_filepath']))
 					{
-						include_once realpath($this->_settings['connect_error_filepath']);
+						include_once realpath($this->___settings['connect_error_filepath']);
 						exit();
 					}
 					else
@@ -345,15 +356,15 @@
 						//echo "Connection error: ", mysqli_connect_error(),"
 					    //  <br/>Please correct your details and try again.";
 
-					    throw new \Exception("Connect Error (".$this->_connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
+					    throw new \Exception("Connect Error (".$this->___connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
 					}
 					
 				}
-				else if($this->_settings['die_on_error'])
+				else if($this->___settings['die_on_error'])
 				{
-					if($this->_settings['connect_error_filepath'] && realpath($this->_settings['connect_error_filepath']))
+					if($this->___settings['connect_error_filepath'] && realpath($this->___settings['connect_error_filepath']))
 					{
-						include_once realpath($this->_settings['connect_error_filepath']);
+						include_once realpath($this->___settings['connect_error_filepath']);
 						exit();
 					}
 					else
@@ -361,31 +372,31 @@
 						//echo "Connection error: ", mysqli_connect_error(),"
 						 // <br/>Please correct your details and try again.";
 
-						throw new \Exception("Connect Error (".$this->_connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
+						throw new \Exception("Connect Error (".$this->___connectionName."): ".mysqli_connect_error(),mysqli_connect_errno());
 					}
 					
 				}
 				
-				$this->_connected = false;
+				$this->___connected = false;
 			}	
 			else
 			{
-				if(isset($this->_settings['charset_type']))
+				if(isset($this->___settings['charset_type']))
 				{
-					$this->_mysqli->set_charset($this->_settings['charset_type']);
+					$this->___mysqli->set_charset($this->___settings['charset_type']);
 				}
 			
-				$this->_connected = true;
+				$this->___connected = true;
 				
-				if(isset($this->_settings['time_zone']))
+				if(isset($this->___settings['time_zone']))
 				{
-					$this->setTimezone($this->_settings['time_zone']);
+					$this->setTimezone($this->___settings['time_zone']);
 				}
 			}
 
-			Connection::setOne($this->_connectionName,$this->_mysqli);
+			Connection::setOne($this->___connectionName,$this->___mysqli);
 			
-			return $this->_connected;
+			return $this->___connected;
 		}
 		
 		public function getServerInfo()
@@ -396,12 +407,12 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			return $this->_mysqli->server_info;
+			return $this->___mysqli->server_info;
 		}
 		
 		public function getConnectError()
 		{
-			return $this->_mysqli->connect_error;
+			return $this->___mysqli->connect_error;
 		}
 		
 		public function isThreadSafe()
@@ -412,12 +423,12 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			return $this->_mysqli->thread_safe;
+			return $this->___mysqli->thread_safe;
 		}
 		
 		public function getConnectErrorNo()
 		{
-			return $this->_mysqli->connect_errno;
+			return $this->___mysqli->connect_errno;
 		}
 		
 		public function isTable($table,$db=null,$die_on_error=null)
@@ -491,22 +502,22 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			return $this->_mysqli->info;
+			return $this->___mysqli->info;
 		}
 		
 		public function getError()
 		{
-			return $this->_mysqli->error;
+			return $this->___mysqli->error;
 		}
 		
 		public function getErrorNo()
 		{
-			return $this->_mysqli->errno;
+			return $this->___mysqli->errno;
 		}
 		
 		public function isError()
 		{
-			return (boolean) $this->_mysqli->errno;
+			return (boolean) $this->___mysqli->errno;
 		}
 		
 		public function getCharset()
@@ -517,7 +528,7 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			return $this->_mysqli->get_charset();
+			return $this->___mysqli->get_charset();
 		}
 		
 		public function setCharset($charset)
@@ -528,7 +539,7 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			$this->_mysqli->set_charset($charset);
+			$this->___mysqli->set_charset($charset);
 		}
 		
 		//mysql close connection
@@ -537,25 +548,25 @@
 			if($this->isConnected())
 			{
 				/* Moved under Driver
-				if(!$this->_mysqli->isClosed())
+				if(!$this->___mysqli->isClosed())
 				{
-					$this->_mysqli->close();
+					$this->___mysqli->close();
 				}
 				*/
 
-				$this->_connected = false;
+				$this->___connected = false;
 			}
 		}
 			
 		public function getConnectionStatus()
 		{
-			if($this->_connected)
+			if($this->___connected)
 			{
 				$status = new \StdClass();
 				$status->connected 	= true;
-				$status->host		= $this->_credentials['host'];
-				$status->db			= $this->_credentials['db'];
-				$status->user		= $this->_credentials['user'];
+				$status->host		= $this->___credentials['host'];
+				$status->db			= $this->___credentials['db'];
+				$status->user		= $this->___credentials['user'];
 				
 				return $status;
 			}
@@ -567,8 +578,8 @@
 		
 		public function &prepare($query, $args=self::_noArgs, $prepare_type=true)
 		{
-			$this->_query 				= $query;
-			$this->_args				= $args;
+			$this->___query 				= $query;
+			$this->___args				= $args;
 			$this->_prepare_typ 		= $prepare_type;
 			
 			return $this;
@@ -582,10 +593,10 @@
 				$args=self::_noArgs;
 			}
 			
-			if($args === self::_noArgs && is_array($this->_args))
-				$args = $this->_args;
-			else if($args === self::_noArgs && $this->_args !== self::_noArgs)
-				$args = array($this->_args);
+			if($args === self::_noArgs && is_array($this->___args))
+				$args = $this->___args;
+			else if($args === self::_noArgs && $this->___args !== self::_noArgs)
+				$args = array($this->___args);
 			else if(!is_array($args) && $args !== self::_noArgs)
 				$args = array($args);
 			else if($args === self::_noArgs)
@@ -597,7 +608,7 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			$query = $this->_query;
+			$query = $this->___query;
 			
 			return $this->_query($this->_prepareQuery($query,$args),null);
 			
@@ -605,10 +616,10 @@
 		
 		public function execute($args=self::_noArgs,$die_on_error=null)
 		{
-			if($args === self::_noArgs && is_array($this->_args))
-				$args = $this->_args;
-			else if($args === self::_noArgs && $this->_args !== self::_noArgs)
-				$args = array($this->_args);
+			if($args === self::_noArgs && is_array($this->___args))
+				$args = $this->___args;
+			else if($args === self::_noArgs && $this->___args !== self::_noArgs)
+				$args = array($this->___args);
 			else if(!is_array($args) && $args !== self::_noArgs)
 				$args = array($args);
 			else if($args === self::_noArgs)
@@ -620,7 +631,7 @@
 				if(!$this->isConnected()) return false;
 			}
 			
-			$query = $this->_query;
+			$query = $this->___query;
 			
 			return $this->_query($this->_prepareQuery($query,$args),$die_on_error);
 			
@@ -691,36 +702,36 @@
 		{	
 			if(
 				!($query instanceof FullyQualifiedQuery) &&
-				$this->_mysqli->getDb()!=$this->_current_db && $this->_current_db
+				$this->___mysqli->getDb()!=$this->___current_db && $this->___current_db
 			)
 			{
-				//echo "change DB $this->_current_db\n";
-				$this->_mysqli->select_db($this->_current_db);
+				//echo "change DB $this->___current_db\n";
+				$this->___mysqli->select_db($this->___current_db);
 			}
 
-			//echo $query.'  - '.$this->_current_db." - \n\n";
-			$result = @$this->_mysqli->query($query);
+			//echo $query.'  - '.$this->___current_db." - \n\n";
+			$result = @$this->___mysqli->query($query);
 			
 			/*
 			* Connection Error - retrying 1 time
 			*/
-			if(!$result && $this->_mysqli->errno == 2006)
+			if(!$result && $this->___mysqli->errno == 2006)
 			{
-				$this->_connected = false;
+				$this->___connected = false;
 				$this->connect();
 
-				$result = $this->_mysqli->query($query);
+				$result = $this->___mysqli->query($query);
 			}
 
 			if(
 				!$result
 			)
 			{
-				throw new \Exception($this->_mysqli->error,$this->_mysqli->errno);
-				//die($this->_mysqli->error);
+				throw new \Exception($this->___mysqli->error,$this->___mysqli->errno);
+				//die($this->___mysqli->error);
 			}
 			
-			return new \Simpletools\Db\Mysql\Result($result,$this->_mysqli);
+			return new \Simpletools\Db\Mysql\Result($result,$this->___mysqli);
 		}
 			
 		//escaping string against sql injection
@@ -737,23 +748,23 @@
 		
 		private function _escape($string)
 		{
-			if($this->_quotes_on)
+			if($this->___quotes_on)
 			{
 				$string = stripslashes($string);
 			}
 			
-			return $this->_mysqli->real_escape_string($string);
+			return $this->___mysqli->real_escape_string($string);
 		}
 			
 		//returning latest id - after insert
 		public function getInsertedId()
 		{
-			return $this->_mysqli->insert_id;
+			return $this->___mysqli->insert_id;
 		}
 		
 		public function getAffectedRows()
 		{
-			return $this->_mysqli->affected_rows;
+			return $this->___mysqli->affected_rows;
 		}
 		
 		//depracted
@@ -834,14 +845,7 @@
 		
 		public function isConnected()
 		{
-			if($this->getConnectionStatus() !== false)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return $this->___connected;
 		}
 		
 		public function getInstanceOfModel($modelName,$initArgs=null,$namespace='')
@@ -850,11 +854,11 @@
 
 			if($namespace)
 			{
-				$path = $this->_modelDir.str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$modelName.'.php';
+				$path = $this->___modelDir.str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$modelName.'.php';
 			}
 			else
 			{
-				$path = $this->_modelDir.'/'.$modelName.'.php';
+				$path = $this->___modelDir.'/'.$modelName.'.php';
 			}
 
 			if(!class_exists($class) && !@include($path))
@@ -862,10 +866,10 @@
 				throw new \Exception("Couldn't find model located under: ".$path."; Please specify modelsDir or check your settings.");
 			}
 			
-			$obj = new $class($this->_settings,$this->getConnectionName());
+			$obj = new $class($this->___settings,$this->getConnectionName());
 			
 			if($obj instanceof \Simpletools\Db\Mysql\Model)
-				$obj->setMysqliClass($this->_settings['custom_mysqli_class_name']);
+				$obj->setMysqliClass($this->___settings['custom_mysqli_class_name']);
 			
 			if(is_callable(array($obj,'init')))
 			{
