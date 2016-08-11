@@ -1,3 +1,7 @@
+### 2.1.2 (2016-03-12)
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed offset() order
+    
 ### 2.1.1 (2016-03-12)
   1. **Simpletools/Db/Mysql/Model**
     1. Introduced `table()` method in case of keys conflicts

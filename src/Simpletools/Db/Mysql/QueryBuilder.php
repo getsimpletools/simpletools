@@ -662,14 +662,14 @@
 				}
 			}
 
-			if(isset($this->_query['offset']))
-			{
-				$query[] = 'OFFSET '.$this->_query['offset'];
-			}
-
 			if(isset($this->_query['limit']))
 			{
 				$query[] = 'LIMIT '.$this->_query['limit'];
+			}
+
+			if(isset($this->_query['offset']))
+			{
+				$query[] = 'OFFSET '.$this->_query['offset'];
 			}
 
 			$this->_query = array();
