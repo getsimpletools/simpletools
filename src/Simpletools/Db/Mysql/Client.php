@@ -101,7 +101,12 @@
 			}
 
 			$this->setCredentials($settings);
-			$this->quotes_on = (get_magic_quotes_gpc()==1 || get_magic_quotes_runtime()==1) ? true : false ;
+			$this->quotes_on = (get_magic_quotes_gpc()==1 || get_magic_quotes_runtime()==1) ? true : false;
+
+			if(isset($settings['queryLog']))
+			{
+				Connection::logSettings($settings['queryLog']);
+			}
 		}
 		
 		public function setDb($db)
@@ -710,7 +715,14 @@
 			}
 
 			//echo $query.'  - '.$this->___current_db." - \n\n";
+
+			$startedAt 		= microtime(true);
+
 			$result = @$this->___mysqli->query($query);
+
+			$endedAt 		= microtime(true);
+
+			Connection::logQuery($startedAt,$endedAt,$query);
 			
 			/*
 			* Connection Error - retrying 1 time
@@ -720,7 +732,14 @@
 				$this->___connected = false;
 				$this->connect();
 
+
+				$startedAt 		= microtime(true);
+
 				$result = $this->___mysqli->query($query);
+
+				$endedAt 		= microtime(true);
+
+				Connection::logQuery($startedAt,$endedAt,$query);
 			}
 
 			if(
@@ -940,6 +959,11 @@
 			$settings['params']				= $params;
 
 			return new \Simpletools\Db\Mysql\Iterator($this,$settings);
+		}
+
+		public function getQueryLog()
+		{
+			return Connection::getQueryLog();
 		}
 	}
 

@@ -1,4 +1,16 @@
-### 2.1.2 (2016-03-12)
+### 2.1.3 (2016-08-21)
+ 1. **Simpletools/Db/Mysql/Connection**
+    1. Introduced query logging storage
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Introduced query logging capabilities, to enable specify `queryLog` at config, accepts the following optional values: `'queryLog'		=> [
+                                                                                                            		'minTimeSec'	=> (float) $sec,
+                                                                                                            		'emitEvent'		=> (string) $eventName,
+                                                                                                            		'emitEventOnly'	=> (true|false),
+                                                                                                            		'ignore'		=> ['INSERT','SET','...']
+                                                                                                            	]` 
+    2. Introduced `getQueryLog()`
+    
+### 2.1.2 (2016-08-11)
  1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed offset() order
     

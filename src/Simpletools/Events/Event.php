@@ -36,8 +36,6 @@
  */
 	namespace Simpletools\Events;
 
-	use Simpletools\Events\Event;
-
 	class Event
 	{
 		protected static $_listeners = array();
