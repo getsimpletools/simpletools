@@ -746,10 +746,12 @@
 				!$result
 			)
 			{
-				Connection::logQuery($startedAt,$endedAt,$query,$this->___mysqli->error,$this->___mysqli->errno);
+				$errorMsg 	= $this->___mysqli->error;
+				$errNo 		= $this->___mysqli->errno;
 
-				throw new \Exception($this->___mysqli->error,$this->___mysqli->errno);
-				//die($this->___mysqli->error);
+				Connection::logQuery($startedAt,$endedAt,$query,$errorMsg,$errNo);
+
+				throw new \Exception($errorMsg,$errNo);
 			}
 			
 			return new \Simpletools\Db\Mysql\Result($result,$this->___mysqli);

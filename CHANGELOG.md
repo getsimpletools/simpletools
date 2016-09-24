@@ -1,3 +1,7 @@
+### 2.1.5 (2016-09-24)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Fixed flushed error and errNo after log
+    
 ### 2.1.4 (2016-09-24)
  1. **Simpletools/Db/Mysql/Connection**
     1. Introduced error query logging storage
