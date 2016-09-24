@@ -356,13 +356,17 @@
 			{
 				return (string) $value;
 			}
-			elseif(is_numeric($value))
+			elseif(is_numeric($value) && substr($value,0,1)!='0')
 			{
 				return $value;
 			}
 			elseif(is_bool($value))
 			{
 				return (int) $value;
+			}
+			elseif(is_null($value))
+			{
+				return null;
 			}
 			else
 			{
@@ -576,7 +580,13 @@
 					{
 						if(!isset($operands[2]))
 						{
-							$query[] = @$operands[-1].' '.$this->escapeKey($operands[0])." = ".$this->_escape($operands[1]);
+							if($operands[1]===null) {
+								$query[] = @$operands[-1] . ' ' . $this->escapeKey($operands[0]) . " IS NULL";
+							}
+							else{
+								$query[] = @$operands[-1] . ' ' . $this->escapeKey($operands[0]) . " = " . $this->_escape($operands[1]);
+							}
+
 						}
 						else
 						{
@@ -595,7 +605,14 @@
 							}
 							else
 							{
-								$query[] = @$operands[-1].' '.$this->escapeKey($operands[0])." ".$operands[1]." ".$this->_escape($operands[2]);
+								if($operands[2]===null) {
+									$query[] = @$operands[-1] . ' ' . $this->escapeKey($operands[0]) . " " . $operands[1] . " NULL";
+								}
+								else
+								{
+									$query[] = @$operands[-1] . ' ' . $this->escapeKey($operands[0]) . " " . $operands[1] . " " . $this->_escape($operands[2]);
+								}
+
 							}
 						}
 					}

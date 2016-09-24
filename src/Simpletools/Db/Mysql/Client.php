@@ -746,6 +746,8 @@
 				!$result
 			)
 			{
+				Connection::logQuery($startedAt,$endedAt,$query,$this->___mysqli->error,$this->___mysqli->errno);
+
 				throw new \Exception($this->___mysqli->error,$this->___mysqli->errno);
 				//die($this->___mysqli->error);
 			}

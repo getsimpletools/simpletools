@@ -56,7 +56,7 @@ class Connection
 		self::$_connectors[$name] = $connector;
 	}
 
-	public static function logQuery($start,$end,$query)
+	public static function logQuery($start,$end,$query,$errMsg=null,$errNo=null)
 	{
 		if(self::$_logQuerySettings)
 		{
@@ -75,12 +75,12 @@ class Connection
 			}
 
 			if(
+				$errMsg OR
 				!isset(self::$_logQuerySettings['minTimeSec']) OR
 				$duration > self::$_logQuerySettings['minTimeSec']
 			)
 			{
-				$trace = self::getQueryLogTrace($start, $end, $query, $duration);
-
+				$trace = self::getQueryLogTrace($start, $end, $query, $duration, $errMsg, $errNo);
 
 				if(isset(self::$_logQuerySettings['emitEvent']))
 				{
@@ -110,14 +110,24 @@ class Connection
 		return self::$_logTrace;
 	}
 
-	protected static function getQueryLogTrace($start,$end,$query,$duration)
+	protected static function getQueryLogTrace($start,$end,$query,$duration,$errMsg,$errNo)
 	{
-		return array(
+		$trace = array(
 			'startedAt'	=> $start,
 			'endedAt'	=> $end,
 			'queryTime'	=> $duration,
 			'query'		=> (string) $query
 		);
+
+		if($errMsg)
+		{
+			$trace['error'] = array(
+				'msg'	=> $errMsg,
+				'code'	=> $errNo
+			);
+		}
+
+		return $trace;
 	}
 }
 

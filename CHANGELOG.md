@@ -1,3 +1,12 @@
+### 2.1.4 (2016-09-24)
+ 1. **Simpletools/Db/Mysql/Connection**
+    1. Introduced error query logging storage
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Introduced error query logging
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+     1. Fixed numeric validation
+     2. Fixed null validation
+    
 ### 2.1.3 (2016-08-21)
  1. **Simpletools/Db/Mysql/Connection**
     1. Introduced query logging storage
