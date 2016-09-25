@@ -564,7 +564,15 @@
 
 				foreach($this->_query['onDuplicateData'] as $key => $value)
 				{
-					$set[] = $this->escapeKey($key).' = '.$this->_escape($value);
+					if(is_null($value))
+					{
+						$set[] = $this->escapeKey($key) . ' = NULL';
+					}
+					else
+					{
+						$set[] = $this->escapeKey($key) . ' = ' . $this->_escape($value);
+					}
+
 				}
 
 				$query[] = implode(', ',$set);

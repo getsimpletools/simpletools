@@ -1,3 +1,7 @@
+### 2.1.6 (2016-09-25)
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed NULL casted as empty string on duplicate key update
+    
 ### 2.1.5 (2016-09-24)
  1. **Simpletools/Db/Mysql/Client**
     1. Fixed flushed error and errNo after log
