@@ -1,3 +1,7 @@
+### 2.1.7 (2016-10-30)
+ 1. **Simpletools/Db/Mongo/Client**
+    1. Connection uri builder - new settings options - host, port, user, pass, authDb
+
 ### 2.1.6 (2016-09-25)
  1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed NULL casted as empty string on duplicate key update

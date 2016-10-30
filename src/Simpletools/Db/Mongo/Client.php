@@ -108,7 +108,24 @@
 
 		public function setCredentials($settings)
 		{
-			$this->___credentials['connectionUri'] 			= isset($settings['connectionUri']) ? $settings['connectionUri'] : null;
+			if(isset($settings['host'])) {
+				$connectionUri = 'mongodb://';
+
+				if(isset($settings['user']) && $settings['user'])
+				{
+					$connectionUri .= $settings['user'].':'.rawurlencode(@$settings['pass']).'@';
+				}
+
+				$connectionUri .= $settings['host'];
+				$connectionUri .= (isset($settings['port']) && $settings['port']) ? ':'.$settings['port'] : '';
+				$connectionUri .= (isset($settings['authDb']) && $settings['authDb']) ? '/'.$settings['authDb'] : '';
+
+				$this->___credentials['connectionUri'] = $connectionUri;
+			}
+			else {
+				$this->___credentials['connectionUri'] = isset($settings['connectionUri']) ? $settings['connectionUri'] : null;
+			}
+
 			$this->___credentials['connectionOptions']	 	= isset($settings['connectionOptions']) ? $settings['connectionOptions'] : array();
 
 			$this->___connectionName						= isset($settings['connectionName']) ? $settings['connectionName'] : 'default';
