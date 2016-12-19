@@ -399,6 +399,11 @@
 			{
 				$options['sort'] 						= $this->_query['sort'];
 			}
+
+			if(isset($this->_query['columns']) && is_array($this->_query['columns']))
+			{
+				$options['projection'] 						= $this->_query['columns'];
+			}
 			
 			if(isset($this->_query['$maxTimeMS']))
 			{

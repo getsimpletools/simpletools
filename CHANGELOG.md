@@ -1,3 +1,7 @@
+### 2.1.8 (2016-12-19)
+ 1. **Simpletools/Db/Mongo/QueryBuilder**
+    1. Fixed determination of which fields(columns) to include in the returned documents.
+
 ### 2.1.7 (2016-10-30)
  1. **Simpletools/Db/Mongo/Client**
     1. Connection uri builder - new settings options - host, port, user, pass, authDb
