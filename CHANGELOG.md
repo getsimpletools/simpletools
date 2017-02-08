@@ -1,3 +1,7 @@
+### 2.2.0 (2016-02-08)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Support of master-slave - read-only slave introduced
+
 ### 2.1.8 (2016-12-19)
  1. **Simpletools/Db/Mongo/QueryBuilder**
     1. Fixed determination of which fields(columns) to include in the returned documents.
