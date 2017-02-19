@@ -292,7 +292,8 @@ class Client
         $this->___mysqli[$this->_queryServer]->init();
         $this->setTimeout();
 
-        if(isset($_credentials['db']) && $_credentials['db'])
+        //$this->___current_db could be already defined under model etc.
+        if(!$this->___current_db && isset($_credentials['db']) && $_credentials['db'])
         {
             $this->___current_db 						= $_credentials['db'];
         }

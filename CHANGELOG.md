@@ -1,3 +1,7 @@
+### 2.2.1 (2016-02-19)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Retain DB name setting between slave and master in case of manual change at e.g. Model level
+
 ### 2.2.0 (2016-02-08)
  1. **Simpletools/Db/Mysql/Client**
     1. Support of master-slave - read-only slave introduced
