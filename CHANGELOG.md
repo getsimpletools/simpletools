@@ -1,15 +1,19 @@
-### 2.2.2 (2016-02-27)
+### 2.2.3 (2017-02-27)
+ 1. **Simpletools/Mvc/Router**
+    1. Added catch for errors (php7)
+    
+### 2.2.2 (2017-02-27)
  1. **Simpletools/Mvc/Router**
     1. Added views failover
     2. Added forced view
     3. Added content type per extension
     4. Added default content type
 
-### 2.2.1 (2016-02-19)
+### 2.2.1 (2017-02-19)
  1. **Simpletools/Db/Mysql/Client**
     1. Retain DB name setting between slave and master in case of manual change at e.g. Model level
 
-### 2.2.0 (2016-02-08)
+### 2.2.0 (2017-02-08)
  1. **Simpletools/Db/Mysql/Client**
     1. Support of master-slave - read-only slave introduced
 
