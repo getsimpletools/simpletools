@@ -36,18 +36,18 @@
  */
 	namespace Simpletools\Events;
 
-	use Simpletools\Events\Event;
-
 	class Event
 	{
 		protected static $_listeners = array();
 
 		public static function on($event,$handler)
 		{
-			$id 							= uniqid();
-			self::$_listeners[$event][$id] 	= $handler;
+			self::$_listeners[$event]	= $handler;
+		}
 
-			return $id;
+		public static function off($event)
+		{
+			unset(self::$_listeners[$event]);
 		}
 
 		private static function _callReflection($callable, array $args = array()) 
@@ -90,39 +90,61 @@
 	        return $reflection->invokeArgs($callable, $pass); 
 	    }
 
-		public static function fire($event,$args=array())
+	    public static function fire($event,$args=array())
 		{
-			if(isset(self::$_listeners[$event]))
-			{
-				foreach(self::$_listeners[$event] as $id => $handler)
-				{
-					if(is_callable($handler))
-					{
-						$res = self::_callReflection($handler,$args);
-						if($res===false)
-						{
-							break;
-						}
-					}
+			self::trigger($event,$args);
+		}
 
-					self::unqueue($id);
-				}
+		public static function trigger($event,$args=array())
+		{
+			if(isset(self::$_listeners[$event]) && is_callable(self::$_listeners[$event]))
+			{
+				self::_callReflection(self::$_listeners[$event],$args);
 			}
 		}
 
-		public static function queue($event)
+		public static function triggerQueue($event)
 		{
+			if(isset(self::$_queue[$event]) && is_array(self::$_queue[$event]))
+			{
+				foreach(self::$_queue[$event] as $id => $args)
+				{
+					$r = self::trigger($event,$args);
+					if($r===false) 
+					{
+						return $id;
+					}
+				}
+			}
 
+			return true;
 		}
 
-		public static function unqueue($event)
+		public static function fireQueue($event)
 		{
-			unset(self::$_listeners[$event]);
+			return self::triggerQueue($event);
 		}
 
-		public static function forget($event)
+		protected static $_queue = array();
+
+		public static function queue($event,$args=array())
 		{
-			unset(self::$_listeners[$event]);
+			$id = uniqid();
+			self::$_queue[$event][$id] = $args;
+
+			return $id;
+		}
+
+		public static function unqueue($event,$id=null)
+		{
+			if($id)
+			{
+				unset(self::$_queue[$event][$id]);
+			}
+			else
+			{
+				self::$_queue[$event] = array();
+			}
 		}
 	}
 

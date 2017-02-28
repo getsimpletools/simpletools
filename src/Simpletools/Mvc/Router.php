@@ -89,6 +89,8 @@
 		//view object
 		protected $_view			= '';
 		protected $_view_enabled	= true;
+		protected $_viewExtension   = 'phtml';
+		protected $_contentTypeSent = false;
 
 		public function __construct(array $settings=null)
 		{
@@ -98,9 +100,11 @@
 					(isset($settings['application_dir']) && ($settings['application_dir']))
 			)
 			{
-				$vext														= isset($settings['view_extension']) ? $settings['view_extension'] : 'phtml';
-				$this->_appDir 												= isset($settings['applicationDir']) ? rtrim($settings['applicationDir'],'/') : rtrim($settings['application_dir'],'/');
-				$this->_view 												= new \Simpletools\Mvc\View($vext);
+				$this->_viewExtension										= isset($settings['view_extension']) ? $settings['view_extension'] : $this->_viewExtension;
+                $this->_viewExtension										= isset($settings['viewExtension']) ? $settings['viewExtension'] : $this->_viewExtension;
+
+                $this->_appDir 												= isset($settings['applicationDir']) ? rtrim($settings['applicationDir'],'/') : rtrim($settings['application_dir'],'/');
+
 				$this->_settings['uri_app_position'] 						= isset($settings['uriAppPosition']) ? (integer) $settings['uriAppPosition'] : 0;
 				$this->_settings['redirect_missing_location_to_default'] 	= isset($settings['redirect_missing_location_to_default']) ? (boolean) $settings['redirect_missing_location_to_default'] : false;
 				$this->_settings['use_subdomain'] 							= isset($settings['use_subdomain']) ? $settings['use_subdomain'] : false;
@@ -112,6 +116,10 @@
 				$this->_duplicate_content									= isset($settings['duplicate_content']) ? (int) $settings['duplicate_content'] : 0;
 
 				$this->_routingEvents										= isset($settings['routingEvents']) ? (bool) $settings['routingEvents'] : false;
+
+				$this->_settings['uriExtMime'] 							    = isset($settings['uriExtMime']) ? $settings['uriExtMime'] : [];
+                $this->_settings['failoverView'] 						    = isset($settings['failoverView']) ? $settings['failoverView'] : false;
+                $this->_settings['forcedView'] 						        = isset($settings['forcedView']) ? $settings['forcedView'] : false;
 
 				if(isset($settings['routingNamespaces']))
 				{
@@ -126,6 +134,12 @@
 
 				$this->_params 	= $this->getParams(true);
 
+				if(!$this->_contentTypeSent && isset($settings['defaultContentType']) && $settings['defaultContentType'])
+                {
+                    header('Content-Type: '.$settings['defaultContentType']);
+                }
+
+                $this->_view = new \Simpletools\Mvc\View($this->_viewExtension);
 				$this->_view->setParams($this->_params,$this->_shifts_params);
 
 				new \Simpletools\Mvc\Model($this->_appDir,$this->_activeRoutingNamespace);
@@ -263,13 +277,12 @@
 			 return self::$_instance;
 		}
 		
-		//depracted - use registerViewObject instead
-		public function registerObject($objectName,&$object)
+		public function registerObject($objectName,$object)
 		{
 			$this->registerViewObject($objectName,$object);
 		}
 		
-		public function registerViewObject($objectName,&$object)
+		public function registerViewObject($objectName,$object)
 		{
 			$this->_objects[$objectName] = &$object;
 			$this->_view->registerObject($objectName,$object);
@@ -286,7 +299,7 @@
 		{
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('dispatchStart');
+				\Simpletools\Events\Event::trigger('dispatchStart');
 			}
 
 			/*
@@ -437,7 +450,7 @@
 	    } 
 		
 		private function forwardDispatch($controller,$action,$params=false)
-		{				
+		{
 			$controller 		= self::getCorrectControllerName($controller);
 			$action				= self::getCorrectActionName($action);
 
@@ -461,65 +474,75 @@
 
 						if($this->_routingEvents)
 						{
-							\Simpletools\Events\Event::fire('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Events\Event::trigger('beforeControllerInit',array('controller'=>$controller,'action'=>$action));
 						}
 
-						if(!$this->_forwarded)
-						{
-							if(is_callable(array($this->_classes[$className],'init')))
-							{
-								$this->_classes[$className]->init();
-							}
+						try {
 
-							if($this->_routingEvents)
-							{
-								\Simpletools\Events\Event::fire('afterControllerInit',array('controller'=>$controller,'action'=>$action));
-							}
+						    if (!$this->_forwarded) {
+                                if (is_callable(array($this->_classes[$className], 'init'))) {
+                                    $this->_classes[$className]->init();
+                                }
 
-							if(!$this->_forwarded && $this->_autoRender)
-							{
-								$actionMethod = $action.'Action';
-								$this->_forwarded = true;
+                                if ($this->_routingEvents) {
+                                    \Simpletools\Events\Event::trigger('afterControllerInit',
+                                        array('controller' => $controller, 'action' => $action));
+                                }
 
-								if(is_callable(array($this->_classes[$className],$actionMethod)))
-								{
-									if($this->_routingEvents)
-									{
-										\Simpletools\Events\Event::fire('beforeControllerAction',array('controller'=>$controller,'action'=>$action));
-									}
+                                if (!$this->_forwarded && $this->_autoRender) {
+                                    $actionMethod = $action . 'Action';
+                                    $this->_forwarded = true;
 
-									if($this->_activeCustomRouteArgs)
-									{
-										$this->_callReflectionMethod($this->_classes[$className],$actionMethod,$this->_activeCustomRouteArgs);
-									}
-									else
-									{
-										$this->_classes[$className]->$actionMethod();
-									}
+                                    if (is_callable(array($this->_classes[$className], $actionMethod))) {
+                                        if ($this->_routingEvents) {
+                                            \Simpletools\Events\Event::trigger('beforeControllerAction',
+                                                array('controller' => $controller, 'action' => $action));
+                                        }
 
-									if($this->_routingEvents)
-									{
-										\Simpletools\Events\Event::fire('afterControllerAction',array('controller'=>$controller,'action'=>$action));
-									}
-								}
-								else
-								{
-									if($this->_routingEvents)
-									{
-										\Simpletools\Events\Event::fire('missingControllerActionError',array('controller'=>$controller,'action'=>$action));
-									}
+                                        if ($this->_activeCustomRouteArgs) {
+                                            $this->_callReflectionMethod($this->_classes[$className], $actionMethod,
+                                                $this->_activeCustomRouteArgs);
+                                        } else {
+                                            $this->_classes[$className]->$actionMethod();
+                                        }
 
-									if($this->_autoRender) $this->error('a404');
-								}
-							}
-						}
+                                        if ($this->_routingEvents) {
+                                            \Simpletools\Events\Event::trigger('afterControllerAction',
+                                                array('controller' => $controller, 'action' => $action));
+                                        }
+                                    } else {
+                                        if ($this->_routingEvents) {
+                                            \Simpletools\Events\Event::trigger('missingControllerActionError',
+                                                array('controller' => $controller, 'action' => $action));
+                                        }
+
+                                        if ($this->_autoRender) {
+                                            $this->error('a404');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch(\Exception $e)
+                        {
+                            if($this->_routingEvents)
+                            {
+                                \Simpletools\Events\Event::trigger('controllerException',
+                                    array('controller'=>$controller,'action'=>$action, 'exception'=>$e, 'e'=>$e)
+                                );
+                            }
+                            else
+                            {
+                                throw $e;
+                            }
+                        }
 
 					}
 					else
 					{
 						if($this->_routingEvents)
 						{
-							\Simpletools\Events\Event::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+							\Simpletools\Events\Event::trigger('missingControllerError',array('controller'=>$controller,'action'=>$action));
 						}
 
 						$this->error('c405');
@@ -534,7 +557,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingControllerError',array('controller'=>$controller,'action'=>$action));
+						\Simpletools\Events\Event::trigger('missingControllerError',array('controller'=>$controller,'action'=>$action));
 					}
 
 					$this->error('c404');
@@ -543,7 +566,7 @@
 
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('dispatchEnd');
+				\Simpletools\Events\Event::trigger('dispatchEnd');
 			}
 		}
 
@@ -686,7 +709,7 @@
 
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('beforeRenderView',array('controller'=>$controller,'view'=>$view));
+				\Simpletools\Events\Event::trigger('beforeRenderView',array('controller'=>$controller,'view'=>$view));
 			}
 
 			$n = substr($controller,0,1);
@@ -716,17 +739,28 @@
 			{
 				$namespacePath 		= '';
 			}
-			
 
-			$v 				= realpath($this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt());
-			if($v)
+			if($this->_settings['forcedView'])
+            {
+                $v = realpath($this->_appDir.'/views/'.$this->_settings['forcedView'].'.'.$this->_view->getViewExt());
+            }
+            else
+            {
+                $v = realpath($this->_appDir.'/views/'.$namespacePath.$controller.'/'.$view.'.'.$this->_view->getViewExt());
+                if(!$v && $this->_settings['failoverView'])
+                {
+                    $v = realpath($this->_appDir.'/views/'.$this->_settings['failoverView'].'.'.$this->_view->getViewExt());
+                }
+            }
+
+            if($v)
 			{
 				$this->_autoRender = false;
 				$this->_view->render($v);
 
 				if($this->_routingEvents)
 				{
-					\Simpletools\Events\Event::fire('afterRenderView',array('controller'=>$controller,'view'=>$view));
+					\Simpletools\Events\Event::trigger('afterRenderView',array('controller'=>$controller,'view'=>$view));
 				}
 			}
 			else
@@ -735,7 +769,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Events\Event::trigger('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					$this->error('v404');
@@ -744,7 +778,7 @@
 				{
 					if($this->_routingEvents)
 					{
-						\Simpletools\Events\Event::fire('missingViewError',array('controller'=>$controller,'view'=>$view));
+						\Simpletools\Events\Event::trigger('missingViewError',array('controller'=>$controller,'view'=>$view));
 					}
 
 					trigger_error("<u>SimpleMVC ERROR</u> - There is a missing Error View.", E_USER_ERROR);
@@ -772,6 +806,19 @@
 			return (isset($this->_classes[$className]) || realpath($this->_appDir.'/controllers/'.$controller.'Controller.php'));
 		}
 
+		protected function _setExtMime($meta)
+        {
+            if(isset($meta['viewExtension']) && $meta['viewExtension'])
+                $this->_viewExtension = $meta['viewExtension'];
+
+            if(isset($meta['contentType']) && $meta['contentType'])
+            {
+                $this->_contentTypeSent = true;
+
+                header('Content-Type: '.$meta['contentType']);
+            }
+        }
+
 		public function getParams($fix_duplicate_content=false)
 		{
 			$_params = array();
@@ -787,8 +834,24 @@
 			//sanitasation
 			foreach($params as $index => $param)
 			{
-				//$params[$index] = $param = preg_replace('/[^a-z0-9\-\/\.]/i','',urldecode($param));
-				$params[$index] = $param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
+				$param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
+
+				if($this->_settings['uriExtMime'])
+                {
+                    foreach($this->_settings['uriExtMime'] as $ext => $meta)
+                    {
+                        $paramsTmp = explode('.',$param);
+
+                        if(count($paramsTmp)>1 && ($lastParam = array_pop($paramsTmp)) == $ext)
+                        {
+                            $param = implode('.',$paramsTmp);
+                            $this->_setExtMime($meta);
+                            break;
+                        }
+                    }
+                }
+
+				$params[$index] = $param;
 			}
 
 			if($this->_settings['uri_app_position'] > 0)
@@ -1040,7 +1103,7 @@
 		{
 			if($this->_routingEvents)
 			{
-				\Simpletools\Events\Event::fire('routerDestruct');
+				\Simpletools\Events\Event::trigger('routerDestruct');
 			}
 		}
 	}

@@ -42,7 +42,8 @@
 	{
 		public function __construct($settings=false,$connectionName='default')
 		{
-			$this->_connectionName = $connectionName;
+			$this->___connectionName 	= $connectionName;
+			$this->___current_db 		= defined('static::CURRENT_DB') ? static::CURRENT_DB : '';
 			
 			if($settings)
 			{
@@ -52,17 +53,63 @@
 
 		public function __get($table)
 		{
-			return new QueryBuilder($table,$this);
+			$query = new QueryBuilder($table,$this);
+			$this->___switchTmpDb($query);
+
+			return $query;
 		}
 
 		public function __call($table,$args)
 		{
-			return new QueryBuilder($table,$this,$args);
+			$query = new QueryBuilder($table,$this,$args);
+			$this->___switchTmpDb($query);
+
+			return $query;
+		}
+
+		protected $___tmpDb = '';
+
+		public function db($db)
+		{
+			$this->___tmpDb = $db;
+
+			return $this;
+		}
+
+		protected function ___switchTmpDb($query)
+		{
+			if($this->___tmpDb)
+			{
+				$query->inDb($this->___tmpDb);
+				$this->___tmpDb = '';
+			}
+		}
+
+		public function table($table)
+		{
+			$args 	= func_get_args();
+			$table 	= array_shift($args);
+
+			$query = new QueryBuilder($table,$this,$args);
+			$this->___switchTmpDb($query);
+
+			return $query;
 		}
 
 		public function getConnectionName()
 		{
 			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
 		}
+
+		public function getClient()
+		{
+			return \Simpletools\Db\Mysql\Client::getInstance($this->getConnectionName());
+		}
+
+		public function injectDependency()
+		{
+			$this->setSettings($this->getClient()->getSettings());
+		}
+					
 	}
 ?>

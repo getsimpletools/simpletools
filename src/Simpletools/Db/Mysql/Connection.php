@@ -36,16 +36,15 @@
 
 namespace Simpletools\Db\Mysql;
 
+use \Simpletools\Events\Event;
+
 class Connection
 {
-	protected static $_connectors = array(
+	protected static $_selfObject 		= null;
+	protected static $_connectors 		= array();
 
-	);
-
-	public static function setDb($name)
-	{
-
-	}
+	protected static $_logQuerySettings = null;
+	protected static $_logTrace 		= array();
 
 	public static function getOne($name)
 	{
@@ -55,6 +54,80 @@ class Connection
 	public static function setOne($name,$connector)
 	{
 		self::$_connectors[$name] = $connector;
+	}
+
+	public static function logQuery($start,$end,$query,$errMsg=null,$errNo=null)
+	{
+		if(self::$_logQuerySettings)
+		{
+			$query 		= trim($query);
+			$duration 	= $end - $start;
+
+			if(isset(self::$_logQuerySettings['ignore']))
+			{
+				foreach(self::$_logQuerySettings['ignore'] as $ignore)
+				{
+					if(stripos($query,$ignore.' ')===0)
+					{
+						return ;
+					}
+				}
+			}
+
+			if(
+				$errMsg OR
+				!isset(self::$_logQuerySettings['minTimeSec']) OR
+				$duration > self::$_logQuerySettings['minTimeSec']
+			)
+			{
+				$trace = self::getQueryLogTrace($start, $end, $query, $duration, $errMsg, $errNo);
+
+				if(isset(self::$_logQuerySettings['emitEvent']))
+				{
+					Event::fire(self::$_logQuerySettings['emitEvent'], array('query'=>$trace));
+				}
+
+				if(!isset(self::$_logQuerySettings['emitEventOnly']) OR !self::$_logQuerySettings['emitEventOnly'])
+				{
+					self::$_logTrace[] = $trace;
+				}
+			}
+		}
+	}
+
+	public static function logSettings($settings)
+	{
+		if(isset($settings['ignore']) && !is_array($settings['ignore']))
+		{
+			$settings['ignore'] = array($settings['ignore']);
+		}
+
+		self::$_logQuerySettings = $settings;
+	}
+
+	public static function getQueryLog()
+	{
+		return self::$_logTrace;
+	}
+
+	protected static function getQueryLogTrace($start,$end,$query,$duration,$errMsg,$errNo)
+	{
+		$trace = array(
+			'startedAt'	=> $start,
+			'endedAt'	=> $end,
+			'queryTime'	=> $duration,
+			'query'		=> (string) $query
+		);
+
+		if($errMsg)
+		{
+			$trace['error'] = array(
+				'msg'	=> $errMsg,
+				'code'	=> $errNo
+			);
+		}
+
+		return $trace;
 	}
 }
 

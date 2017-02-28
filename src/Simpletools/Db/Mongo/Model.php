@@ -34,45 +34,35 @@
  * 
  */
 
-namespace Simpletools\Db\Mysql;
+	namespace Simpletools\Db\Mongo;
 
-class Driver extends \mysqli
-{
-	protected $_closed 	= false;
-	protected $_db 		= '';
-
-	public function isClosed()
+	class Model extends \Simpletools\Db\Mongo\Client
 	{
-		return $this->_closed;
-	}
+		public function __construct($settings=false,$connectionName='default')
+		{
+			$this->___connectionName 	= $connectionName;
+			$this->___current_db 		= defined('static::CURRENT_DB') ? static::CURRENT_DB : '';
+			
+			if($settings)
+			{
+				parent::__construct($settings,$connectionName);
+			}
+		}
 
-	public function close()
-	{
-		$this->_closed = true;
-		parent::close();
-	}
+		public function getConnectionName()
+		{
+			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
+		}
 
-	public function select_db($db)
-	{
-		$this->_db = $db;
-		parent::select_db($db);
-	}
+		public function getClient()
+		{
+			return \Simpletools\Db\Mongo\Client::getInstance($this->getConnectionName());
+		}
 
-	public function real_connect($host=NULL,$user=NULL,$password=NULL,$database=NULL,$port=NULL,$socket=NULL,$flags=NULL)
-	{
-		$this->_db = $database;
-		parent::real_connect($host,$user,$password,$database,$port,$socket,$flags);
+		public function injectDependency()
+		{
+			$this->setSettings($this->getClient()->getSettings());
+		}
+					
 	}
-
-	public function getDb()
-	{
-		return $this->_db;
-	}
-
-	public function __destruct()
-	{
-		$this->close();
-	}
-}
-
 ?>

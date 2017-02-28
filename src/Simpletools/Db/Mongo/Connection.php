@@ -34,44 +34,22 @@
  * 
  */
 
-namespace Simpletools\Db\Mysql;
+namespace Simpletools\Db\Mongo;
 
-class Driver extends \mysqli
+class Connection
 {
-	protected $_closed 	= false;
-	protected $_db 		= '';
+	protected static $_connectors = array(
 
-	public function isClosed()
+	);
+
+	public static function getOne($name)
 	{
-		return $this->_closed;
+		return isset(self::$_connectors[$name]) ? self::$_connectors[$name] : null;
 	}
 
-	public function close()
+	public static function setOne($name,$connector)
 	{
-		$this->_closed = true;
-		parent::close();
-	}
-
-	public function select_db($db)
-	{
-		$this->_db = $db;
-		parent::select_db($db);
-	}
-
-	public function real_connect($host=NULL,$user=NULL,$password=NULL,$database=NULL,$port=NULL,$socket=NULL,$flags=NULL)
-	{
-		$this->_db = $database;
-		parent::real_connect($host,$user,$password,$database,$port,$socket,$flags);
-	}
-
-	public function getDb()
-	{
-		return $this->_db;
-	}
-
-	public function __destruct()
-	{
-		$this->close();
+		self::$_connectors[$name] = $connector;
 	}
 }
 

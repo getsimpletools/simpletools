@@ -1,3 +1,86 @@
+### 2.2.2 (2016-02-27)
+ 1. **Simpletools/Mvc/Router**
+    1. Added views failover
+    2. Added forced view
+    3. Added content type per extension
+    4. Added default content type
+
+### 2.2.1 (2016-02-19)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Retain DB name setting between slave and master in case of manual change at e.g. Model level
+
+### 2.2.0 (2016-02-08)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Support of master-slave - read-only slave introduced
+
+### 2.1.8 (2016-12-19)
+ 1. **Simpletools/Db/Mongo/QueryBuilder**
+    1. Fixed determination of which fields(columns) to include in the returned documents.
+
+### 2.1.7 (2016-10-30)
+ 1. **Simpletools/Db/Mongo/Client**
+    1. Connection uri builder - new settings options - host, port, user, pass, authDb
+
+### 2.1.6 (2016-09-25)
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed NULL casted as empty string on duplicate key update
+    
+### 2.1.5 (2016-09-24)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Fixed flushed error and errNo after log
+    
+### 2.1.4 (2016-09-24)
+ 1. **Simpletools/Db/Mysql/Connection**
+    1. Introduced error query logging storage
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Introduced error query logging
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+     1. Fixed numeric validation
+     2. Fixed null validation
+    
+### 2.1.3 (2016-08-21)
+ 1. **Simpletools/Db/Mysql/Connection**
+    1. Introduced query logging storage
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Introduced query logging capabilities, to enable specify `queryLog` at config, accepts the following optional values: `'queryLog'		=> [
+                                                                                                            		'minTimeSec'	=> (float) $sec,
+                                                                                                            		'emitEvent'		=> (string) $eventName,
+                                                                                                            		'emitEventOnly'	=> (true|false),
+                                                                                                            		'ignore'		=> ['INSERT','SET','...']
+                                                                                                            	]` 
+    2. Introduced `getQueryLog()`
+    
+### 2.1.2 (2016-08-11)
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed offset() order
+    
+### 2.1.1 (2016-03-12)
+  1. **Simpletools/Db/Mysql/Model**
+    1. Introduced `table()` method in case of keys conflicts
+    2. Introduced `db()` method to setup per query db
+    3. Introduced `injectDependency()` to improve in Mvc models loading
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Introduced truncate() method
+  1. **Simpletools/Mvc/Model**
+    1. Improved Simpletools classes dependency injections
+  1. **Simpletools/Mvc/Router**
+    1. Refactored internal Events trigger-er from `fire()` to `trigger()`
+  1. **Simpletools/Db/Mongo**
+    1. Introduced Mongo Client library with QueryBuilder
+  1. **Simpletools/Events/Event**
+    1. Introduced queue
+    2. Improved events stacking
+
+### 2.0.32 (2016-02-01)
+  1. **Simpletools/Db/Mysql/Driver**
+    1. Introduced destructor
+  1. **Simpletools/Db/Mysql/Client**
+    1. Moved destructor under Driver
+
+### 2.0.31 (2016-01-29)
+  1. **Simpletools/Db/Mysql/QueryBuilder**
+    1. Fixed empty spaces on fullqualification
+
 ### 2.0.30 (2016-01-29)
   1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed fullqualification of some select queries
