@@ -536,6 +536,18 @@
                                 throw $e;
                             }
                         }
+												catch (\Error $e) {
+													if($this->_routingEvents)
+													{
+														\Simpletools\Events\Event::trigger('controllerException',
+																array('controller'=>$controller,'action'=>$action, 'exception'=>$e, 'e'=>$e)
+														);
+													}
+													else
+													{
+														throw $e;
+													}
+												}
 
 					}
 					else
