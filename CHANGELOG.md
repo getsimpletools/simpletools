@@ -1,3 +1,8 @@
+### 2.3.1 (2017-03-12)
+ 1. **Simpletools/Mvc/Cloud**
+    1. Added Google Storage Cloud/File support
+    2. Added Google Storage Cloud/Bucket support
+    
 ### 2.2.3 (2017-02-27)
  1. **Simpletools/Mvc/Router**
     1. Added catch for errors (php7)
