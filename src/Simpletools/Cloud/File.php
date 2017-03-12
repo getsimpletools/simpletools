@@ -140,9 +140,14 @@ class File
         return $this->_file->exists();
     }
 
-    public function getLink()
+    public function getUrl()
     {
-        return $this->_file->getLink();
+        return $this->_file->getUrl();
+    }
+
+    public function getUri()
+    {
+        return $this->_file->getUri();
     }
 
     public function setJson($body)
@@ -171,5 +176,17 @@ class File
     {
         $path = $this->_parsePath($path);
         return $this->_file->renameTo($path['path']);
+    }
+
+    public function makePublic()
+    {
+        $this->_file->makePublic();
+        return $this;
+    }
+
+    public function makePrivate()
+    {
+        $this->_file->makePrivate();
+        return $this;
     }
 }

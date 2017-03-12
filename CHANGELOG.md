@@ -1,3 +1,10 @@
+### 2.3.2 (2017-03-12)
+ 1. **Simpletools/Mvc/Cloud**
+    1. Added \File ->makePublic()
+    2. Added \File ->makePrivate()
+    3. Added \File ->getUri()
+    4. Added \File ->getUrl()
+    
 ### 2.3.1 (2017-03-12)
  1. **Simpletools/Mvc/Cloud**
     1. Added Google Storage Cloud/File support

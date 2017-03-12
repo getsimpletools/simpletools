@@ -19,6 +19,7 @@ class File
     protected $_remoteFile;
 
     protected $_bodyTouched = false;
+    protected $_acl;
 
     public function __construct($file,array $meta=[])
     {
@@ -131,19 +132,30 @@ class File
 
         if($this->_bodyTouched)
         {
+            $settings = [
+                "name"      => $this->_fileSettings['key'],
+                "metadata"  => $this->_fileSettings['meta']
+            ];
+
+            if($this->_acl)
+                $settings['predefinedAcl'] = $this->_acl;
+
             $this->_remoteFile = $bucket->upload(
                 fopen($this->_fileLocation, 'r'),
-                [
-                    "name"      => $this->_fileSettings['key'],
-                    "metadata"  => $this->_fileSettings['meta']
-                ]
+                $settings
             );
         }
         else
         {
-            $this->_remoteFile->update([
-                'metadata' => $this->_fileSettings['meta']
-            ]);
+            $settings = array();
+
+            if($this->_fileSettings['meta'])
+                $settings['metadata'] = $this->_fileSettings['meta'];
+
+            if($this->_acl)
+                $settings['predefinedAcl'] = $this->_acl;
+
+            $this->_remoteFile->update($settings);
         }
     }
 
@@ -259,7 +271,7 @@ class File
         ];
     }
 
-    public function getPath()
+    public function getUri()
     {
         return $this->_fileSettings['path'];
     }
@@ -273,7 +285,7 @@ class File
         $this->_remoteFile->rename($meta['key']);
     }
 
-    public function getLink()
+    public function getUrl()
     {
         $this->_initStorageObject();
         $info = $this->_remoteFile->info();
@@ -286,5 +298,15 @@ class File
         if(!$this->exists()) return 0;
         $meta = $this->getMeta();
         return $meta['size'];
+    }
+
+    public function makePublic()
+    {
+        $this->_acl = 'publicRead';
+    }
+
+    public function makePrivate()
+    {
+        $this->_acl = 'private';
     }
 }
