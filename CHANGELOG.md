@@ -1,3 +1,7 @@
+### 2.3.3(2017-03-27)
+ 1. **Simpletools/Db/Mongo/QueryBuilder**
+    1. Fixed bug of escaping some float values.
+
 ### 2.3.2 (2017-03-12)
  1. **Simpletools/Mvc/Cloud**
     1. Added \File ->makePublic()

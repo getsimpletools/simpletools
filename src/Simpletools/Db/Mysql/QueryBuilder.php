@@ -356,7 +356,7 @@
 			{
 				return (string) $value;
 			}
-			elseif(is_numeric($value) && substr($value,0,1)!='0')
+			elseif(is_float($value) || is_numeric($value))
 			{
 				return $value;
 			}
