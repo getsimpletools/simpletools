@@ -1,4 +1,4 @@
-### 2.3.3(2017-03-27)
+### 2.3.4(2017-03-27)
  1. **Simpletools/Db/Mongo/QueryBuilder**
     1. Fixed bug of escaping some float values.
 

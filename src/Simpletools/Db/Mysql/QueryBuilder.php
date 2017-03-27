@@ -356,7 +356,7 @@
 			{
 				return (string) $value;
 			}
-			elseif(is_float($value) || is_numeric($value))
+			elseif(is_float($value) || is_integer($value))
 			{
 				return $value;
 			}
