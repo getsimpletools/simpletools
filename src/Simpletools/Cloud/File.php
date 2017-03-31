@@ -93,6 +93,11 @@ class File
     /*
      * Interfaced methods
      */
+		public function importFile($filepath, $flag='a')
+		{
+			return $this->_file->importFile($filepath, $flag);
+		}
+
     public function getHandler($flag)
     {
         return $this->_file->getHandler($flag);

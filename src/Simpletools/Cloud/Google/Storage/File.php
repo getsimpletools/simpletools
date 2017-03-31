@@ -106,6 +106,28 @@ class File
         return true;
     }
 
+		public function importFile($filepath, $flag='a')
+		{
+			if(!file_exists($filepath))
+			{
+				throw new \Exception('File '.$filepath.' doesn\'t exists');
+			}
+
+			if($this->_fileHandler)
+			{
+				@fclose($this->_fileHandler);
+			}
+
+			if($this->_fileLocation)
+			{
+				@unlink($this->_fileLocation);
+			}
+
+			$this->_fileLocation = $filepath;
+
+			return $this->_fileHandler = fopen($this->_fileLocation,$flag);
+		}
+
     public function getHandler($flag)
     {
         if($flag!='r')

@@ -1,3 +1,8 @@
+### 2.3.5(2017-03-31)
+ 1. **Simpletools/Mvc/Cloud**
+    1. Added \File ->importFile()
+    2. Added \Storage\File ->importFile()
+
 ### 2.3.4(2017-03-27)
  1. **Simpletools/Db/Mongo/QueryBuilder**
     1. Fixed bug of escaping some float values.
