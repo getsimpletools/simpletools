@@ -36,8 +36,6 @@
 
 	namespace Simpletools\Db\Mongo;
 
-	use Simpletools\Db\Mongo\QueryBuilder;
-
 	class Client
 	{
 		protected $___connectionName 	= '';
@@ -100,7 +98,7 @@
 		    }
 		    elseif(is_string($settings) && !isset(self::$___instance[$connectionName]))
 		    {
-		    	throw new \Exception('No mysql settings defined with connectionName '.$connectionName);
+		    	throw new \Exception('No mongo settings defined with connectionName '.$connectionName);
 		    }
 
 		   	return self::$___instance[$connectionName];
@@ -208,5 +206,3 @@
 			return (!$id) ? new \MongoDB\BSON\ObjectID() : new \MongoDB\BSON\ObjectID($id);
 		}
 	}
-
-?>

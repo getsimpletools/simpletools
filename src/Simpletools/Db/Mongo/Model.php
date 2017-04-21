@@ -38,6 +38,8 @@
 
 	class Model extends \Simpletools\Db\Mongo\Client
 	{
+        protected static $____selfModel;
+
 		public function __construct($settings=false,$connectionName='default')
 		{
 			$this->___connectionName 	= $connectionName;
@@ -49,6 +51,22 @@
 			}
 		}
 
+        public static function self()
+        {
+            if(isset(static::$____selfModel[static::class]))
+                return static::$____selfModel[static::class];
+
+            $obj = new static();
+            $obj->injectDependency();
+
+            if(is_callable(array($obj,'init')))
+            {
+                call_user_func_array(array($obj,'init'),func_get_args());
+            }
+
+            return static::$____selfModel[static::class]   = $obj;
+        }
+
 		public function getConnectionName()
 		{
 			return defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : 'default';
@@ -56,13 +74,11 @@
 
 		public function getClient()
 		{
-			return \Simpletools\Db\Mongo\Client::getInstance($this->getConnectionName());
+			return Client::getInstance($this->getConnectionName());
 		}
 
 		public function injectDependency()
 		{
 			$this->setSettings($this->getClient()->getSettings());
 		}
-					
 	}
-?>

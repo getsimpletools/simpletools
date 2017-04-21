@@ -1,3 +1,9 @@
+### 2.3.6(2017-04-21)
+ 1. **Simpletools/Db/Mongo/Model**
+    1. Added ->self()
+ 1. **Simpletools/Db/Mysql/Model**
+     1. Added ->self()
+
 ### 2.3.5(2017-03-31)
  1. **Simpletools/Mvc/Cloud**
     1. Added \File ->importFile()

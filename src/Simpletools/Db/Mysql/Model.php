@@ -36,20 +36,36 @@
 
 	namespace Simpletools\Db\Mysql;
 
-	use \Simpletools\Db\Mysql\QueryBuilder;
-
-	class Model extends \Simpletools\Db\Mysql\Client
+	class Model extends Client
 	{
+	    protected static $____selfModel;
+
 		public function __construct($settings=false,$connectionName='default')
 		{
-			$this->___connectionName 	= $connectionName;
+			$this->___connectionName 	= defined('static::CONNECTION_NAME') ? static::CONNECTION_NAME : $connectionName;
 			$this->___current_db 		= defined('static::CURRENT_DB') ? static::CURRENT_DB : '';
 			
 			if($settings)
 			{
-				parent::__construct($settings,$connectionName);
+				parent::__construct($settings,$this->___connectionName);
 			}
 		}
+
+        public static function self()
+        {
+            if(isset(static::$____selfModel[static::class]))
+                return static::$____selfModel[static::class];
+
+            $obj = new static();
+            $obj->injectDependency();
+
+            if(is_callable(array($obj,'init')))
+            {
+                call_user_func_array(array($obj,'init'),func_get_args());
+            }
+
+            return static::$____selfModel[static::class]   = $obj;
+        }
 
 		public function __get($table)
 		{
@@ -103,7 +119,7 @@
 
 		public function getClient()
 		{
-			return \Simpletools\Db\Mysql\Client::getInstance($this->getConnectionName());
+			return Client::getInstance($this->getConnectionName());
 		}
 
 		public function injectDependency()
@@ -112,4 +128,3 @@
 		}
 					
 	}
-?>
