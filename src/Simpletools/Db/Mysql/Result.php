@@ -46,6 +46,7 @@
 
 		protected $_position 		= 0;
 		protected $_currentRow 		= false;
+		protected $_columnsMap      = array();
 
 		public function __construct(&$mysqliResult,&$mysqli)
 		{
@@ -58,6 +59,105 @@
 				$this->_loadFirstRowCache();
 			}
 		}
+
+        public function setColumnsMap(array $columnsMap)
+        {
+            $this->_columnsMap = $columnsMap;
+        }
+
+        protected function _parseColumn($column,$value,$rawResultAssoc)
+        {
+            if(isset($this->_columnsMap[$column]))
+            {
+                $cast = $this->_columnsMap[$column];
+
+                if(is_callable($cast))
+                {
+                    $value = $this->_callReflection($cast,$rawResultAssoc);
+                }
+                elseif($cast=='json' OR $cast=='json:array' OR $cast=='json:object')
+                {
+                    $assoc = false;
+                    if($cast=='json:array')
+                    {
+                        $assoc = true;
+                    }
+
+                    $value = json_decode($value,$assoc);
+                }
+                elseif(is_string($cast))
+                {
+                    settype($value,$cast);
+                }
+            }
+
+            return $value;
+        }
+
+        private function _callReflection($callable, array $args = array())
+        {
+            if(is_array($callable))
+            {
+                $reflection 	= new \ReflectionMethod($callable[0], $callable[1]);
+            }
+            elseif(is_string($callable))
+            {
+                $reflection 	= new \ReflectionFunction($callable);
+            }
+            elseif(is_a($callable, 'Closure') || is_callable($callable, '__invoke'))
+            {
+                $objReflector 	= new \ReflectionObject($callable);
+                $reflection    	= $objReflector->getMethod('__invoke');
+            }
+
+            $pass = array();
+            foreach($reflection->getParameters() as $param)
+            {
+                $name = $param->getName();
+                if(isset($args[$name]))
+                {
+                    $pass[] = $args[$name];
+                }
+                else
+                {
+                    try
+                    {
+                        $pass[] = $param->getDefaultValue();
+                    }
+                    catch(\Exception $e)
+                    {
+                        $pass[] = null;
+                    }
+                }
+            }
+
+            return $reflection->invokeArgs($callable, $pass);
+        }
+
+        protected function _parseColumnsMap($result,$returnObject=true)
+        {
+            if($result && $this->_columnsMap) {
+
+                $rawResultAssoc = (array) $result;
+
+                if ($returnObject) {
+
+                    foreach($result as $column => $value)
+                    {
+                        $result->{$column} = $this->_parseColumn($column,$value,$rawResultAssoc);
+                    }
+
+                } else {
+
+                    foreach($result as $column => $value)
+                    {
+                        $result[$column] = $this->_parseColumn($column,$value,$rawResultAssoc);
+                    }
+                }
+            }
+
+            return $result;
+        }
 
 		public function isEmpty()
 		{
@@ -72,9 +172,11 @@
 		public function fetch($returnObject=true)
 		{
 			if($returnObject)
-				return mysqli_fetch_object($this->_mysqlResult);	
+				$result = mysqli_fetch_object($this->_mysqlResult);
 			else
-				return mysqli_fetch_assoc($this->_mysqlResult);
+                $result = mysqli_fetch_assoc($this->_mysqlResult);
+
+			return $this->_parseColumnsMap($result,$returnObject);
 		}
 
 		public function fetchAll($returnObject=true)

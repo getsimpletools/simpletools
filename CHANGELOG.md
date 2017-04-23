@@ -1,3 +1,9 @@
+### 2.3.7(2017-04-23)
+ 1. **Simpletools/Db/Mysql/QueryBuilder**
+     1. Added columns type casting for SELECT queries
+ 2. **Simpletools/Db/Mysql/Json**
+     1. Introduced JSON helper
+     
 ### 2.3.6(2017-04-21)
  1. **Simpletools/Db/Mongo/Model**
     1. Added ->self()

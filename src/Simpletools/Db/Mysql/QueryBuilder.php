@@ -39,10 +39,11 @@ namespace Simpletools\Db\Mysql;
 
 class QueryBuilder implements \Iterator
 {
-    protected $_query 	= '';
-    protected $_mysql 	= '';
+    protected $_query 	    = '';
+    protected $_columnsMap  = array();
+    protected $_mysql 	    = '';
 
-    protected $_result   = null;
+    protected $_result      = null;
 
     public function __construct($table,$mysql,$columns=array())
     {
@@ -65,7 +66,7 @@ class QueryBuilder implements \Iterator
         $this->_mysql = $mysql;
     }
 
-    public function &columns()
+    public function columns()
     {
         $args = func_get_args();
 
@@ -81,7 +82,7 @@ class QueryBuilder implements \Iterator
 
     protected $_currentJoinIndex = 0;
 
-    public function &join($tableName,$direction='left')
+    public function join($tableName,$direction='left')
     {
         $tableType = 'table';
 
@@ -100,17 +101,17 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &leftJoin($tableName)
+    public function leftJoin($tableName)
     {
         return $this->join($tableName,'left');
     }
 
-    public function &rightJoin($tableName)
+    public function rightJoin($tableName)
     {
         return $this->join($tableName,'right');
     }
 
-    public function &innerJoin($tableName)
+    public function innerJoin($tableName)
     {
         return $this->join($tableName,'inner');
     }
@@ -157,7 +158,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &on()
+    public function on()
     {
         $args = func_get_args();
         if(count($args)==1) $args = $args[0];
@@ -167,7 +168,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &orOn()
+    public function orOn()
     {
         $args = func_get_args();
         if(count($args)==1) $args = $args[0];
@@ -177,7 +178,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &andOn()
+    public function andOn()
     {
         $args = func_get_args();
         if(count($args)==1) $args = $args[0];
@@ -187,14 +188,14 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &using()
+    public function using()
     {
         $this->_currentJoinIndex++;
 
         return $this;
     }
 
-    public function &db($db)
+    public function db($db)
     {
         if(isset($this->_query['db']) OR isset($this->_query['join']))
         {
@@ -212,12 +213,12 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &inDb($db)
+    public function inDb($db)
     {
         return $this->db($db);
     }
 
-    public function &group()
+    public function group()
     {
         $args = func_get_args();
 
@@ -231,7 +232,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &sort()
+    public function sort()
     {
         $args = func_get_args();
 
@@ -245,7 +246,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &insertIgnore($data)
+    public function insertIgnore($data)
     {
         $this->_query['type'] = "INSERT IGNORE";
         $this->_query['data'] = $data;
@@ -253,7 +254,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &insertDelayed($data)
+    public function insertDelayed($data)
     {
         $this->_query['type'] = "INSERT DELAYED";
         $this->_query['data'] = $data;
@@ -261,7 +262,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &insertLowPriority($data)
+    public function insertLowPriority($data)
     {
         $this->_query['type'] = "INSERT LOW_PRIORITY";
         $this->_query['data'] = $data;
@@ -269,7 +270,7 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &insertHighPriority($data)
+    public function insertHighPriority($data)
     {
         $this->_query['type'] = "INSERT HIGH_PRIORITY";
         $this->_query['data'] = $data;
@@ -277,12 +278,17 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
-    public function &delete()
+    public function delete()
     {
         $this->_query['type'] = "DELETE FROM";
 
         $args = func_get_args();
         if(count($args)==1) $args = $args[0];
+
+        if(!count($args))
+        {
+            throw new \Exception('Please specify where condition as an argument of ->delete() otherwise use ->truncate()');
+        }
 
         $this->_query['where'][] 	= $args;
 
@@ -340,7 +346,10 @@ class QueryBuilder implements \Iterator
     {
         if($this->_result) return $this->_result;
 
-        return $this->_result = $this->_mysql->query($this->getQuery());
+        $this->_result = $this->_mysql->query($this->getQuery());
+        $this->_result->setColumnsMap($this->_columnsMap);
+
+        return $this->_result;
     }
 
     public function get($id,$column='id')
@@ -452,12 +461,39 @@ class QueryBuilder implements \Iterator
         {
             foreach($this->_query['columns'] as $idx => $column)
             {
-                if($column instanceof Json)
+                if(!is_integer($idx))
                 {
-                    $this->_query['columns'][$idx] = $column->toArray();
+                    $this->_columnsMap[$idx]      = $column;
+                    $column                       = $idx;
                 }
 
-                $this->_query['columns'][$idx] = $this->escapeKey($column);
+                if($column instanceof Json) {
+                    //$this->_query['columns'][$idx] = $column->toArray();
+                }
+                elseif($column instanceof Sql){
+                    $this->_query['columns'][$idx] = (string) $column;
+                }
+                else
+                {
+                    $column = str_replace(' as ',' ',$column);
+
+                    if(strpos($column,' ')!==false)
+                    {
+                        $column = explode(' ',$column);
+                        foreach($column as $_columnKey => $_columnName)
+                        {
+                            $column[$_columnKey] = $this->escapeKey($_columnName);
+                        }
+
+                        if(isset($this->_columnsMap[$idx]))
+                            $this->_columnsMap[$_columnName]      = $this->_columnsMap[$idx];
+
+                        $this->_query['columns'][$idx] = implode(' ',$column);
+                    }
+                    else {
+                        $this->_query['columns'][$idx] = $this->escapeKey($column);
+                    }
+                }
             }
         }
 
