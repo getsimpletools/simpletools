@@ -10,6 +10,7 @@ use Google\Cloud\Storage\StorageObject;
 class File
 {
     protected $_fileLocation;
+		protected $_isTempFile;
     protected $_fileHandler;
 
     protected $_fileSettings;
@@ -80,6 +81,7 @@ class File
     {
         if($this->_fileLocation) return $this->_fileLocation;
 
+        $this->_isTempFile = true;
         return $this->_fileLocation = tempnam(sys_get_temp_dir(),uniqid());
     }
 
@@ -124,8 +126,28 @@ class File
 			}
 
 			$this->_fileLocation = $filepath;
+			$this->_isTempFile = false;
 
 			return $this->_fileHandler = fopen($this->_fileLocation,$flag);
+		}
+
+		public function exportFile($filepath)
+		{
+			$this->_initStorageObject();
+
+			if(!$this->_remoteFile->exists())
+			{
+				throw new \Exception('File '.$this->_fileSettings['path']. "doesn't exists.");
+			}
+
+			if(!$fp= @fopen($filepath,'w'))
+			{
+				throw new \Exception("Couldn't open a file pointer for this location: ".$filepath);
+			}
+			fclose($fp);
+
+			$this->_remoteFile->downloadToFile($filepath);
+			return true;
 		}
 
     public function getHandler($flag)
@@ -276,7 +298,7 @@ class File
             @fclose($this->_fileHandler);
         }
 
-        if($this->_fileLocation)
+        if($this->_fileLocation && $this->_isTempFile)
         {
             @unlink($this->_fileLocation);
         }

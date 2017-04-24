@@ -98,6 +98,11 @@ class File
 			return $this->_file->importFile($filepath, $flag);
 		}
 
+		public function exportFile($filepath)
+		{
+			return $this->_file->exportFile($filepath);
+		}
+
     public function getHandler($flag)
     {
         return $this->_file->getHandler($flag);

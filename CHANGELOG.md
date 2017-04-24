@@ -1,3 +1,9 @@
+### 2.3.8(2017-04-24)
+ 1. **Simpletools/Mvc/Cloud**
+    1. Added \File ->exportFile()
+    2. Added \Storage\File ->exportFile()
+    3. Changed \Storage\File ->importFile()
+
 ### 2.3.7(2017-04-23)
  1. **Simpletools/Db/Mysql/QueryBuilder**
      1. Added columns type casting for SELECT queries
