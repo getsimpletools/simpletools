@@ -151,14 +151,16 @@
 
                     foreach($this->_columnsMap as $column => $cast)
                     {
-                        $result->{$column} = $this->_parseColumn($column,$result->{$column},$rawResultAssoc);
+                        if(isset($result->{$column}))
+                            $result->{$column} = $this->_parseColumn($column,$result->{$column},$rawResultAssoc);
                     }
 
                 } else {
 
                     foreach($this->_columnsMap as $column => $cast)
                     {
-                        $result[$column] = $this->_parseColumn($column,$result[$column],$rawResultAssoc);
+                        if(isset($result[$column]))
+                            $result[$column] = $this->_parseColumn($column,$result[$column],$rawResultAssoc);
                     }
                 }
             }

@@ -1,3 +1,7 @@
+### 2.3.10 (2017-04-24)
+ 1. **Simpletools/Db/Mysql/Result**
+    1. Fixed PHP warnings for undefined column names under column map set via columnMap() or ->setColumnMap() methods
+
 ### 2.3.9 (2017-04-24)
  1. **Simpletools/Db/Mysql/Client**
     1. Added ->columnMap() and ->setColumnMap() methods
