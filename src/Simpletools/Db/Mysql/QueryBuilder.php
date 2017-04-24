@@ -347,7 +347,7 @@ class QueryBuilder implements \Iterator
         if($this->_result) return $this->_result;
 
         $this->_result = $this->_mysql->query($this->getQuery());
-        $this->_result->setColumnsMap($this->_columnsMap);
+        $this->_result->setColumnMap($this->_columnsMap);
 
         return $this->_result;
     }

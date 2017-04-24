@@ -800,7 +800,26 @@ class Client
             throw new \Exception($errorMsg,$errNo);
         }
 
-        return new \Simpletools\Db\Mysql\Result($result,$this->___mysqli[$this->_queryServer]);
+        $result = new \Simpletools\Db\Mysql\Result($result,$this->___mysqli[$this->_queryServer]);
+
+        if($this->_columnsMap)
+            $result->setColumnMap($this->_columnsMap);
+
+        return $result;
+    }
+
+    protected $_columnsMap;
+
+    public function columnMap(array $map)
+    {
+        return $this->setColumnMap($map);
+    }
+
+    public function setColumnMap(array $map)
+    {
+        $this->_columnsMap = $map;
+
+        return $this;
     }
 
     //escaping string against sql injection

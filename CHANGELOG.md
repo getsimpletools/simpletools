@@ -1,3 +1,10 @@
+### 2.3.9 (2017-04-24)
+ 1. **Simpletools/Db/Mysql/Client**
+    1. Added ->columnMap() and ->setColumnMap() methods
+ 2. **Simpletools/Db/Mysql/Result**
+    1. Added ->columnMap() and ->setColumnMap() methods
+    2. Improved columnMap executing and iteration process
+    
 ### 2.3.8(2017-04-24)
  1. **Simpletools/Mvc/Cloud**
     1. Added \File ->exportFile()

@@ -60,9 +60,16 @@
 			}
 		}
 
-        public function setColumnsMap(array $columnsMap)
+		public function columnMap(array $columnsMap)
+        {
+            return $this->setColumnMap($columnsMap);
+        }
+
+        public function setColumnMap(array $columnsMap)
         {
             $this->_columnsMap = $columnsMap;
+
+            return $this;
         }
 
         protected function _parseColumn($column,$value,$rawResultAssoc)
@@ -142,16 +149,16 @@
 
                 if ($returnObject) {
 
-                    foreach($result as $column => $value)
+                    foreach($this->_columnsMap as $column => $cast)
                     {
-                        $result->{$column} = $this->_parseColumn($column,$value,$rawResultAssoc);
+                        $result->{$column} = $this->_parseColumn($column,$result->{$column},$rawResultAssoc);
                     }
 
                 } else {
 
-                    foreach($result as $column => $value)
+                    foreach($this->_columnsMap as $column => $cast)
                     {
-                        $result[$column] = $this->_parseColumn($column,$value,$rawResultAssoc);
+                        $result[$column] = $this->_parseColumn($column,$result[$column],$rawResultAssoc);
                     }
                 }
             }
