@@ -40,7 +40,7 @@
 
 	class Session
 	{
-		private static $default_return = 'exception';
+		private static $default_return = 'Exception';
 		private static $settings = array(
 			'autostart_if_session_cookie_set' 			=> false,
 			'session_auto_start'						=> true

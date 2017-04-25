@@ -1,3 +1,7 @@
+### 2.3.11 (2017-04-25)
+ 1. **Simpletools/Store/Session**
+    1. Fixed default return
+
 ### 2.3.10 (2017-04-24)
  1. **Simpletools/Db/Mysql/Result**
     1. Fixed PHP warnings for undefined column names under column map set via columnMap() or ->setColumnMap() methods
