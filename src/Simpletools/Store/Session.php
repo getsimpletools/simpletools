@@ -159,7 +159,12 @@
 
 			if(!self::$_sessionStarted && session_id() == '')
 			{
-				if(self::$settings['session_auto_start']){@session_start();self::$_sessionStarted = true;}
+				if(self::$settings['session_auto_start']){
+                    if (php_sapi_name() != "cli") {
+                        @session_start();
+                    }
+                    self::$_sessionStarted = true;
+				}
 				elseif(self::$settings['autostart_if_session_cookie_set'] && isset($_COOKIE[session_name()]) && session_id() == ''){@session_start();self::$_sessionStarted = true;}
 				elseif(!self::$settings['autostart_if_session_cookie_set']){throw new \Exception('Please start session before using \Simpletools\Store\Session or set sessionAutoStart under ::settings() method.',11111);}
 				else return;
@@ -181,5 +186,3 @@
 			}
 		}
 	}
-
-?>

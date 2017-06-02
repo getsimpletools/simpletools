@@ -1,3 +1,7 @@
+### 2.3.12 (2017-06-02)
+ 1. **Simpletools/Store/Session**
+    1. Added - Don't auto-start session in CLI
+    
 ### 2.3.11 (2017-04-25)
  1. **Simpletools/Store/Session**
     1. Fixed default return
