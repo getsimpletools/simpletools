@@ -543,7 +543,7 @@ class Client
             }
             */
 
-            $this->___connected = false;
+            unset($this->___connected[$this->_queryServer]);
         }
     }
 
@@ -775,9 +775,10 @@ class Client
         */
         if(!$result && $this->___mysqli[$this->_queryServer]->errno == 2006)
         {
-            $this->___connected = false;
-            $this->connect();
+            unset($this->___connected[$this->_queryServer]);
+            Connection::cleanOne($this->___connectionName.'/'.$this->_queryServer);
 
+            $this->connect();
 
             $startedAt 		= microtime(true);
 

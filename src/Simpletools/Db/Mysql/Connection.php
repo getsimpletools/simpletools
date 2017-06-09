@@ -46,6 +46,13 @@ class Connection
 	protected static $_logQuerySettings = null;
 	protected static $_logTrace 		= array();
 
+	public static function cleanOne($name)
+    {
+        if(isset(self::$_connectors[$name])) {
+            unset(self::$_connectors[$name]);
+        }
+    }
+
 	public static function getOne($name)
 	{
 		return isset(self::$_connectors[$name]) ? self::$_connectors[$name] : null;

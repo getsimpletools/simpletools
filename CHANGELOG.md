@@ -1,3 +1,9 @@
+### 2.3.13 (2017-06-09)
+ 1. **Simpletools/Mysql/Client**
+    1. Fixed - Retry on timeout
+ 2. **Simpletools/Mysql/Connection**
+    1. Added - clean connectors
+    
 ### 2.3.12 (2017-06-02)
  1. **Simpletools/Store/Session**
     1. Added - Don't auto-start session in CLI
