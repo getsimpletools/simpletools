@@ -1,3 +1,9 @@
+### 2.3.14 (2017-07-17)
+ 1. **Simpletools/Mysql/QueryBuilder**
+    1. Fixed - Array recast in php 7.1
+ 2. **Simpletools/Mongo/QueryBuilder**
+    1. Fixed - Array recast in php 7.1
+
 ### 2.3.13 (2017-06-09)
  1. **Simpletools/Mysql/Client**
     1. Fixed - Retry on timeout

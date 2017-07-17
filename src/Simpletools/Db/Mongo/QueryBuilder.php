@@ -43,7 +43,7 @@
 
 	class QueryBuilder implements \Iterator
 	{
-		protected $_query 		= '';
+		protected $_query 		= array();
 		protected $_client 		= '';
 		protected $_db 			= '';
 

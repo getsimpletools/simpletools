@@ -39,7 +39,7 @@ namespace Simpletools\Db\Mysql;
 
 class QueryBuilder implements \Iterator
 {
-    protected $_query 	    = '';
+    protected $_query 	    = array();
     protected $_columnsMap  = array();
     protected $_mysql 	    = '';
 
