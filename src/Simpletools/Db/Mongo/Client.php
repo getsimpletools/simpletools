@@ -39,7 +39,7 @@
 	class Client
 	{
 		protected $___connectionName 	= '';
-		protected static $___instance 	= '';
+		protected static $___instance 	= null;
 		protected $___settings 			= '';
 		protected $___modelsDir			= '';
 		protected $___credentials		= array();
