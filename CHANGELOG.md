@@ -1,3 +1,9 @@
+### 2.3.16 (2017-10-08)
+ 1. **Simpletools/Mysql/QueryBuilder**
+    1. Added - filter() - can be chained without where() first
+ 2. **Simpletools/Store/Flash**
+    1. Fixed - variables notice in case $_SESSION is not started
+    
 ### 2.3.15 (2017-09-12)
  1. **Simpletools/Mongo/Client**
     1. Fixed - Array recast in php 7.1

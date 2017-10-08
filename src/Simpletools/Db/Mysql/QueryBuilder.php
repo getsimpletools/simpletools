@@ -837,6 +837,21 @@ class QueryBuilder implements \Iterator
         return $this;
     }
 
+    public function &filter()
+    {
+        $args = func_get_args();
+        if(count($args)==1) $args = $args[0];
+
+        if(isset($this->_query['where']))
+        {
+            $args[-1] 	= 'AND';
+        }
+
+        $this->_query['where'][] 	= $args;
+
+        return $this;
+    }
+
     public function &where()
     {
         $args = func_get_args();

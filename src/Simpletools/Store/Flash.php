@@ -86,20 +86,17 @@
 			if(self::$_cleanedPrev) return true;
 			self::$_cleanedPrev = 1;
 
-			foreach($_SESSION as $key => $value)
-			{
-				if(strpos($key,self::$_sessionKey)===0)
-				{
-					if($_SESSION[$key][0]<1)
-					{
-						unset($_SESSION[$key]);
-					}
-					else
-					{
-						$_SESSION[$key][0] = 0;
-					}
-				}
-			}
+			if(isset($_SESSION) && is_array($_SESSION)) {
+                foreach ($_SESSION as $key => $value) {
+                    if (strpos($key, self::$_sessionKey) === 0) {
+                        if ($_SESSION[$key][0] < 1) {
+                            unset($_SESSION[$key]);
+                        } else {
+                            $_SESSION[$key][0] = 0;
+                        }
+                    }
+                }
+            }
 		}
 
 		/**
