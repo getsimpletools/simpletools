@@ -254,7 +254,7 @@ class File
 
         if(!file_put_contents($this->_fileLocation,$body,$flag))
         {
-            throw new \Exception(401,"Can't write to file");
+            throw new \Exception("Can't write to file",401);
         }
 
         return $this;

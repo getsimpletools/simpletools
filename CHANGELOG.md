@@ -1,3 +1,7 @@
+### 2.3.17 (2017-10-08)
+ 1. **Simpletools\Cloud\Google\Storage\File**
+    1. Fixed - wrong exception throw params
+
 ### 2.3.16 (2017-10-08)
  1. **Simpletools/Mysql/QueryBuilder**
     1. Added - filter() - can be chained without where() first
