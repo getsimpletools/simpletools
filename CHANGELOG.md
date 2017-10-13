@@ -1,3 +1,7 @@
+### 2.3.18 (2017-10-08)
+ 1. **Simpletools\Cloud\Google\Storage\File**
+    1. Fixed - file_put_contents === false
+    
 ### 2.3.17 (2017-10-08)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Fixed - wrong exception throw params

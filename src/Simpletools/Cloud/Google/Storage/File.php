@@ -252,7 +252,7 @@ class File
             $this->_fileHandler = null;
         }
 
-        if(!file_put_contents($this->_fileLocation,$body,$flag))
+        if(file_put_contents($this->_fileLocation,$body,$flag)===false)
         {
             throw new \Exception("Can't write to file",401);
         }
