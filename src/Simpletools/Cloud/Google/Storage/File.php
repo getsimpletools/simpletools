@@ -128,7 +128,8 @@ class File
 			$this->_fileLocation = $filepath;
 			$this->_isTempFile = false;
 
-			return $this->_fileHandler = fopen($this->_fileLocation,$flag);
+			$this->_fileHandler = fopen($this->_fileLocation,$flag);
+			return $this;
 		}
 
 		public function exportFile($filepath)
@@ -147,7 +148,7 @@ class File
 			fclose($fp);
 
 			$this->_remoteFile->downloadToFile($filepath);
-			return true;
+			return $this;
 		}
 
     public function getHandler($flag)

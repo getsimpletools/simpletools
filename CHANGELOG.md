@@ -1,3 +1,7 @@
+### 2.3.19 (2017-10-27)
+ 1. **Simpletools\Cloud\Google\Storage\File**
+    1. Return $this on import/export
+
 ### 2.3.18 (2017-10-08)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Fixed - file_put_contents === false
