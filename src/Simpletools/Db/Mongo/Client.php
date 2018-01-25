@@ -101,6 +101,7 @@
 		    	throw new \Exception('No mongo settings defined with connectionName '.$connectionName);
 		    }
 
+
 		   	return self::$___instance[$connectionName];
 		}
 
