@@ -4,7 +4,7 @@
     "description": "High Performance MVC Framework",
     "keywords": ["framework"],
     "homepage": "http://www.getsimpletools.com/",
-    "license": "BSD",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Marcin Rosinski",
