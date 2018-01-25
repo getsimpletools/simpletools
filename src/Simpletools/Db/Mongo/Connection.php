@@ -38,9 +38,7 @@ namespace Simpletools\Db\Mongo;
 
 class Connection
 {
-	protected static $_connectors = array(
-
-	);
+	protected static $_connectors = array();
 
 	public static function getOne($name)
 	{
