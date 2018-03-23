@@ -12,6 +12,7 @@ class File
     protected $_fileLocation;
 		protected $_isTempFile;
     protected $_fileHandler;
+		protected $_isImport =false;
 
     protected $_fileSettings;
     protected $_client;
@@ -127,6 +128,7 @@ class File
 
 			$this->_fileLocation = $filepath;
 			$this->_isTempFile = false;
+			$this->_isImport = true;
 
 			$this->_fileHandler = fopen($this->_fileLocation,$flag);
 			return $this;
@@ -175,7 +177,7 @@ class File
             $this->_bodyTouched = true;
         }
 
-        if($this->_bodyTouched)
+				if($this->_bodyTouched || $this->_isImport)
         {
             $settings = [
                 "name"      => $this->_fileSettings['key'],

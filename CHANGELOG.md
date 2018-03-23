@@ -1,3 +1,7 @@
+### 2.3.23 (2018-03-23)
+ 1. **Simpletools\Cloud\Google\Storage\File**
+    1. Save after Import always force upload to Storage
+
 ### 2.3.19 (2017-10-27)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Return $this on import/export
