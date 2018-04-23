@@ -63,6 +63,7 @@
 			$this->_routingNamespaces				= &$env->routingNamespaces;
 			$this->_activeRoutingNamespace			= &$env->activeRoutingNamespace;
 			$this->_activeRoutingNamespaceUrlPath	= &$env->activeRoutingNamespaceUrlPath;
+			$this->_httpMethod                      = $env->httpMethod;
 			
 			if(empty(self::$_instance)) 
 			{
@@ -221,6 +222,7 @@
 			$env->current_controller	= &$this->_current_controller;
 			$env->_404_error_header		= &$this->_404_error_header;
 			$env->view_enabled			= &$this->_view_enabled;
+			$env->httpMethod            = $this->_httpMethod;
 
 			$env->routingNamespaces				= &$this->_routingNamespaces;
 			$env->activeRoutingNamespace 		= &$this->_activeRoutingNamespace;
@@ -369,6 +371,16 @@
 					if($this->_autoRender)
 					{
 						$actionMethod = $action.'Action';
+
+                        /*
+                         * HTTP METHOD ACTION OVERLOAD
+                         */
+                        if($this->_httpMethod)
+                        {
+                            if (is_callable(array($this->_classes[$className], $actionMethod.'_'.$this->_httpMethod))) {
+                                $actionMethod = $actionMethod.'_'.$this->_httpMethod;
+                            }
+                        }
 
 						if(is_callable(array($this->_classes[$className],$actionMethod)))
 						{

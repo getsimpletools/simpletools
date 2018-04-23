@@ -92,6 +92,8 @@
 		protected $_viewExtension   = 'phtml';
 		protected $_contentTypeSent = false;
 
+		protected $_httpMethod      = '';
+
 		public function __construct(array $settings=null)
 		{
 			if(
@@ -121,6 +123,8 @@
                 $this->_settings['failoverView'] 						    = isset($settings['failoverView']) ? $settings['failoverView'] : false;
                 $this->_settings['forcedView'] 						        = isset($settings['forcedView']) ? $settings['forcedView'] : false;
 
+                $this->_httpMethod                                          = ($rMethod = strtoupper(@$_SERVER['REQUEST_METHOD'])) ? $rMethod : false;
+
 				if(isset($settings['routingNamespaces']))
 				{
 					$this->registerRoutingNamespaces($settings['routingNamespaces']);
@@ -136,7 +140,7 @@
 
 				if(!$this->_contentTypeSent && isset($settings['defaultContentType']) && $settings['defaultContentType'])
                 {
-                    header('Content-Type: '.$settings['defaultContentType']);
+                    @header('Content-Type: '.$settings['defaultContentType']);
                 }
 
                 $this->_view = new \Simpletools\Mvc\View($this->_viewExtension);
@@ -417,6 +421,7 @@
 			$env->routingNamespaces				= &$this->_routingNamespaces;
 			$env->activeRoutingNamespace 		= &$this->_activeRoutingNamespace;
 			$env->activeRoutingNamespaceUrlPath = &$this->_activeRoutingNamespaceUrlPath;
+			$env->httpMethod                    = &$this->_httpMethod;
 			
 			return $env;
 		}
@@ -492,6 +497,31 @@
                                 if (!$this->_forwarded && $this->_autoRender) {
                                     $actionMethod = $action . 'Action';
                                     $this->_forwarded = true;
+
+                                    /*
+                                     * HTTP METHOD ACTION OVERLOAD
+                                     */
+                                    if($this->_httpMethod)
+                                    {
+                                        if (is_callable(array($this->_classes[$className], $actionMethod.'_'.$this->_httpMethod))) {
+                                            $actionMethod = $actionMethod.'_'.$this->_httpMethod;
+                                        }
+                                    }
+
+                                    //overloader
+
+                                    if(!is_callable(array($this->_classes[$className], $actionMethod))) {
+
+                                        if (
+                                            is_callable(array($this->_classes[$className], '_'))
+                                        ) {
+                                            $actionMethod = '_';
+                                        } elseif (
+                                            $this->_httpMethod && is_callable(array($this->_classes[$className], '_'.$this->_httpMethod))
+                                        ) {
+                                            $actionMethod = '_'.$this->_httpMethod;
+                                        }
+                                    }
 
                                     if (is_callable(array($this->_classes[$className], $actionMethod))) {
                                         if ($this->_routingEvents) {
