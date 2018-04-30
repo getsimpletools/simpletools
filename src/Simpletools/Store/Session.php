@@ -140,6 +140,11 @@
 			self::$settings['session_auto_start'] 	= isset($options['session_auto_start']) ? (boolean) $options['sessionAutoStart'] : self::$settings['session_auto_start'];
 			self::$_regenerateSessionIdEverySec 	= isset($options['regenerateSessionIdEverySec']) ? (int) $options['regenerateSessionIdEverySec'] : self::$_regenerateSessionIdEverySec;
 
+			if(isset($options['handler']) && $options['handler'] instanceof \SessionHandlerInterface)
+			{
+				session_set_save_handler($options['handler'], true);
+			}
+
 			/*
 			if(self::$settings['autostart_if_session_cookie_set'])
 			{

@@ -1,3 +1,7 @@
+### 2.4.2 (2018-04-30)
+  1. **Simpletools\Store\Session**
+     1. Added custom session handler
+
 ### 2.4.1 (2018-04-23)
  1. **Simpletools\Mvc\Router**
     1. Added http methods overloader
