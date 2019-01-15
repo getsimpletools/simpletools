@@ -303,6 +303,16 @@
 			return isset($this->_params['associative'][$key]) ? (string) $this->_params['associative'][$key] : null;
 		}
 
+        public function getAction()
+        {
+            return $this->getParam('action');
+        }
+
+        public function getController()
+        {
+            return $this->getParam('controller');
+        }
+
 		/**
 		* Get URL Param by index
 		*

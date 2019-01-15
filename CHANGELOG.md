@@ -1,3 +1,7 @@
+### 2.5.1 (2019-01-15)
+  1. **Simpletools\Http\Api**
+     1. Initial Release of API helpers
+     
 ### 2.4.2 (2018-04-30)
   1. **Simpletools\Store\Session**
      1. Added custom session handler
