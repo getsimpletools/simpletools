@@ -1,7 +1,11 @@
+### 2.5.2 (2019-01-16)
+  1. **Simpletools\Http\Api**
+     1. Fixed CONTENT_TYPE bug
+
 ### 2.5.1 (2019-01-15)
   1. **Simpletools\Http\Api**
      1. Initial Release of API helpers
-     
+
 ### 2.4.2 (2018-04-30)
   1. **Simpletools\Store\Session**
      1. Added custom session handler
@@ -13,7 +17,7 @@
     1. Added http methods overloader
  2. **Simpletools\Terminal\Cli**
     1. Added Terminal CLI
-    
+
 ### 2.3.23 (2018-03-23)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Save after Import always force upload to Storage
@@ -25,7 +29,7 @@
 ### 2.3.18 (2017-10-08)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Fixed - file_put_contents === false
-    
+
 ### 2.3.17 (2017-10-08)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Fixed - wrong exception throw params
@@ -35,7 +39,7 @@
     1. Added - filter() - can be chained without where() first
  2. **Simpletools/Store/Flash**
     1. Fixed - variables notice in case $_SESSION is not started
-    
+
 ### 2.3.15 (2017-09-12)
  1. **Simpletools/Mongo/Client**
     1. Fixed - Array recast in php 7.1
@@ -51,11 +55,11 @@
     1. Fixed - Retry on timeout
  2. **Simpletools/Mysql/Connection**
     1. Added - clean connectors
-    
+
 ### 2.3.12 (2017-06-02)
  1. **Simpletools/Store/Session**
     1. Added - Don't auto-start session in CLI
-    
+
 ### 2.3.11 (2017-04-25)
  1. **Simpletools/Store/Session**
     1. Fixed default return
@@ -70,7 +74,7 @@
  2. **Simpletools/Db/Mysql/Result**
     1. Added ->columnMap() and ->setColumnMap() methods
     2. Improved columnMap executing and iteration process
-    
+
 ### 2.3.8(2017-04-24)
  1. **Simpletools/Mvc/Cloud**
     1. Added \File ->exportFile()
@@ -82,7 +86,7 @@
      1. Added columns type casting for SELECT queries
  2. **Simpletools/Db/Mysql/Json**
      1. Introduced JSON helper
-     
+
 ### 2.3.6(2017-04-21)
  1. **Simpletools/Db/Mongo/Model**
     1. Added ->self()
@@ -104,16 +108,16 @@
     2. Added \File ->makePrivate()
     3. Added \File ->getUri()
     4. Added \File ->getUrl()
-    
+
 ### 2.3.1 (2017-03-12)
  1. **Simpletools/Mvc/Cloud**
     1. Added Google Storage Cloud/File support
     2. Added Google Storage Cloud/Bucket support
-    
+
 ### 2.2.3 (2017-02-27)
  1. **Simpletools/Mvc/Router**
     1. Added catch for errors (php7)
-    
+
 ### 2.2.2 (2017-02-27)
  1. **Simpletools/Mvc/Router**
     1. Added views failover
@@ -140,11 +144,11 @@
 ### 2.1.6 (2016-09-25)
  1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed NULL casted as empty string on duplicate key update
-    
+
 ### 2.1.5 (2016-09-24)
  1. **Simpletools/Db/Mysql/Client**
     1. Fixed flushed error and errNo after log
-    
+
 ### 2.1.4 (2016-09-24)
  1. **Simpletools/Db/Mysql/Connection**
     1. Introduced error query logging storage
@@ -153,7 +157,7 @@
  1. **Simpletools/Db/Mysql/QueryBuilder**
      1. Fixed numeric validation
      2. Fixed null validation
-    
+
 ### 2.1.3 (2016-08-21)
  1. **Simpletools/Db/Mysql/Connection**
     1. Introduced query logging storage
@@ -163,13 +167,13 @@
                                                                                                             		'emitEvent'		=> (string) $eventName,
                                                                                                             		'emitEventOnly'	=> (true|false),
                                                                                                             		'ignore'		=> ['INSERT','SET','...']
-                                                                                                            	]` 
+                                                                                                            	]`
     2. Introduced `getQueryLog()`
-    
+
 ### 2.1.2 (2016-08-11)
  1. **Simpletools/Db/Mysql/QueryBuilder**
     1. Fixed offset() order
-    
+
 ### 2.1.1 (2016-03-12)
   1. **Simpletools/Db/Mysql/Model**
     1. Introduced `table()` method in case of keys conflicts

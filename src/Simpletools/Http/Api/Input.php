@@ -25,7 +25,7 @@ class Input
 
         self::$_input = file_get_contents('php://input');
 
-        if(strtolower(@$_SERVER['CONTENT_TYPE'])=='application/json')
+				if(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='application/json')
         {
             self::$_input = json_decode(self::$_input);
         }
