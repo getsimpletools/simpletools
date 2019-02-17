@@ -1,3 +1,7 @@
+### 2.6.4 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Added meta modifiedAt support
+
 ### 2.6.3 (2019-02-17)
   1. **Simpletools\Store\Credentials**
      1. Added JSON serialisation support

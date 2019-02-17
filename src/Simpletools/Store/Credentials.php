@@ -49,21 +49,31 @@ class Credentials implements \JsonSerializable
     protected $_payloadEncrypted;
     protected $_payloadInput;
 
+    protected $_modifiedAt;
+    protected $_initType = 'array';
+
     public function __construct($data)
     {
-        if(!($data instanceof Credentials) && !is_array($data) && !is_string($data))
+        if($data instanceof Credentials)
+        {
+            $data = (string) $data;
+        }
+
+        if(!is_array($data) && !is_string($data))
         {
             throw new \Exception('Not supported data format, accepted formats: array (raw data) or string (encrypted credentials)',400);
+        }
+
+        if(is_string($data))
+        {
+            $this->_initType = 'credentials';
         }
 
         $this->_cryptKey        = static::$_CRYPT_KEY;
 
         $this->_resetIv();
 
-        if($data instanceof Credentials)
-        {
-            $data = (string) $data;
-        }
+
 
         $this->_payloadInput    = $data;
     }
@@ -119,6 +129,11 @@ class Credentials implements \JsonSerializable
 
         $this->_payloadInput = $this->_payloadDecrypted['body'];
 
+        if($this->_initType == 'credentials')
+        {
+            $this->_modifiedAt = time();
+        }
+
         return $this;
     }
 
@@ -131,9 +146,10 @@ class Credentials implements \JsonSerializable
         elseif(is_array($this->_payloadInput))
         {
             if(!$this->_payloadDecrypted) {
-                $this->_payloadDecrypted['meta'] = $this->_getMeta();
                 $this->_payloadDecrypted['body'] = $this->_payloadInput;
             }
+
+            $this->_payloadDecrypted['meta'] = $this->_getMeta();
 
             $this->_resetIv();
 
@@ -143,10 +159,27 @@ class Credentials implements \JsonSerializable
 
     protected function _getMeta()
     {
-        return array(
+        $meta = array(
             'createdAt'     => time(),
             'creatorVer'    => self::CREATOR_VERSION
         );
+
+        if(isset($this->_payloadDecrypted['meta']['createdAt']))
+        {
+            $meta['createdAt'] = $this->_payloadDecrypted['meta']['createdAt'];
+        }
+
+        if(isset($this->_payloadDecrypted['meta']['modifiedAt']))
+        {
+            $meta['modifiedAt'] = $this->_payloadDecrypted['meta']['modifiedAt'];
+        }
+
+        if($this->_modifiedAt)
+        {
+            $meta['modifiedAt'] = $this->_modifiedAt;
+        }
+
+        return $meta;
     }
 
     public function decrypt()
@@ -217,6 +250,10 @@ class Credentials implements \JsonSerializable
 
         $debug['meta']['createdAt'] = date('c',$debug['meta']['createdAt']); //stored as unix timestamp to save the byte space
 
+        if(isset($debug['meta']['modifiedAt']))
+        {
+            $debug['meta']['modifiedAt'] = date('c',$debug['meta']['modifiedAt']);
+        }
         return $debug;
     }
 
