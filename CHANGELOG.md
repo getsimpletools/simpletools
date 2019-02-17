@@ -1,3 +1,8 @@
+### 2.6.2 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Removed unnecessary use of namespace
+     2. Added support for custom ciphers, defaults to AES-256-CBC
+     
 ### 2.6.1 (2019-02-17)
   1. **Simpletools\Store\Credentials**
      1. Introduced new Class allowing to easily encrypt/decrypt credentials data 

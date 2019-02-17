@@ -35,8 +35,6 @@
 
 namespace Simpletools\Store;
 
-use Simpletools\Http\Api\Exception;
-
 class Credentials
 {
     protected static $_CIPHER = 'AES-256-CBC';
@@ -74,6 +72,11 @@ class Credentials
     {
         $iv_size            = openssl_cipher_iv_length(static::$_CIPHER);
         $this->_cryptIv     = openssl_random_pseudo_bytes($iv_size);
+    }
+
+    public static function cryptCipher($cryptCipher)
+    {
+        self::$_CIPHER = $cryptCipher;
     }
 
     public static function cryptKey($cryptKey)
