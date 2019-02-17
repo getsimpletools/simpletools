@@ -1,3 +1,7 @@
+### 2.6.1 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Introduced new Class allowing to easily encrypt/decrypt credentials data 
+     
 ### 2.5.2 (2019-01-16)
   1. **Simpletools\Http\Api**
      1. Fixed CONTENT_TYPE bug
