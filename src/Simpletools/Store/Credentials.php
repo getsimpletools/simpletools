@@ -35,10 +35,10 @@
 
 namespace Simpletools\Store;
 
-class Credentials
+class Credentials implements \JsonSerializable
 {
     protected static $_CIPHER = 'AES-256-CBC';
-    const CREATOR_VERSION = 'st_1.0.0';
+    const CREATOR_VERSION = 'st(php)_1.0.0';
 
     private static $_CRYPT_KEY;
 
@@ -191,7 +191,7 @@ class Credentials
     {
         $this->_encrypt();
 
-        return $this->_payloadEncrypted;
+        return (string) $this->_payloadEncrypted;
     }
 
     public function __debugInfo()
@@ -218,5 +218,10 @@ class Credentials
         $debug['meta']['createdAt'] = date('c',$debug['meta']['createdAt']); //stored as unix timestamp to save the byte space
 
         return $debug;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->__toString();
     }
 }

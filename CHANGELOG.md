@@ -1,3 +1,8 @@
+### 2.6.3 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Added JSON serialisation support
+     2. Updated meta creator version
+     
 ### 2.6.2 (2019-02-17)
   1. **Simpletools\Store\Credentials**
      1. Removed unnecessary use of namespace
