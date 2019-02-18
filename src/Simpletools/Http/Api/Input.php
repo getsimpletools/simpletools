@@ -177,12 +177,8 @@ class Input
 
             $exempt = array_flip($exempt);
 
-            $mappings[':exempt'] = $exempt = array_merge($exempt, self::$_exemptKeys);
-        }
-
-        if($mappings[':exempt'])
-        {
-            unset($mappings[':exempt']);
+            $exempt = array_merge($exempt, self::$_exemptKeys);
+						unset($mappings[':exempt']);
         }
 
         $this->_exceptions = [];

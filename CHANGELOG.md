@@ -1,3 +1,7 @@
+### 2.5.3 (2019-02-18)
+  1. **Simpletools\Http\Api\Input**
+     1. Fixed notice
+
 ### 2.5.2 (2019-01-16)
   1. **Simpletools\Http\Api**
      1. Fixed CONTENT_TYPE bug
