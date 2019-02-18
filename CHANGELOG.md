@@ -1,7 +1,21 @@
-### 2.5.3 (2019-02-18)
-  1. **Simpletools\Http\Api\Input**
-     1. Fixed notice
+### 2.6.4 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Added meta modifiedAt support
 
+### 2.6.3 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Added JSON serialisation support
+     2. Updated meta creator version
+     
+### 2.6.2 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Removed unnecessary use of namespace
+     2. Added support for custom ciphers, defaults to AES-256-CBC
+     
+### 2.6.1 (2019-02-17)
+  1. **Simpletools\Store\Credentials**
+     1. Introduced new Class allowing to easily encrypt/decrypt credentials data 
+     
 ### 2.5.2 (2019-01-16)
   1. **Simpletools\Http\Api**
      1. Fixed CONTENT_TYPE bug
