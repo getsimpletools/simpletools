@@ -1,3 +1,9 @@
+### 2.6.6 (2019-04-09)
+  1. **Simpletools\Http\Api\Input**
+     1. Fixed :exempt order
+     2. Added toArray()
+     3. Added toObject()
+     
 ### 2.6.5 (2019-02-18)
   1. **Simpletools\Http\Api\Input**
      1. Fixed notice

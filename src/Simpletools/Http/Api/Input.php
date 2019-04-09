@@ -162,7 +162,7 @@ class Input
                }
            }
 
-            $mappings = array_merge($mappings, $mappings_);
+            $mappings = array_merge($mappings_,$mappings);
         }
 
         $exempt = self::$_exemptKeys;
@@ -306,5 +306,15 @@ class Input
     public function __isset($name)
     {
         return isset(self::$_input->{$name});
+    }
+
+    public function toObject()
+    {
+        return self::$_input;
+    }
+
+    public function toArray()
+    {
+        return json_decode(json_encode(self::$_input),true);
     }
 }
