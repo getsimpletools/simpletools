@@ -1,3 +1,10 @@
+### 2.6.7 (2019-05-17)
+ 1. **Simpletools\Cloud\File**
+    1. Added ::setTempDir($tempDir) - to setup a custom temp dir globally
+    2. Added ->tempDir($tempDir) - to setup a custom temp dir for current given object
+ 2. **Simpletools\Google\Storage\File**
+    1. Added ->tempDir($tempDir) - to setup a custom temp dir for current given object
+    
 ### 2.6.6 (2019-04-09)
   1. **Simpletools\Http\Api\Input**
      1. Fixed :exempt order

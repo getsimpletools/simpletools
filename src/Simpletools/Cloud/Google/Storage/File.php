@@ -10,9 +10,9 @@ use Google\Cloud\Storage\StorageObject;
 class File
 {
     protected $_fileLocation;
-		protected $_isTempFile;
+    protected $_isTempFile;
     protected $_fileHandler;
-		protected $_isImport =false;
+    protected $_isImport =false;
 
     protected $_fileSettings;
     protected $_client;
@@ -22,6 +22,8 @@ class File
 
     protected $_bodyTouched = false;
     protected $_acl;
+
+    protected $_tmpDir;
 
     public function __construct($file,array $meta=[])
     {
@@ -60,6 +62,8 @@ class File
                 'meta' => $meta
             ];
         }
+
+        $this->_tmpDir = sys_get_temp_dir();
     }
 
     protected function _getBucket($bucket)
@@ -78,12 +82,22 @@ class File
         }
     }
 
+    public function tempDir($tempDir)
+    {
+        if(!is_dir($tempDir))
+        {
+            throw new \Exception("Provided temp dir doesn't exist",404);
+        }
+
+        $this->_tmpDir = $tempDir;
+    }
+
     protected function _createEmptyFile()
     {
         if($this->_fileLocation) return $this->_fileLocation;
 
         $this->_isTempFile = true;
-        return $this->_fileLocation = tempnam(sys_get_temp_dir(),uniqid());
+        return $this->_fileLocation = tempnam($this->_tmpDir,uniqid());
     }
 
     protected function _download()

@@ -12,6 +12,8 @@ class File
     protected static $_bucketSuffix;
     protected static $_bucketPrefix;
 
+    protected static $_tmpDir;
+
     public static function setBucketPrefix($prefix)
     {
         self::$_bucketPrefix = $prefix;
@@ -25,6 +27,16 @@ class File
     public static function setBaseProtocol($protocol)
     {
         self::$_defaultProtocol = $protocol;
+    }
+
+    public static function setTempDir($tempDir)
+    {
+        if(!is_dir($tempDir))
+        {
+            throw new \Exception("Provided temp dir doesn't exist",404);
+        }
+
+        self::$_tmpDir = $tempDir;
     }
 
     public function __construct($file,array $meta=[])
@@ -50,6 +62,23 @@ class File
         {
             throw new \Exception('An unknown file type');
         }
+
+        if(self::$_tmpDir)
+        {
+            $this->_file->tempDir(self::$_tmpDir);
+        }
+    }
+
+    public function tempDir($tempDir)
+    {
+        if(!is_dir($tempDir))
+        {
+            throw new \Exception("Provided temp dir doesn't exist",404);
+        }
+
+        $this->_file->tempDir($tempDir);
+
+        return $this;
     }
 
     protected function _parsePath($path)
