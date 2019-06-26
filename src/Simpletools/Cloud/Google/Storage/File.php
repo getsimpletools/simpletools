@@ -102,23 +102,36 @@ class File
 
     protected function _download()
     {
+        $TMPDIR = sys_get_temp_dir();
+        if($this->_tmpDir) putenv('TMPDIR=/' . $this->_tmpDir);
+
         if(!$this->_fileLocation)
         {
             $this->_initStorageObject();
             $this->_createEmptyFile();
 
-            if(!$this->_remoteFile->exists()) return false;
+            if(!$this->_remoteFile->exists())
+            {
+                if($this->_tmpDir) putenv('TMPDIR=/' . $TMPDIR);
+
+                return false;
+            }
 
             try
             {
                 $this->_remoteFile->downloadToFile($this->_fileLocation);
             }
             catch(\Exception $e){
+
+                if($this->_tmpDir) putenv('TMPDIR=/' . $TMPDIR);
+
                 //no file found - $e->getCode() = 404
                 $this->_remoteFile = null;
                 return false;
             }
         }
+
+        if($this->_tmpDir) putenv('TMPDIR=/' . $TMPDIR);
 
         return true;
     }
