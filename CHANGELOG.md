@@ -1,3 +1,9 @@
+### 2.7.2 (2019-06-30)
+ 1. **Simpletools\Terminal\Progress**
+    1. Fixed auto end restart bug
+    2. Added ->onCompleted() callback event
+    3. Added ->onEnded() callback event
+    
 ### 2.7.1 (2019-06-30)
  1. **Simpletools\Terminal\Progress**
     1. Added relevant color and completion status to ->end()

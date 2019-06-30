@@ -13,12 +13,21 @@ class Progress
     protected $_step = 0;
 
     protected $_callback;
+    protected $_completedCallback;
+    protected $_endedCallback;
+
     protected $_hidden = false;
 
     protected $_memStart;
     protected $_lastPercent;
     protected $_done = false;
     protected $_pid;
+
+    protected $_progress = 0;
+    protected $_ram;
+    protected $_cpu;
+    protected $_opsSec = 0;
+    protected $_elapsed = 0;
 
     public function __construct($label='')
     {
@@ -43,6 +52,21 @@ class Progress
         if(!$this->_done)
         {
             echo PHP_EOL."\033[43m\033[30m ENDED \033[0m".PHP_EOL.PHP_EOL;
+
+            if($this->_endedCallback)
+            {
+                $this->_triggerCallback($this->_endedCallback, [
+                    'step' => $this->_step,
+                    'steps' => $this->_steps,
+                    'label' => $this->_label,
+                    'pace' => $this->_pace,
+                    'progress' => $this->_progress / 100,
+                    'ram' => $this->_ram,
+                    'cpu' => $this->_cpu / 100,
+                    'opsSec' => $this->_opsSec,
+                    'elapsed' => $this->_elapsed
+                ]);
+            }
         }
 
         $this->_steps       = 0;
@@ -80,6 +104,30 @@ class Progress
         return $this;
     }
 
+    public function onCompleted($callback)
+    {
+        if(!is_callable($callback))
+        {
+            throw new \Exception('Your callback is not callable',400);
+        }
+
+        $this->_completedCallback = $callback;
+
+        return $this;
+    }
+
+    public function onEnded($callback)
+    {
+        if(!is_callable($callback))
+        {
+            throw new \Exception('Your callback is not callable',400);
+        }
+
+        $this->_endedCallback = $callback;
+
+        return $this;
+    }
+
     public function pace($rate)
     {
         if($rate<0.01 OR $rate>1)
@@ -111,6 +159,11 @@ class Progress
         $this->_startTime   = microtime(true);
         $this->_memStart    = memory_get_peak_usage(true);
 
+        if(!$this->_steps)
+        {
+            throw new \Exception('Please specify steps',400);
+        }
+
         return $this->step($step);
     }
 
@@ -125,7 +178,7 @@ class Progress
 
         if(!$this->_steps)
         {
-            throw new \Exception('Please specify steps',400);
+            return $this;
         }
 
         $steps          = $this->_steps;
@@ -158,9 +211,15 @@ class Progress
         $elapsed        = $now - $start_time;
         $opsSec         = $elapsed ? round($step/$elapsed) : '-';
 
+        $this->_progress = $percent;
+        $this->_ram = $ram;
+        $this->_cpu = $cpu;
+        $this->_opsSec = $opsSec;
+        $this->_elapsed = $elapsed;
+
         if($this->_callback)
         {
-            $this->_triggerCallback([
+            $this->_triggerCallback($this->_callback,[
                 'step'          => $step,
                 'steps'         => $this->_steps,
                 'label'         => $this->_label,
@@ -237,7 +296,26 @@ class Progress
 
         if ($step >= $steps)
         {
-            echo PHP_EOL."\033[42m\033[30m COMPLETED \033[0m".PHP_EOL.PHP_EOL;
+            if(!$this->_done)
+            {
+                echo PHP_EOL."\033[42m\033[30m COMPLETED \033[0m".PHP_EOL.PHP_EOL;
+
+                if($this->_completedCallback)
+                {
+                    $this->_triggerCallback($this->_completedCallback, [
+                        'step' => $step,
+                        'steps' => $this->_steps,
+                        'label' => $this->_label,
+                        'pace' => $this->_pace,
+                        'progress' => $percent / 100,
+                        'ram' => $ram,
+                        'cpu' => $cpu / 100,
+                        'opsSec' => $opsSec,
+                        'elapsed' => $elapsed
+                    ]);
+                }
+            }
+
             $this->_done = true;
 
             $this->end();
@@ -246,21 +324,19 @@ class Progress
         return $this;
     }
 
-    protected function _triggerCallback($args)
+    protected function _triggerCallback($callback,$args)
     {
-        $callable = $this->_callback;
-
-        if(is_array($callable))
+        if(is_array($callback))
         {
-            $reflection 	= new \ReflectionMethod($callable[0], $callable[1]);
+            $reflection 	= new \ReflectionMethod($callback[0], $callback[1]);
         }
-        elseif(is_string($callable))
+        elseif(is_string($callback))
         {
-            $reflection 	= new \ReflectionFunction($callable);
+            $reflection 	= new \ReflectionFunction($callback);
         }
-        elseif(is_a($callable, 'Closure') || is_callable($callable, '__invoke'))
+        elseif(is_a($callback, 'Closure') || is_callable($callback, '__invoke'))
         {
-            $objReflector 	= new \ReflectionObject($callable);
+            $objReflector 	= new \ReflectionObject($callback);
             $reflection    	= $objReflector->getMethod('__invoke');
         }
 
@@ -285,6 +361,6 @@ class Progress
             }
         }
 
-        return $reflection->invokeArgs($callable, $pass);
+        return $reflection->invokeArgs($callback, $pass);
     }
 }
