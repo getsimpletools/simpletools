@@ -1,4 +1,8 @@
-### 2.6.8 (2019-05-26)
+### 2.7.0 (2019-06-30)
+ 1. **Simpletools\Terminal\Progress**
+    1. Introduced shell progress bar allowing to measure speed as well as additional useful metric across ended-loop running processes
+
+### 2.6.8 (2019-06-26)
  1. **Simpletools\Cloud\Google\Storage\File**
     1. Added temp dir control propagation for the underlying client
 
