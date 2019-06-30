@@ -1,3 +1,7 @@
+### 2.7.1 (2019-06-30)
+ 1. **Simpletools\Terminal\Progress**
+    1. Added relevant color and completion status to ->end()
+
 ### 2.7.0 (2019-06-30)
  1. **Simpletools\Terminal\Progress**
     1. Introduced shell progress bar allowing to measure speed as well as additional useful metric across ended-loop running processes

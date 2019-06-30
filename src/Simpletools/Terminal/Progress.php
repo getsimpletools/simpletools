@@ -40,6 +40,11 @@ class Progress
 
     public function end()
     {
+        if(!$this->_done)
+        {
+            echo PHP_EOL."\033[43m\033[30m ENDED \033[0m".PHP_EOL.PHP_EOL;
+        }
+
         $this->_steps       = 0;
         $this->_firstRun    = true;
         $this->_lastPercent = null;
@@ -232,8 +237,10 @@ class Progress
 
         if ($step >= $steps)
         {
-            echo PHP_EOL."\033[0;44m COMPLETED \033[0m".PHP_EOL.PHP_EOL;
+            echo PHP_EOL."\033[42m\033[30m COMPLETED \033[0m".PHP_EOL.PHP_EOL;
             $this->_done = true;
+
+            $this->end();
         }
 
         return $this;
