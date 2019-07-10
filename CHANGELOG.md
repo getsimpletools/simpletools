@@ -1,3 +1,7 @@
+### 2.7.4 (2019-07-10)
+  1. **Simpletools\Store\Credentials**
+     1. Added `->encrypt()` allowing to pass a string on construct and get it encrypted rather than decrypted, resulting in error due to default assumption of string being a cipher
+
 ### 2.7.3 (2019-07-10)
   1. **Simpletools\Store\Credentials**
      1. Added `->salt()` allowing to specify your own salt string
@@ -8,12 +12,12 @@
 ### 2.7.2 (2019-06-30)
  1. **Simpletools\Terminal\Progress**
     1. Fixed auto end restart bug
-    2. Added ->onCompleted() callback event
-    3. Added ->onEnded() callback event
+    2. Added `->onCompleted()` callback event
+    3. Added `->onEnded()` callback event
     
 ### 2.7.1 (2019-06-30)
  1. **Simpletools\Terminal\Progress**
-    1. Added relevant color and completion status to ->end()
+    1. Added relevant color and completion status to `->end()`
 
 ### 2.7.0 (2019-06-30)
  1. **Simpletools\Terminal\Progress**

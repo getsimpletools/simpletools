@@ -35,6 +35,8 @@
 
 namespace Simpletools\Store;
 
+use mysql_xdevapi\Exception;
+
 class Credentials implements \JsonSerializable
 {
     protected static $_CIPHER = 'AES-256-CBC';
@@ -53,7 +55,7 @@ class Credentials implements \JsonSerializable
     protected $_payloadInput;
 
     protected $_modifiedAt;
-    protected $_initType = 'array';
+    protected $_initType = 'data';
 
     public function __construct($data)
     {
@@ -69,7 +71,7 @@ class Credentials implements \JsonSerializable
 
         if(is_string($data))
         {
-            $this->_initType = 'credentials';
+            $this->_initType = 'cipher';
         }
 
         $this->_cryptKey        = static::$_CRYPT_KEY;
@@ -77,6 +79,13 @@ class Credentials implements \JsonSerializable
         $this->_resetIv();
 
         $this->_payloadInput    = $data;
+    }
+
+    public function encrypt()
+    {
+        $this->_initType = 'data';
+
+        return $this;
     }
 
     public function salt($salt)
@@ -173,11 +182,11 @@ class Credentials implements \JsonSerializable
 
     protected function _encrypt()
     {
-        if(is_string($this->_payloadInput))
+        if(is_string($this->_payloadInput) && $this->_initType == 'cipher')
         {
             $this->_decrypt();
         }
-        elseif(is_array($this->_payloadInput))
+        elseif(is_array($this->_payloadInput) OR $this->_initType == 'data')
         {
             if(!$this->_payloadDecrypted) {
                 $this->_payloadDecrypted['body'] = $this->_payloadInput;
@@ -189,6 +198,10 @@ class Credentials implements \JsonSerializable
             $this->_resetIv();
 
             $this->_payloadEncrypted = base64_encode($this->_cryptIv).'.'.openssl_encrypt(json_encode($this->_payloadDecrypted),self::$_CIPHER,$this->_cryptKey,null,$this->_cryptIv);
+        }
+        else
+        {
+            throw new Exception("Unknown construct data type",400);
         }
     }
 
