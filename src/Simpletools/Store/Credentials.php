@@ -35,8 +35,6 @@
 
 namespace Simpletools\Store;
 
-use mysql_xdevapi\Exception;
-
 class Credentials implements \JsonSerializable
 {
     protected static $_CIPHER = 'AES-256-CBC';

@@ -1,3 +1,8 @@
+### 2.7.5 (2019-07-10)
+  1. **Simpletools\Store\Credentials**
+     1. Fixed `use mysql_xdevapi\Exception;` accidentally added by IDE
+
+
 ### 2.7.4 (2019-07-10)
   1. **Simpletools\Store\Credentials**
      1. Added `->encrypt()` allowing to pass a string on construct and get it encrypted rather than decrypted, resulting in error due to default assumption of string being a cipher
