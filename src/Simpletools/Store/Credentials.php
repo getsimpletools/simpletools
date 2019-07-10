@@ -44,6 +44,9 @@ class Credentials implements \JsonSerializable
 
     private $_cryptKey;
     private $_cryptIv;
+    protected $_mySalt;
+
+    protected $_metaDisabled = false;
 
     protected $_payloadDecrypted;
     protected $_payloadEncrypted;
@@ -73,15 +76,29 @@ class Credentials implements \JsonSerializable
 
         $this->_resetIv();
 
-
-
         $this->_payloadInput    = $data;
+    }
+
+    public function salt($salt)
+    {
+        $this->_mySalt = $salt;
+        $this->_resetIv();
+
+        return $this;
     }
 
     protected function _resetIv()
     {
         $iv_size            = openssl_cipher_iv_length(static::$_CIPHER);
-        $this->_cryptIv     = openssl_random_pseudo_bytes($iv_size);
+
+        if($this->_mySalt)
+        {
+            $this->_cryptIv     = substr(sha1($this->_mySalt),0,$iv_size);
+        }
+        else
+        {
+            $this->_cryptIv     = openssl_random_pseudo_bytes($iv_size);
+        }
     }
 
     public static function cryptCipher($cryptCipher)
@@ -108,9 +125,12 @@ class Credentials implements \JsonSerializable
         return isset($this->_payloadDecrypted['body'][$name]);
     }
 
-    public function get($name)
+    public function get($name=null)
     {
         $this->_decrypt();
+
+        if($name === null) return $this->_payloadDecrypted['body'];
+
         if(isset($this->_payloadDecrypted['body'][$name]))
         {
             return $this->_payloadDecrypted['body'][$name];
@@ -137,6 +157,20 @@ class Credentials implements \JsonSerializable
         return $this;
     }
 
+    public function disableMeta()
+    {
+        $this->_metaDisabled = true;
+
+        return $this;
+    }
+
+    public function enableMeta()
+    {
+        $this->_metaDisabled = false;
+
+        return $this;
+    }
+
     protected function _encrypt()
     {
         if(is_string($this->_payloadInput))
@@ -149,7 +183,8 @@ class Credentials implements \JsonSerializable
                 $this->_payloadDecrypted['body'] = $this->_payloadInput;
             }
 
-            $this->_payloadDecrypted['meta'] = $this->_getMeta();
+            if(!$this->_metaDisabled)
+                $this->_payloadDecrypted['meta'] = $this->_getMeta();
 
             $this->_resetIv();
 
@@ -237,7 +272,7 @@ class Credentials implements \JsonSerializable
 
         $debug = array(
             'credentials'       => $credentials,
-            'meta'              => $this->_payloadDecrypted['meta'],
+            'meta'              => @$this->_payloadDecrypted['meta'],
             'size'              => array(
                 'bytes'        => strlen($credentials),
                 'overhead'      => array(

@@ -1,3 +1,10 @@
+### 2.7.3 (2019-07-10)
+  1. **Simpletools\Store\Credentials**
+     1. Added `->salt()` allowing to specify your own salt string
+     2. Added `->disableMeta()` allowing to disable meta data
+     3. Added `->enableMeta()` allowing to enable meta data
+     4. Added `->get()` allowing to get entire data set
+     
 ### 2.7.2 (2019-06-30)
  1. **Simpletools\Terminal\Progress**
     1. Fixed auto end restart bug
