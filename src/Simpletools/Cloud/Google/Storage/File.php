@@ -25,6 +25,10 @@ class File
 
     protected $_tmpDir;
 
+    protected $_gzip = false;
+    protected $_gzipChunk = 0;
+    protected $_gzipCompressionLevel = 9;
+
     public function __construct($file,array $meta=[])
     {
         if($file instanceof StorageObject)
@@ -204,8 +208,49 @@ class File
             $this->_bodyTouched = true;
         }
 
-				if($this->_bodyTouched || $this->_isImport)
+        if($this->_bodyTouched || $this->_isImport)
         {
+            if($this->_gzip)
+            {
+                $compressed_file_path 	= tempnam($this->_tmpDir,uniqid());
+                $compressed_file_h		= fopen($compressed_file_path,'wb');
+
+                $original_file_h = fopen($this->_fileLocation,'rb');
+
+                while($content = fread($original_file_h,$this->_gzipChunk))
+                {
+                    fwrite($compressed_file_h,gzencode($content,$this->_gzipCompressionLevel));
+                }
+
+                fclose($original_file_h);
+                fclose($compressed_file_h);
+
+                $beforeGzip = filesize($this->_fileLocation);
+                $afterGzip = filesize($compressed_file_path);
+
+                $file_path = $compressed_file_path;
+
+                if($beforeGzip > $afterGzip) {
+                    $this->setMeta([
+                        'contentEncoding' => 'gzip',
+                        'metadata' => [
+                            'contentLengthBeforeGzip' => $beforeGzip,
+                            'contentLengthAfterGzip' => $afterGzip
+                        ]
+                    ]);
+                }
+                else
+                {
+                    $file_path = $this->_fileLocation;
+                    @unlink($compressed_file_path);
+                    $compressed_file_path = null;
+                }
+            }
+            else
+            {
+                $file_path = $this->_fileLocation;
+            }
+
             $settings = [
                 "name"      => $this->_fileSettings['key'],
                 "metadata"  => $this->_fileSettings['meta']
@@ -214,10 +259,19 @@ class File
             if($this->_acl)
                 $settings['predefinedAcl'] = $this->_acl;
 
-            $this->_remoteFile = $bucket->upload(
-                fopen($this->_fileLocation, 'r'),
-                $settings
-            );
+            try {
+                $this->_remoteFile = $bucket->upload(
+                    fopen($file_path, 'r'),
+                    $settings
+                );
+            }
+            catch(\Exception $e)
+            {
+                if(isset($compressed_file_path))
+                    @unlink($compressed_file_path);
+
+                throw $e;
+            }
         }
         else
         {
@@ -383,4 +437,21 @@ class File
     {
         $this->_acl = 'private';
     }
+
+    public function gzip($compressionLevel=9,$chunkSize=100000)
+    {
+        $this->_gzipChunk = $chunkSize;
+        $this->_gzipCompressionLevel = $compressionLevel;
+        $this->_gzip = true;
+
+        return $this;
+    }
+
+    public function gzipOff()
+    {
+        $this->_gzip = false;
+
+        return $this;
+    }
+
 }

@@ -14,6 +14,22 @@ class File
 
     protected static $_tmpDir;
 
+    protected static $_gzipChunkSize = 100000;
+    protected static $_gzipCompressionLevel = 9;
+    protected static $_gzip = false;
+
+    public static function enableGzip($compressionLevel=9,$chunkSize=10000)
+    {
+        self::$_gzip = true;
+        self::$_gzipCompressionLevel = $compressionLevel;
+        self::$_gzipChunkSize = $chunkSize;
+    }
+
+    public static function disableGzip()
+    {
+        self::$_gzip = false;
+    }
+
     public static function setBucketPrefix($prefix)
     {
         self::$_bucketPrefix = $prefix;
@@ -66,6 +82,10 @@ class File
         if(self::$_tmpDir)
         {
             $this->_file->tempDir(self::$_tmpDir);
+        }
+
+        if(self::$_gzip) {
+            $this->_file->gzip(self::$_gzipCompressionLevel, self::$_gzipChunkSize);
         }
     }
 
@@ -226,6 +246,18 @@ class File
     public function makePrivate()
     {
         $this->_file->makePrivate();
+        return $this;
+    }
+
+    public function gzip($compressionLevel=9,$chunkSize=100000)
+    {
+        $this->_file->gzip($compressionLevel,$chunkSize);
+        return $this;
+    }
+
+    public function gzipOff()
+    {
+        $this->_file->gzipOff();
         return $this;
     }
 }

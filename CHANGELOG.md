@@ -1,7 +1,13 @@
+### 2.8.1 (2019-11-25)
+  1. **Simpletools\Cloud\File**
+     1. Added `::enableGzip($compressionLevel=9,$chunkSize=100000)` allowing to disable global gzip across all objects
+     2. Added `::disableGzip()` allowing to disable global gzip across all objects
+     2. Added `->gzip($compressionLevel=9,$chunkSize=100000)` to enable gzip compression on per object basis
+     3. Added `->gzipOff()` to disable gzip compression on per object basis
+     
 ### 2.7.5 (2019-07-10)
   1. **Simpletools\Store\Credentials**
      1. Fixed `use mysql_xdevapi\Exception;` accidentally added by IDE
-
 
 ### 2.7.4 (2019-07-10)
   1. **Simpletools\Store\Credentials**
