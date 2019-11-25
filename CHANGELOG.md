@@ -1,3 +1,7 @@
+### 2.8.2 (2019-11-25)
+  1. **Simpletools\Cloud\File**
+     1. Added `::enableGzip($compressionLevel=9,$chunkSize=100000)` and `->gzip($compressionLevel=9,$chunkSize=100000)` args validation
+     
 ### 2.8.1 (2019-11-25)
   1. **Simpletools\Cloud\File**
      1. Added `::enableGzip($compressionLevel=9,$chunkSize=100000)` allowing to disable global gzip across all objects

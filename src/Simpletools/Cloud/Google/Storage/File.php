@@ -26,7 +26,7 @@ class File
     protected $_tmpDir;
 
     protected $_gzip = false;
-    protected $_gzipChunk = 0;
+    protected $_gzipChunk = 100000;
     protected $_gzipCompressionLevel = 9;
 
     public function __construct($file,array $meta=[])

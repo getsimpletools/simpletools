@@ -18,8 +18,14 @@ class File
     protected static $_gzipCompressionLevel = 9;
     protected static $_gzip = false;
 
-    public static function enableGzip($compressionLevel=9,$chunkSize=10000)
+    public static function enableGzip($compressionLevel=9,$chunkSize=100000)
     {
+        if($chunkSize<1)
+            throw new \Exception("chunk can't be smaller than 0",400);
+
+        if($compressionLevel<1 OR $compressionLevel>9)
+            throw new \Exception("compressionLevel can be between 1 and 9",400);
+
         self::$_gzip = true;
         self::$_gzipCompressionLevel = $compressionLevel;
         self::$_gzipChunkSize = $chunkSize;
@@ -251,6 +257,12 @@ class File
 
     public function gzip($compressionLevel=9,$chunkSize=100000)
     {
+        if($chunkSize<1)
+            throw new \Exception("chunk can't be smaller than 0",400);
+
+        if($compressionLevel<1 OR $compressionLevel>9)
+            throw new \Exception("compressionLevel can be between 1 and 9",400);
+
         $this->_file->gzip($compressionLevel,$chunkSize);
         return $this;
     }
