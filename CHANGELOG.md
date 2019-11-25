@@ -1,3 +1,7 @@
+### 2.8.3 (2019-11-25)
+  1. **Simpletools\Cloud\File**
+     1. Added `gzipExemptExtensions('png','jpg','jpeg','gif','pdf', ...)` to allow exemptions of certain file types
+     
 ### 2.8.2 (2019-11-25)
   1. **Simpletools\Cloud\File**
      1. Added `::enableGzip($compressionLevel=9,$chunkSize=100000)` and `->gzip($compressionLevel=9,$chunkSize=100000)` args validation

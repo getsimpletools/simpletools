@@ -17,6 +17,19 @@ class File
     protected static $_gzipChunkSize = 100000;
     protected static $_gzipCompressionLevel = 9;
     protected static $_gzip = false;
+    protected static $_gzipExemptExtensions = array();
+
+    public static function gzipExemptExtensions()
+    {
+        $extensions = func_get_args();
+        if(!count($extensions))
+            throw new \Exception("Please provide some extensions",400);
+
+        if(is_array($extensions[0]))
+            $extensions = $extensions[0];
+
+        self::$_gzipExemptExtensions = array_change_key_case(array_flip($extensions), CASE_LOWER);
+    }
 
     public static function enableGzip($compressionLevel=9,$chunkSize=100000)
     {
@@ -61,11 +74,19 @@ class File
         self::$_tmpDir = $tempDir;
     }
 
+    protected function _getExt($filename)
+    {
+        $ext = explode('.',$filename);
+        return strtolower(end($ext));
+    }
+
     public function __construct($file,array $meta=[])
     {
         if($file instanceof StorageObject)
         {
             $this->_file = new Google\Storage\File($file,$meta);
+            $ext = $this->_getExt($this->_file->getName());
+
         }
         elseif(is_string($file))
         {
@@ -79,6 +100,8 @@ class File
                 $this->_file = new Google\Storage\File($path['path'],$meta);
             else
                 throw new \Exception('An unknown protocol '.$path['protocol']);
+
+            $ext = $path['ext'];
         }
         else
         {
@@ -90,7 +113,8 @@ class File
             $this->_file->tempDir(self::$_tmpDir);
         }
 
-        if(self::$_gzip) {
+        if(self::$_gzip && !isset(self::$_gzipExemptExtensions[$ext]))
+        {
             $this->_file->gzip(self::$_gzipCompressionLevel, self::$_gzipChunkSize);
         }
     }
@@ -137,11 +161,17 @@ class File
             $fullPath   = $protocol.'://'.$path[0].'/'.$path[1];
         }
 
+        $fullPath_lastleaf = explode('/',$fullPath);
+        $fullPath_lastleaf = end($fullPath_lastleaf);
+
+        $ext = $this->_getExt($fullPath_lastleaf);
+
         return array(
             'path'      => $fullPath,
             'protocol'  => $protocol,
             'bucket'    => $path[0],
-            'key'       => $path[1]
+            'key'       => $path[1],
+            'ext'       => $ext
         );
     }
 

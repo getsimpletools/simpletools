@@ -261,7 +261,7 @@ class File
 
             try {
                 $this->_remoteFile = $bucket->upload(
-                    fopen($file_path, 'r'),
+                    fopen($file_path, 'rb'),
                     $settings
                 );
             }
