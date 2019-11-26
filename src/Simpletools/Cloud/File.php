@@ -193,6 +193,11 @@ class File
         return $this->_file->getHandler($flag);
     }
 
+    public function stream()
+    {
+        return $this->_file->stream();
+    }
+
     public function save()
     {
         $this->_file->save();

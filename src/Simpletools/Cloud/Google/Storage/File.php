@@ -454,4 +454,9 @@ class File
         return $this;
     }
 
+    public function stream()
+    {
+        $this->_initStorageObject();
+        return $this->_remoteFile->downloadAsStream();
+    }
 }
