@@ -213,17 +213,17 @@ class File
             if($this->_gzip)
             {
                 $compressed_file_path 	= tempnam($this->_tmpDir,uniqid());
-                $compressed_file_h		= fopen($compressed_file_path,'wb');
+                $compressed_file_h		= gzopen($compressed_file_path,'wb'.$this->_gzipCompressionLevel);
 
                 $original_file_h = fopen($this->_fileLocation,'rb');
 
                 while($content = fread($original_file_h,$this->_gzipChunk))
                 {
-                    fwrite($compressed_file_h,gzencode($content,$this->_gzipCompressionLevel));
+                    gzwrite($compressed_file_h,$content);
                 }
 
                 fclose($original_file_h);
-                fclose($compressed_file_h);
+                gzclose($compressed_file_h);
 
                 $beforeGzip = filesize($this->_fileLocation);
                 $afterGzip = filesize($compressed_file_path);

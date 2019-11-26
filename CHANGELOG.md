@@ -1,5 +1,9 @@
 ### 2.8.4 (2019-11-26)
   1. **Simpletools\Cloud\File**
+     1. Fixed gzip encoding.
+
+### 2.8.4 (2019-11-26)
+  1. **Simpletools\Cloud\File**
      1. Added corrected custom meta data for gzip content-before.
     
 ### 2.8.3 (2019-11-25)
