@@ -235,7 +235,9 @@ class File
                         'contentEncoding' => 'gzip',
                         'metadata' => [
                             'content-length-before-gzip' => $beforeGzip,
-                            'content-length-after-gzip' => $afterGzip
+                            'content-length-after-gzip' => $afterGzip,
+                            'contentLengthBeforeGzip' => $beforeGzip,
+                            'contentLengthAfterGzip' => $afterGzip
                         ]
                     ]);
                 }

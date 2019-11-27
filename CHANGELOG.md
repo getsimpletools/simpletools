@@ -1,3 +1,7 @@
+### 2.8.8 (2019-11-27)
+  1. **Simpletools\Cloud\File**
+     1. Added `contentLength(*)Gzip` metadata, deprecated `content-length-(*)-gzip` version
+     
 ### 2.8.7 (2019-11-27)
   1. **Simpletools\Cloud\File**
      1. Fixed unlink.
