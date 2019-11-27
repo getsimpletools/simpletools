@@ -234,8 +234,6 @@ class File
                     $this->setMeta([
                         'contentEncoding' => 'gzip',
                         'metadata' => [
-                            'content-length-before-gzip' => $beforeGzip,
-                            'content-length-after-gzip' => $afterGzip,
                             'contentLengthBeforeGzip' => $beforeGzip,
                             'contentLengthAfterGzip' => $afterGzip
                         ]
