@@ -1,3 +1,7 @@
+### 2.8.7 (2019-11-27)
+  1. **Simpletools\Cloud\File**
+     1. Fixed unlink.
+
 ### 2.8.6 (2019-11-26)
   1. **Simpletools\Cloud\File**
      1. Added `stream()` returning `\Psr\Http\Message\StreamInterface` allowing to stream large files

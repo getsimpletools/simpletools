@@ -264,6 +264,9 @@ class File
                     fopen($file_path, 'rb'),
                     $settings
                 );
+
+                if(isset($compressed_file_path))
+                    @unlink($compressed_file_path);
             }
             catch(\Exception $e)
             {
