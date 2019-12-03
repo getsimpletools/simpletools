@@ -15,6 +15,10 @@ class Client
     public static function settings($settings)
     {
         self::$_clientSettings = $settings;
+        if(self::$_gCloudClient)
+        {
+            self::$_gCloudClient = null;
+        }
         self::$_gCloudClient   = new ServiceBuilder($settings);
     }
 

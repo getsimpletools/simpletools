@@ -1,3 +1,7 @@
+### 2.8.10 (2019-12-03)
+  1. **Simpletools\Cloud\Google\Client**
+     1. Fixed bug with multiple instances
+
 ### 2.8.9 (2019-11-27)
   1. **Simpletools\Cloud\File**
      1. Removed `content-length-(*)-gzip` version
