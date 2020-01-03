@@ -10,6 +10,10 @@
             "name": "Marcin Rosinski",
             "email": "marcin@getsimpletools.com",
             "homepage": "http://twitter.com/marcinrosinski"
+        },
+        {
+            "name": "Adrian Chwialkowski",
+            "email": "adrian@getsimpletools.com"
         }
     ],
     "require": {
