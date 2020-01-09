@@ -29,6 +29,10 @@ class Input
         {
             self::$_input = json_decode(self::$_input);
         }
+				elseif(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='multipart/form-data')
+				{
+						self::$_input = json_decode(json_encode($_POST));
+				}
         else
         {
             self::$_input = isset($_REQUEST) ? (object) $_REQUEST : null;

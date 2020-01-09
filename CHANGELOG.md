@@ -1,3 +1,7 @@
+### 2.8.12 (2020-01-09)
+  1. **Simpletools\Http\Api\Input**
+     1. Added POST multipart/form-data support
+     
 ### 2.8.10 (2019-12-03)
   1. **Simpletools\Cloud\Google\Client**
      1. Fixed bug with multiple instances
