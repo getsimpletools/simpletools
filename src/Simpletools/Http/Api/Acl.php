@@ -36,6 +36,11 @@ class Acl
         return $this;
     }
 
+    public function getAclCompiled()
+    {
+        return $this->_aclCompiled;
+    }
+
     public function evaluate()
     {
         if($this->_aclCompiled)
