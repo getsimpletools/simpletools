@@ -61,9 +61,9 @@ class Acl
                         if($method=='NONE') {
 
                             if($this->_dryRun)
-                                throw new \Exception('Unauthorized, ACL NONE', 401);
+                                throw new \Exception('Forbidden, ACL NONE', 403);
                             else
-                                throw new Exception('Unauthorized, ACL NONE', 401);
+                                throw new Exception('Forbidden, ACL NONE', 403);
                         }
 
                         return true;
@@ -72,9 +72,9 @@ class Acl
             }
 
             if($this->_dryRun)
-                throw new \Exception('Unauthorized, ACL no matches',401);
+                throw new \Exception('Forbidden, ACL no matches',403);
             else
-                throw new Exception('Unauthorized, ACL no matches',401);
+                throw new Exception('Forbidden, ACL no matches',403);
         }
 
         if($this->_dryRun)

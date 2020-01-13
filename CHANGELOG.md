@@ -1,3 +1,6 @@
+### 2.8.13 (2020-01-13)
+  1. **Simpletools\Http\Api\Acl**
+     1. Changed the HTTP code from 401 to 403 on bad ACL
 ### 2.8.12 (2020-01-09)
   1. **Simpletools\Http\Api\Input**
      1. Added POST multipart/form-data support
