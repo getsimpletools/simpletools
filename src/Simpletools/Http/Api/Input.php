@@ -239,40 +239,42 @@ class Input
                 unset($mappings[$key]['decorator']);
             }
 
-            if(isset($settings[':test']))
-            {
-                $value = @self::$_input->{$key};
+						if ((!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional']) && !property_exists(self::$_input, $key))
+						{
+							$this->_exceptions[] = new InputException('Bad Request, missing value for required key: {' . $key . '}', 400);
+						}
+						else if (isset($settings[':test']))
+						{
+							$value = @self::$_input->{$key};
 
-                $mappings[$key][':test']['matching'] = true;
+							$mappings[$key][':test']['matching'] = true;
 
-                if(
-                    (isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && isset(self::$_input->{$key})) OR
-                    (!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional'])
-                )
-                {
-                    if (
-                        //!(isset($exempt[$key]) && isset($bindedMaps[$key]) && !isset($localMaps[$key])) && //exempt and not overwritten locally on construct
-                        $settings[':test']['notEmpty'] && !$value
-                    ) {
-                        $mappings[$key][':test']['matching'] = false;
-                        $this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $key . '}', 400);
-                    }
+							if (
+									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $key)) ||
+									(!isset($settings[':test']['conditional']) || !$settings[':test']['conditional'])
+							)
+							{
+								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && (!$value || (is_object($value) && empty((array)$value))))
+								{
+									$mappings[$key][':test']['matching'] = false;
+									$this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $key . '}', 400);
+								}
 
-                    if (@$settings[':test']['matching'] && is_callable($settings[':test']['matching'])) {
-                        $settings[':test']['matching'] = $mappings[$key][':test']['matching'] = $settings[':test']['matching']($value);
-                        if (!$settings[':test']['matching']) {
-                            $mappings[$key][':test']['matching'] = false;
-                            $this->_exceptions[] = new InputException('Bad Request, non-empty {' . $key . '} param is not passing value matching test', 400);
-                        }
-                    }
-
-
-                }
-            }
-            else
-            {
-                $this->_exceptions[] = new InputException('Not Implemented, :test is missing for defined key {'.$key.'}',501);
-            }
+								if (isset($settings[':test']['matching']) && is_callable($settings[':test']['matching']))
+								{
+									$settings[':test']['matching'] = $mappings[$key][':test']['matching'] = $settings[':test']['matching']($value);
+									if (!$settings[':test']['matching'])
+									{
+										$mappings[$key][':test']['matching'] = false;
+										$this->_exceptions[] = new InputException('Bad Request, non-empty {' . $key . '} param is not passing value matching test', 400);
+									}
+								}
+							}
+						}
+						else
+						{
+							$this->_exceptions[] = new InputException('Not Implemented, :test is missing for defined key {' . $key . '}', 501);
+						}
         }
 
         if(self::$_input && (is_object(self::$_input) OR is_array(self::$_input))) {
