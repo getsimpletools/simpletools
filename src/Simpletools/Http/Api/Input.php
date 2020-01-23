@@ -250,15 +250,17 @@ class Input
 							$mappings[$key][':test']['matching'] = true;
 
 							if (
-									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $key)) ||
-									(!isset($settings[':test']['conditional']) || !$settings[':test']['conditional'])
+									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $key)) OR
+									(!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional'])
 							)
 							{
-								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && (!$value || (is_object($value) && empty((array)$value))))
+								$_value = (array)$value;
+								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && (!$value OR (is_object($value) && empty($_value))))
 								{
 									$mappings[$key][':test']['matching'] = false;
 									$this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $key . '}', 400);
 								}
+								unset($_value);
 
 								if (isset($settings[':test']['matching']) && is_callable($settings[':test']['matching']))
 								{
