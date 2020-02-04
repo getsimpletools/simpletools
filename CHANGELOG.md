@@ -1,6 +1,10 @@
+### 2.8.17 (2020-01-23)
+  1. **Simpletools\Http\Api\Input**
+     1. Fixed `notEmpty` - the integer 0, is now allowed.
+
 ### 2.8.15 (2020-01-23)
   1. **Simpletools\Http\Api\Input**
-     1. Fixed bug with fields, they are now required by default (unless `conditonal` is used). Previously, fields were only required if `notEmpty` had been used.
+     1. Fixed bug with fields, they are now required by default (unless `conditional` is used). Previously, fields were only required if `notEmpty` had been used.
      2. Fixed `notEmpty` - previously allowed NULL value, when using `conditional`
 
 ### 2.8.13 (2020-01-13)

@@ -255,7 +255,7 @@ class Input
 							)
 							{
 								$_value = (array)$value;
-								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && (!$value OR (is_object($value) && empty($_value))))
+								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && ($value === null OR (is_string($value) && !strlen($value)) OR (is_array($value) && !count($value)) OR (is_object($value) && empty($_value))))
 								{
 									$mappings[$key][':test']['matching'] = false;
 									$this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $key . '}', 400);
