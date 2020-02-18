@@ -1,3 +1,7 @@
+### 2.8.18 (2020-02-18)
+  1. **Simpletools\Db\Replicator**
+  2. **Simpletools\Db\TaskReplicator**
+
 ### 2.8.17 (2020-01-23)
   1. **Simpletools\Http\Api\Input**
      1. Fixed `notEmpty` - the integer 0, is now allowed.
