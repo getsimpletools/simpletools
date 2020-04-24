@@ -196,24 +196,38 @@
 		*/
 		protected function _parseCustomRoutes($path,$invoke)
 		{
-			preg_match_all('/\{(.*?)\}/', $path, $matches);
+            $paramBased = true;
+            if(strpos($path,'{')!==false)
+            {
+                preg_match_all('/\{(.*?)\}/', $path, $matches);
+            }
+            else
+            {
+                $paramBased = false;
+                preg_match_all('/\:(.*?)\:/', $path, $matches);
+            }
 
-			if(isset($matches[0]))
-			{
-				$path = str_replace(array('\*','\^','\?'),array('.*','^','?'),preg_quote($path,'/'));
-				$map = array();
-				foreach($matches[0] as $index => $match)
-				{
-					$path = str_replace(preg_quote($match),'([A-Za-z0-9\-_]*)',$path);
-					$map[] = $matches[1][$index];
-				}
-			}
+            if(isset($matches[0]))
+            {
+                $path = str_replace(array('\*','\^','\?'),array('.*','^','?'),preg_quote($path,'/'));
 
-			return array(
-				'pattern'	=> '/'.$path.'$/',
-				'map'		=> $map,
-				'invoke'	=> $invoke
-			);
+                $map = array();
+                foreach($matches[0] as $index => $match)
+                {
+                    if($paramBased)
+                        $path = str_replace(preg_quote($match),'([A-Za-z0-9\-_]*)',$path);
+                    else
+                        $path = str_replace(preg_quote($match),'([A-Za-z0-9\-_\/]*)',$path);
+
+                    $map[] = $matches[1][$index];
+                }
+            }
+
+            return array(
+                'pattern'	=> '/'.$path.'$/',
+                'map'		=> $map,
+                'invoke'	=> $invoke
+            );
 		}
 
 		public function registerRoutingNamespaces($namespaces)
@@ -463,7 +477,7 @@
 
 			$path = (!$namespace) ? $controller.'Controller.php' : str_replace('\\',DIRECTORY_SEPARATOR,$namespace).'/'.$controller.'Controller.php';
 			$path = $this->_appDir.'/controllers/'.$path;
-			
+
 			if(!$this->_forwarded)
 			{
 				if(($_c = realpath($path)))
@@ -874,6 +888,7 @@
 			$params = explode('/',rtrim(substr($SERVER_REQUEST_URI,1),'/'));
 
 			//sanitasation
+            $currentExt = '';
 			foreach($params as $index => $param)
 			{
 				$param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
@@ -888,6 +903,7 @@
                         {
                             $param = implode('.',$paramsTmp);
                             $this->_setExtMime($meta);
+                            $currentExt = $ext;
                             break;
                         }
                     }
@@ -895,6 +911,19 @@
 
 				$params[$index] = $param;
 			}
+
+            if($currentExt && strpos($SERVER_REQUEST_URI,'.')!==false)
+            {
+                $SERVER_REQUEST_URI = explode('.', $SERVER_REQUEST_URI);
+                $ext = array_pop($SERVER_REQUEST_URI);
+
+                if($ext != $currentExt)
+                {
+                    $SERVER_REQUEST_URI[] = $ext;
+                }
+
+                $SERVER_REQUEST_URI = implode('.', $SERVER_REQUEST_URI);
+            }
 
 			if($this->_settings['uri_app_position'] > 0)
 			{
@@ -965,7 +994,7 @@
 
 							$this->_activeCustomRouteArgs[$route['map'][$i]] = $m;
 						}
-						
+
 						return $_params;
 					}
 				}				

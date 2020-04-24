@@ -1,3 +1,11 @@
+### 2.9.0 (2020-04-24)
+  1. **Simpletools\Http\Api\Response**
+     1. Added `->meta()` method allowing to pass meta for the response
+  2. **Simpletools\Terminal\Cli**
+     1. Added options to `->input($msg,$options=array())` allowing to specify `credentials = true|false` - password like dots, `required = true|false` - to require anything but empty input
+  3. **Simpletools\Mvc\Router**
+     1. Added support for `:param:` allowing custom routes to map reminder of the URI
+        
 ### 2.8.18 (2020-02-18)
   1. **Simpletools\Db\Replicator**
   2. **Simpletools\Db\TaskReplicator**

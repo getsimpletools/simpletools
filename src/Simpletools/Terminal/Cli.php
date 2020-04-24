@@ -218,37 +218,44 @@ class Cli
         return $this;
     }
 
-    public function input($msg,$confidential=false)
+    public function input($msg,$options=array())
     {
-        $prompt = $this->_prepareMessage($msg,self::INFO,true);
+        $options['confidential']    = isset($options['confidential']) ? $options['confidential'] : false;
+        $options['required']        = isset($options['required']) ? $options['required'] : false;
 
-        if ($confidential) {
-            if (preg_match('/^win/i', PHP_OS)) {
-                $vbscript = sys_get_temp_dir() . 'prompt_password.vbs';
-                file_put_contents(
-                    $vbscript, 'wscript.echo(InputBox("'
-                    . addslashes($prompt)
-                    . '", "", "password here"))');
-                $command = "cscript //nologo " . escapeshellarg($vbscript);
-                $password = rtrim(shell_exec($command));
-                unlink($vbscript);
-                return $password;
-            } else {
-                $command = "/usr/bin/env bash -c 'echo OK'";
-                if (rtrim(shell_exec($command)) !== 'OK') {
-                    trigger_error("Can't invoke bash");
-                    return;
+        $prompt = $this->_prepareMessage($msg, self::INFO, true);
+
+        while(true) {
+            if ($options['confidential']) {
+                if (preg_match('/^win/i', PHP_OS)) {
+                    $vbscript = sys_get_temp_dir() . 'prompt_password.vbs';
+                    file_put_contents(
+                        $vbscript, 'wscript.echo(InputBox("'
+                        . addslashes($prompt)
+                        . '", "", "password here"))');
+                    $command = "cscript //nologo " . escapeshellarg($vbscript);
+                    $password = rtrim(shell_exec($command));
+                    unlink($vbscript);
+                    return $password;
+                } else {
+                    $command = "/usr/bin/env bash -c 'echo OK'";
+                    if (rtrim(shell_exec($command)) !== 'OK') {
+                        trigger_error("Can't invoke bash");
+                        return;
+                    }
+                    $command = "/usr/bin/env bash -c 'read -s -p \""
+                        . addslashes($prompt)
+                        . "\" mypassword && echo \$mypassword'";
+                    $password = rtrim(shell_exec($command));
+                    echo "\n";
+                    if($options['required'] && !$password) continue;
+                    return $password;
                 }
-                $command = "/usr/bin/env bash -c 'read -s -p \""
-                    . addslashes($prompt)
-                    . "\" mypassword && echo \$mypassword'";
-                $password = rtrim(shell_exec($command));
-                echo "\n";
-                return $password;
+            } else {
+                $line = readline($prompt);
+                if($options['required'] && !$line) continue;
+                return $line;
             }
-        }
-        else{
-            return readline($prompt);
         }
     }
 }

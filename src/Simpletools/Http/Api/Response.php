@@ -5,7 +5,8 @@
     class Response
     {
         protected $_statusCode      = 0;
-        protected $_payload            = '';
+        protected $_payload;
+        protected $_meta;
         protected $_statusMsg       = '';
         protected $_exception       = '';
         protected $_httpHeader      = [];
@@ -117,6 +118,29 @@
             return $this;
         }
 
+        public function meta($key,$value=null)
+        {
+            if (!is_array($this->_meta))
+            {
+                $this->_meta = array();
+            }
+
+            if($value)
+            {
+                $this->_meta[$key] = $value;
+            }
+            elseif(is_array($key))
+            {
+                $this->_meta = array_merge($this->_meta,$key);
+            }
+            else
+            {
+                throw new Exception("Wrong type passed as parameter of Response->meta() function",400);
+            }
+
+            return $this;
+        }
+
         public function isError()
         {
             if($this->_exception OR substr($this->_statusCode,0,1)!=2)
@@ -165,6 +189,11 @@
             $response = [
                 'status'    => (object) $status
             ];
+
+            if(isset($this->_meta) && $this->_meta)
+            {
+                $response['meta']         = $this->_meta;
+            }
 
             if($this->_payload)
             {
