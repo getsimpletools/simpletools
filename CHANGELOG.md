@@ -1,3 +1,7 @@
+### 2.9.1 (2020-04-26)
+  1. **Simpletools\Http\Api\Input**
+     1. Added `:test.default` for the conditional params
+
 ### 2.9.0 (2020-04-24)
   1. **Simpletools\Http\Api\Response**
      1. Added `->meta()` method allowing to pass meta for the response

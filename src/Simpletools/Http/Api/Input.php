@@ -249,6 +249,18 @@ class Input
 
 							$mappings[$key][':test']['matching'] = true;
 
+							/*
+							 * Checking if default value has been set for the :test.conditional=true and if specified and otherwise
+							 * property has not been set by the user, sets it to default so matching function can be run against
+							 */
+                            if (
+                                isset($settings[':test']['conditional']) && $settings[':test']['conditional'] &&
+                                !property_exists(self::$_input, $key) && isset($settings[':test']['default'])
+                            )
+                            {
+                                self::$_input->{$key} = $value = $settings[':test']['default'];
+                            }
+
 							if (
 									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $key)) OR
 									(!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional'])
