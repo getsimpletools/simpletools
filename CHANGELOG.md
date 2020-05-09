@@ -1,3 +1,7 @@
+### 2.9.2 (2020-05-09)
+  1. **Simpletools\Http\Api\Input**
+     1. Fixed `response.body` to not be set only on `null`, from 2.9.2 `[]`, `false`, `0`, `""` will now be returned as a part of response's body
+     
 ### 2.9.1 (2020-04-26)
   1. **Simpletools\Http\Api\Input**
      1. Added `:test.default` for the conditional params

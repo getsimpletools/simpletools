@@ -195,10 +195,8 @@
                 $response['meta']         = $this->_meta;
             }
 
-            if($this->_payload)
-            {
+            if($this->_payload!==null)
                 $response['body']   =   $this->_payload;
-            }
 
             return $response;
         }
