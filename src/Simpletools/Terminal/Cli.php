@@ -223,6 +223,16 @@ class Cli
         $options['confidential']    = isset($options['confidential']) ? $options['confidential'] : false;
         $options['required']        = isset($options['required']) ? $options['required'] : false;
 
+        if(isset($options['matching']))
+        {
+            if(!is_callable($options['matching']))
+                throw new \Exception('Matching needs to be a callable',400);
+        }
+        else
+        {
+            $options['matching'] = false;
+        }
+
         $prompt = $this->_prepareMessage($msg, self::INFO, true);
 
         while(true) {
@@ -234,9 +244,8 @@ class Cli
                         . addslashes($prompt)
                         . '", "", "password here"))');
                     $command = "cscript //nologo " . escapeshellarg($vbscript);
-                    $password = rtrim(shell_exec($command));
+                    $input = rtrim(shell_exec($command));
                     unlink($vbscript);
-                    return $password;
                 } else {
                     $command = "/usr/bin/env bash -c 'echo OK'";
                     if (rtrim(shell_exec($command)) !== 'OK') {
@@ -246,16 +255,23 @@ class Cli
                     $command = "/usr/bin/env bash -c 'read -s -p \""
                         . addslashes($prompt)
                         . "\" mypassword && echo \$mypassword'";
-                    $password = rtrim(shell_exec($command));
-                    echo "\n";
-                    if($options['required'] && !$password) continue;
-                    return $password;
+                    $input = rtrim(shell_exec($command));
+                    echo "\n"; //needs to be added to move to the next line
                 }
             } else {
-                $line = readline($prompt);
-                if($options['required'] && !$line) continue;
-                return $line;
+                $input = readline($prompt);
             }
+
+            if($options['matching'] && !$options['matching']($input))
+            {
+                $this->error('Provided input doesn\'t match with permitted values, please try again');
+                $this->line();
+                continue;
+            }
+
+            if($options['required'] && !$input) continue;
+
+            return $input;
         }
     }
 }
