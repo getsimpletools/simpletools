@@ -118,6 +118,20 @@ class Credentials implements \JsonSerializable
         self::$_CRYPT_KEY = $cryptKey;
     }
 
+    public function prependKey($key)
+    {
+        $this->_cryptKey        = $key.$this->_cryptKey;
+
+        return $this;
+    }
+
+    public function appendKey($key)
+    {
+        $this->_cryptKey        .= $key;
+
+        return $this;
+    }
+
     public function key($key)
     {
         $this->_cryptKey        = $key;
@@ -231,6 +245,8 @@ class Credentials implements \JsonSerializable
     public function decrypt()
     {
         $this->_decrypt();
+
+        return $this;
     }
 
     protected function _decrypt()

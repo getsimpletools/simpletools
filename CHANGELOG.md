@@ -1,3 +1,9 @@
+### 2.9.4 (2020-05-20)
+  1. **Simpletools\Store\Credentials**
+     1. Added new `->prependKey()` method allowing to prepend (extend) the encryption key
+     2. Added new `->appendKey()` method allowing to append (extend) the encryption key
+     3. Fixed `->decrypt()` method so it returns reference to the object
+
 ### 2.9.3 (2020-05-09)
   1. **Simpletools\Terminal\Cli**
      1. Added new `->input()` option `matching` - a function callback allowing to perform input test
