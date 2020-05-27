@@ -239,8 +239,12 @@ class Input
                 unset($mappings[$key]['decorator']);
             }
 
-						if ((!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional']) && !property_exists(self::$_input, $key))
+						if (
+						    (!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional']) &&
+                            (!self::$_input OR !property_exists(self::$_input, $key))
+                        )
 						{
+                            $mappings[$key][':test']['matching'] = false;
 							$this->_exceptions[] = new InputException('Bad Request, missing value for required key: {' . $key . '}', 400);
 						}
 						else if (isset($settings[':test']))

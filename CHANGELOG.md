@@ -1,3 +1,8 @@
+### 2.9.5 (2020-05-27)
+  1. **Simpletools\Http\Api\Input**
+     1. Fixed but related to malformed JSON
+     2. Fixed matching not set to `false` on missing required param
+     
 ### 2.9.4 (2020-05-20)
   1. **Simpletools\Store\Credentials**
      1. Added new `->prependKey()` method allowing to prepend (extend) the encryption key
