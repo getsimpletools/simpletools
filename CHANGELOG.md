@@ -1,3 +1,11 @@
+### 2.9.6 (2020-06-14)
+  1. **Simpletools\Store\Session**
+     1. Added `::settings()` option `sessionCookieParams` allowing to set session cookie options
+     2. Added `::settings()` option `onSessionIdRegenerate` - a callback triggered on session id change
+     3. Added `::hasStarted()` allowing to see if session started
+     4. Added `::startIfSessionCookieSet()` allowing to manually start the session if session cookie set
+     5. Added `::start()` allowing to manually start the session
+     
 ### 2.9.5 (2020-05-27)
   1. **Simpletools\Http\Api\Input**
      1. Fixed but related to malformed JSON

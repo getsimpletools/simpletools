@@ -38,12 +38,15 @@
 
 	namespace Simpletools\Store;
 
-	class Session
+    class Session
 	{
-		private static $default_return = 'Exception';
+		private static $default_return                  = 'Exception';
 		private static $settings = array(
 			'autostart_if_session_cookie_set' 			=> false,
-			'session_auto_start'						=> true
+			'session_auto_start'						=> true,
+
+            'handlerType'                               => "PHP",
+            'onSessionIdRegenerate'                     => false
 		);
 		private static $_sessionStarted					= false;
 		private static $_regenerateSessionIdEverySec 	= 600;
@@ -135,6 +138,15 @@
 
 		public static function settings(array $options)
 		{
+            if(isset($options['sessionCookieParams']) && !is_array($options['sessionCookieParams']))
+            {
+                throw new \Exception("sessionCookieParams needs to be of an array type",400);
+            }
+            elseif(isset($options['sessionCookieParams']) && is_array($options['sessionCookieParams']))
+            {
+                session_set_cookie_params($options['sessionCookieParams']);
+            }
+
 			self::$settings['autostart_if_session_cookie_set'] 	= isset($options['autostartIfSessionCookieSet']) ? (boolean) $options['autostartIfSessionCookieSet'] : self::$settings['autostart_if_session_cookie_set'];
 
 			self::$settings['session_auto_start'] 	= isset($options['session_auto_start']) ? (boolean) $options['sessionAutoStart'] : self::$settings['session_auto_start'];
@@ -142,20 +154,42 @@
 
 			if(isset($options['handler']) && $options['handler'] instanceof \SessionHandlerInterface)
 			{
+                if(is_a($options['handler'],'Simpletools\Db\Cassandra\SessionHandler'))
+                    self::$settings['handlerType'] = 'Simpletools\Cassandra';
+
 				session_set_save_handler($options['handler'], true);
 			}
 
-			/*
-			if(self::$settings['autostart_if_session_cookie_set'])
-			{
-				if(isset($_COOKIE[session_name()]) && session_id() == '') session_start();
-			}
-			*/
+            if(isset($options['onSessionIdRegenerate']) && is_callable($options['onSessionIdRegenerate']))
+            {
+                self::$settings['onSessionIdRegenerate'] = $options['onSessionIdRegenerate'];
+            }
 
-			self::$default_return = (array_key_exists('defaultReturn',$options)) ? $options['defaultReturn'] : ((array_key_exists('default_return',$options)) ? $options['default_return'] : 'Exception');
+            self::$default_return = (array_key_exists('defaultReturn',$options)) ? $options['defaultReturn'] : ((array_key_exists('default_return',$options)) ? $options['default_return'] : 'Exception');
+
+            if(self::$settings['autostart_if_session_cookie_set'])
+			{
+				self::startIfSessionCookieSet();
+			}
 		}
 
-		protected static function _autoStart()
+        public static function hasStarted()
+        {
+            return self::$_sessionStarted;
+        }
+
+		public static function startIfSessionCookieSet()
+        {
+            if(isset($_COOKIE[session_name()]) && session_id() == ''){self::_autoStart();}
+            return false;
+        }
+
+        public static function start($sessionId=null)
+        {
+            self::_autoStart($sessionId);
+        }
+
+		protected static function _autoStart($sessionId=null)
 		{
 			if(self::$_sessionStarted)
 			{
@@ -166,11 +200,13 @@
 			{
 				if(self::$settings['session_auto_start']){
                     if (php_sapi_name() != "cli") {
+                        if($sessionId) {session_id($sessionId);}
+
                         @session_start();
                     }
                     self::$_sessionStarted = true;
 				}
-				elseif(self::$settings['autostart_if_session_cookie_set'] && isset($_COOKIE[session_name()]) && session_id() == ''){@session_start();self::$_sessionStarted = true;}
+				elseif(self::$settings['autostart_if_session_cookie_set'] && isset($_COOKIE[session_name()]) && session_id() == ''){if($sessionId) {session_id($sessionId);}@session_start();self::$_sessionStarted = true;}
 				elseif(!self::$settings['autostart_if_session_cookie_set']){throw new \Exception('Please start session before using \Simpletools\Store\Session or set sessionAutoStart under ::settings() method.',11111);}
 				else return;
 			}
@@ -180,11 +216,26 @@
 			}
 
 			$now = time();
+
 			if(!isset($_SESSION['__regenerateSessionIdEverySec']) OR $_SESSION['__regenerateSessionIdEverySec']<$now)
 			{
 				if(isset($_SESSION['__regenerateSessionIdEverySec']) && $_SESSION['__regenerateSessionIdEverySec']<$now)
 				{
-					@session_regenerate_id(true);
+                    if(
+                        self::$settings['handlerType'] == 'Simpletools\Cassandra' &&
+                        method_exists('\Simpletools\Db\Cassandra\SessionHandler','regenerateSessionId')
+                    )
+                    {
+                        \Simpletools\Db\Cassandra\SessionHandler::regenerateSessionId();
+                    }
+                    else {
+                        @session_regenerate_id(true);
+                    }
+
+                    if(self::$settings['onSessionIdRegenerate'])
+                    {
+                        (self::$settings['onSessionIdRegenerate'])(session_id());
+                    }
 				}
 
 				$_SESSION['__regenerateSessionIdEverySec'] = time()+self::$_regenerateSessionIdEverySec;
