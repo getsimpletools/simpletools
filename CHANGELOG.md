@@ -1,3 +1,7 @@
+### 2.9.7 (2020-06-14)
+  1. **Simpletools\Store\Session**
+    1. Updated `::destroy()` - unnecessary autostart
+  
 ### 2.9.6 (2020-06-14)
   1. **Simpletools\Store\Session**
      1. Added `::settings()` option `sessionCookieParams` allowing to set session cookie options

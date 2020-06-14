@@ -94,10 +94,11 @@
 
 		public static function destroy($autoStart=true)
 		{
-			self::_autoStart();
+            if(isset($_SESSION))
+                session_destroy();
 
-			if(isset($_SESSION)) session_destroy();
-			if($autoStart) session_start();
+			//if(isset($_SESSION)) session_destroy();
+            if($autoStart) self::_autoStart();
 		}
 
 		public static function get($id='')
