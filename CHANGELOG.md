@@ -1,3 +1,7 @@
+### 2.9.9 (2020-06-17)
+  1. **Simpletools\Http\Api\Input**
+    1. Updated so input defaults to empty object in case content-type is set as application/json but request body is empty.
+    
 ### 2.9.8 (2020-06-17)
   1. **Simpletools\Store\Session**
     1. Support for older PHP versions

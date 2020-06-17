@@ -25,14 +25,16 @@ class Input
 
         self::$_input = file_get_contents('php://input');
 
-				if(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='application/json')
+        if(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='application/json')
         {
             self::$_input = json_decode(self::$_input);
+            if(self::$_input===null)
+                self::$_input = (object) array();
         }
-				elseif(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='multipart/form-data')
-				{
-						self::$_input = json_decode(json_encode($_POST));
-				}
+        elseif(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='multipart/form-data')
+        {
+            self::$_input = json_decode(json_encode($_POST));
+        }
         else
         {
             self::$_input = isset($_REQUEST) ? (object) $_REQUEST : null;
