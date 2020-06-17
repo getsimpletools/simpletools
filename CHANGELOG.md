@@ -1,3 +1,7 @@
+### 2.9.8 (2020-06-17)
+  1. **Simpletools\Store\Session**
+    1. Support for older PHP versions
+    
 ### 2.9.7 (2020-06-14)
   1. **Simpletools\Store\Session**
     1. Updated `::destroy()` - unnecessary autostart

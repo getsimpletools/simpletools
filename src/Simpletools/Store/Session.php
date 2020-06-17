@@ -235,7 +235,8 @@
 
                     if(self::$settings['onSessionIdRegenerate'])
                     {
-                        (self::$settings['onSessionIdRegenerate'])(session_id());
+                    	$method = self::$settings['onSessionIdRegenerate'];
+											$method(session_id());
                     }
 				}
 
