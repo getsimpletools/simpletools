@@ -1,3 +1,7 @@
+### 2.9.10 (2020-07-02)
+  1. **Simpletools\Db\Mysql\Client**
+    1. Removed `get_magic_quotes_gpc()` and `get_magic_quotes_runtime()` deprecated methods.
+
 ### 2.9.9 (2020-06-17)
   1. **Simpletools\Http\Api\Input**
     1. Updated so input defaults to empty object in case content-type is set as application/json but request body is empty.

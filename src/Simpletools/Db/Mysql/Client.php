@@ -103,7 +103,7 @@ class Client
         }
 
         $this->setCredentials($settings);
-        $this->quotes_on = (get_magic_quotes_gpc()==1 || get_magic_quotes_runtime()==1) ? true : false;
+        //$this->quotes_on = (get_magic_quotes_gpc()==1 || get_magic_quotes_runtime()==1) ? true : false;
 
         if(isset($settings['queryLog']))
         {
@@ -837,10 +837,10 @@ class Client
 
     private function _escape($string)
     {
-        if($this->___quotes_on)
-        {
-            $string = stripslashes($string);
-        }
+//        if($this->___quotes_on)
+//        {
+//            $string = stripslashes($string);
+//        }
 
         return $this->___mysqli[$this->_queryServer]->real_escape_string($string);
     }
