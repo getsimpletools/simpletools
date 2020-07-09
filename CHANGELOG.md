@@ -1,3 +1,7 @@
+### 2.9.11 (2020-07-09)
+  1. **Simpletools\Cloud\File**
+    1. Added `->getSignedUrl($expire)` method
+    
 ### 2.9.10 (2020-07-02)
   1. **Simpletools\Db\Mysql\Client**
     1. Removed `get_magic_quotes_gpc()` and `get_magic_quotes_runtime()` deprecated methods.
