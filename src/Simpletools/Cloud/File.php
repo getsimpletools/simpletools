@@ -245,6 +245,31 @@ class File
         return $this->_file->getUrl();
     }
 
+    /**
+     * Get a signed URL referencing the file
+     * 
+     * @param \DateTime|string $expiry Time the url should expire
+     * @throws \Exception
+     * 
+     * @return string
+     */
+    public function getSignedUrl($expiry)
+    {
+        if(is_string($expiry)) {
+            try {
+                $expiry = new \DateTime($expiry);
+            } catch (\Exception $e) {
+                throw new \Exception('Could not parse the expiry date', 0, $e);
+            }
+        }
+        if($expiry instanceof \DateTime) {
+            return $this->_file->getSignedUrl($expiry);
+        }
+        throw new \Exception(
+          sprintf('Expiry must be a string or DateTime instance, %s given', gettype($expiry))
+        );
+    }
+
     public function getUri()
     {
         return $this->_file->getUri();
