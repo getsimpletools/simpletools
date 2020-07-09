@@ -424,6 +424,22 @@ class File
         return $info['selfLink'];
     }
 
+    /**
+     * Get a signed URL referencing the object
+     * 
+     * @param \DateTime $expiry Expiry of the url
+     * 
+     * @return string
+     */
+    public function getSignedUrl($expiry)
+    {
+        if(!$expiry instanceof \DateTime) {
+            throw new \Exception(sprintf('Expiry must be a DateTime instance, %s given', gettype($expiry)));
+        }
+        $this->_initStorageObject();
+        return $this->_remoteFile->signedUrl($expiry);
+    }
+
     public function getSize()
     {
         if(!$this->exists()) return 0;
