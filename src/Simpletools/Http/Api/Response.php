@@ -175,7 +175,7 @@
                     'type'  => get_class($this->_exception),
                     'msg'   => $this->_exception->getMessage(),
                     'code'  => $this->_exception->getCode(),
-                    'trace' => $this->_exception->getTrace()
+                    'trace' => explode("\n",$this->_exception->getTraceAsString())
                 ];
             }
 

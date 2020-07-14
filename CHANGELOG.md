@@ -1,3 +1,7 @@
+### 2.9.12 (2020-07-14)
+  1. **Simpletools\Http\Api\Response**
+    1. Changed  `->getTrace()` to `->getTraceAsString` for verbose
+
 ### 2.9.11 (2020-07-09)
   1. **Simpletools\Cloud\File**
     1. Added `->getSignedUrl($expire)` method
