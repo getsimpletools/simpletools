@@ -1,3 +1,12 @@
+### 2.9.13 (2020-07-19)
+ 1. **Simpletools\Http\Api\Response**
+    1. Added `->private($keys=array())` allowing to set response properties as masks by default `*******`, format editable with `privateMask()`
+    2. Added  `->toLogJson()` allowing to extract privatised response body
+ 1. **Simpletools\Http\Api\Input**
+    1. Added `private => true|false` definition allowing params to be masked for log purposes `*******`, format editable with `privateMask()`
+    2. Added  `->toLogJson()` allowing to extract privatised input
+    3. Changed - throws exception error on malformed JSON
+    
 ### 2.9.12 (2020-07-14)
   1. **Simpletools\Http\Api\Response**
     1. Changed  `->getTrace()` to `->getTraceAsString` for verbose

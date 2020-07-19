@@ -25,6 +25,101 @@
             return self::$_self;
         }
 
+        protected $_private             = array();
+        protected $_privateFlipped      = array();
+        protected $_privateAll          = false;
+
+        public function private($keys=null)
+        {
+            if($this->_privateFlipped) {
+                $this->_private = array_flip($this->_private);
+                $this->_privateFlipped = false;
+            }
+
+            if($keys===null)
+            {
+                $this->_privateAll=true;
+                return $this;
+            }
+
+            if(!is_array($keys))
+                $keys = explode(',',$keys);
+
+            $keys = array_flip($keys);
+
+            $this->_private = array_merge($this->_private,$keys);
+            $this->_privateFlipped = true;
+
+            return $this;
+        }
+
+        protected $_privateMask = '*******';
+
+        public function privateMask($mask)
+        {
+            $this->_privateMask = $mask;
+            return $this;
+        }
+
+        protected function _logListPrepare($list)
+        {
+            $type = is_object($list) ? 'object' : 'array';
+
+            foreach ($list as $key => $value)
+            {
+                if ($type == 'object') {
+                    if ($this->_privateAll or isset($this->_private[$key]))
+                        $list->{$key} = $this->_privateMask;
+                } elseif ($type == 'array') {
+                    if ($this->_privateAll or isset($this->_private[$key]))
+                        $list[$key] = $this->_privateMask;
+                }
+            }
+
+            return $list;
+        }
+
+        public function toLogJson()
+        {
+            $response = $this->toArray(true);
+
+            unset($response['status']->input);
+
+            if(isset($response['body']) && $response['body']) {
+                if (is_array($response['body']) or is_object($response['body'])) {
+                    $type = is_object($response['body']) ? 'object' : 'array';
+
+                    $list = false;
+
+                    if($type == 'array' && isset($response['body'][0]))
+                    {
+                        $list = true;
+                    }
+
+                    foreach ($response['body'] as $key => $value)
+                    {
+                        if(!$list) {
+                            if ($type == 'object') {
+                                if ($this->_privateAll or isset($this->_private[$key]))
+                                    $response['body']->{$key} = $this->_privateMask;
+                            } elseif ($type == 'array') {
+                                if ($this->_privateAll or isset($this->_private[$key]))
+                                    $response['body'][$key] = $this->_privateMask;
+                            }
+                        }
+                        else
+                        {
+                            $response['body'][$key] = $this->_logListPrepare($value);
+                        }
+                    }
+
+                } elseif ($this->_privateAll)
+                    $response['body'] = $this->_privateMask;
+            }
+
+            return json_encode($response);
+        }
+
         public function __construct(array $body=null)
         {
             $this->_payload = $body;
@@ -156,7 +251,7 @@
             return $this;
         }
 
-        public function toArray()
+        public function toArray($verbose=false)
         {
             $status = [
                 'code'  => (int) $this->_statusCode
@@ -169,7 +264,7 @@
 
             $status['OK'] = !$this->isError();
 
-            if($this->_verbose && $this->_exception)
+            if(($this->_verbose OR $verbose) && $this->_exception)
             {
                 $status['exception'] = [
                     'type'  => get_class($this->_exception),

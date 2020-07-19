@@ -18,6 +18,7 @@ class Input
     protected $_exceptions      = [];
     protected $_parsedMappings;
 
+    protected static $_malformedJsonException = false;
 
     protected static function _init()
     {
@@ -27,9 +28,18 @@ class Input
 
         if(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='application/json')
         {
-            self::$_input = json_decode(self::$_input);
-            if(self::$_input===null)
+            if(self::$_input)
+                self::$_input = json_decode(self::$_input);
+            else
                 self::$_input = (object) array();
+
+            if(self::$_input===null)
+            {
+                if($msg = json_last_error_msg())
+                    self::$_malformedJsonException = new InputException("Malformed JSON request - ".$msg,400);
+
+                self::$_input = (object)array();
+            }
         }
         elseif(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='multipart/form-data')
         {
@@ -37,7 +47,7 @@ class Input
         }
         else
         {
-            self::$_input = isset($_REQUEST) ? (object) $_REQUEST : null;
+            self::$_input = isset($_REQUEST) ? (object) $_REQUEST : (object) array();
         }
     }
 
@@ -128,6 +138,9 @@ class Input
 
     public static function self()
     {
+        if(!self::$_self)
+            new self();
+
         return self::$_self;
     }
 
@@ -143,6 +156,9 @@ class Input
         self::_init();
         self::$_triggered = true;
         self::$_self = $this;
+
+        if(self::$_malformedJsonException)
+            $this->_exceptions[] = self::$_malformedJsonException;
 
         $bindedMaps = [];
         $localMaps = [];
@@ -187,7 +203,7 @@ class Input
 						unset($mappings[':exempt']);
         }
 
-        $this->_exceptions = [];
+        //$this->_exceptions = [];
 
         foreach($mappings as $key => $settings)
         {
@@ -332,6 +348,33 @@ class Input
     public function __isset($name)
     {
         return isset(self::$_input->{$name});
+    }
+
+    protected $_privateMask = '*******';
+
+    public function privateMask($mask)
+    {
+        $this->_privateMask = $mask;
+        return $this;
+    }
+
+    protected function _preparedInput()
+    {
+        $input      = self::$_input;
+        $mapping    = $this->mappings();
+
+        foreach($input as $key => $val)
+        {
+            if(isset($mapping[$key]) && isset($mapping[$key]['private']) && $mapping[$key]['private'])
+                $input->{$key} = $this->_privateMask;
+        }
+
+        return $input;
+    }
+
+    public function toLogJson()
+    {
+        return json_encode($this->_preparedInput(self::$_input));
     }
 
     public function toObject()
