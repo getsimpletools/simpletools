@@ -1,3 +1,7 @@
+### 2.9.14 (2020-08-12)
+  1. **Simpletools\Terminal\Cli**
+    1. Added `->select()` - terminal UI with radio/checkbox like user interface.
+    
 ### 2.9.13 (2020-07-19)
  1. **Simpletools\Http\Api\Response**
     1. Added `->private($keys=array())` allowing to set response properties as masks by default `*******`, format editable with `privateMask()`

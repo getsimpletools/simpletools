@@ -18,6 +18,8 @@ class Cli
     const TEXT_COLOR_YELLOW     = "\e[33m";
     const TEXT_COLOR_WHITE      = "\e[37m";
     const TEXT_COLOR_GREY       = "\e[0;37m";
+    const TEXT_COLOR_BLUE       = "\e[34m";
+
 
     const TEXT_BOLD             = "\e[1m";
 
@@ -273,5 +275,245 @@ class Cli
 
             return $input;
         }
+    }
+
+    public function select($msg,array $options,array $settings=array())
+    {
+        $settings['multi']              = $multi    = (boolean) (isset($settings['multi']) ? $settings['multi'] : false);
+        $settings['defaultOptionIndex'] = (isset($settings['defaultOptionIndex']) ? $settings['defaultOptionIndex'] : -1);
+        $settings['vertical']           = $vertical = (boolean) (isset($settings['vertical']) ? $settings['vertical'] : false);
+
+        $orgKeys    = array_keys($options);
+        $orgKeysFlip= array_flip($orgKeys);
+        $options    = array_values($options);
+
+        $settings['defaultOptionIndex'] = isset($orgKeysFlip[$settings['defaultOptionIndex']]) ? $orgKeysFlip[$settings['defaultOptionIndex']] : -1;
+
+        $sign = $settings['multi']?' ':"X";
+        $currentOption = $settings['defaultOptionIndex']+1;
+        $cliOptions = [];
+        $optionsArray = [];
+
+        $cliOption ='';
+        foreach ($options as $i => $o)
+        {
+            $cliOption.=self::NOTE."[ ]".self::INFO." ".$o. ($settings['vertical'] ? "\n" : " ");
+        }
+        $cliOptions[] = $cliOption;
+
+
+        foreach ($options as $index => $option)
+        {
+            $cliOption ='';
+            foreach ($options as $i => $o)
+            {
+                $cliOption.=($index === $i && $settings['multi'] ? self::SUCCESS : self::NOTE).($index === $i ? "[$sign]":"[ ]").self::INFO." ".$o.($vertical ? "\n" : " ");
+            }
+            $cliOptions[] = $cliOption;
+        }
+
+        echo self::TEXT_COLOR_WHITE.$msg.self::INFO.PHP_EOL.PHP_EOL;
+
+        echo $cliOptions[$currentOption];
+
+        system('stty cbreak -echo');
+        $stdin = fopen('php://stdin', 'r');
+
+
+        if($vertical)
+        {
+            if($multi)
+            {
+                while (1)
+                {
+                    $c = ord(fgetc($stdin));
+
+                    if ($c ==10 && $optionsArray) break; //enter
+                    elseif ($c == 32) //space
+                    {
+                        if(in_array($currentOption-1,$optionsArray))
+                            $optionsArray = array_diff($optionsArray, [$currentOption-1]);
+                        elseif(isset($options[$currentOption-1]))
+                            $optionsArray[] = $currentOption-1;
+                        else
+                            continue;
+
+                        $cliOptions=[];
+                        foreach ($options as $i => $o)
+                        {
+                            $cliOption.=self::NOTE."[ ]".self::INFO." ".$o."\n";
+                        }
+                        $cliOptions[] = $cliOption;
+
+
+                        foreach ($options as $index => $option)
+                        {
+                            $cliOption ='';
+                            foreach ($options as $i => $o)
+                            {
+                                $cliOption.=($index === $i && $multi ? self::SUCCESS : self::NOTE)."[".(in_array($i, $optionsArray) ? 'X':' ')."]".self::INFO." ".$o."\n";
+                            }
+                            $cliOptions[] = $cliOption;
+                        }
+
+                        foreach ($options as $o)
+                            echo "\e[1A\r\033[K";
+
+                        echo $cliOptions[$currentOption];
+                    }
+                    elseif ($c == 65) //arrow left
+                    {
+                        if(isset($cliOptions[$currentOption-1]) && $currentOption-1)
+                        {
+                            foreach ($options as $o)
+                                echo "\e[1A\r\033[K";
+                            echo $cliOptions[--$currentOption];
+                        }
+                    }
+                    elseif ($c == 66 || $c == 9) //arrow right | tab
+                    {
+                        if(isset($cliOptions[$currentOption+1]))
+                        {
+                            foreach ($options as $o)
+                                echo "\e[1A\r\033[K";
+                            echo $cliOptions[++$currentOption];
+                        }
+                    }
+                }
+            }
+            else //single
+            {
+                while (1)
+                {
+                    $c = ord(fgetc($stdin));
+                    //echo "Char read: $c\n";
+
+                    if ($c ==10 && $currentOption > 0) break; //enter
+                    elseif ($c == 65) //arrow left
+                    {
+                        if(isset($cliOptions[$currentOption-1]) && $currentOption-1)
+                        {
+                            foreach ($options as $o)
+                                echo "\e[1A\r\033[K";
+                            echo $cliOptions[--$currentOption];
+                        }
+                    }
+                    elseif ($c == 66 || $c == 9) //arrow right | tab
+                    {
+                        if(isset($cliOptions[$currentOption+1]))
+                        {
+                            foreach ($options as $o)
+                                echo "\e[1A\r\033[K";
+                            echo $cliOptions[++$currentOption];
+                        }
+                    }
+                }
+            }
+
+        }
+        else
+        {
+
+            if($multi)
+            {
+                while (1)
+                {
+                    $c = ord(fgetc($stdin));
+
+                    if ($c ==10 && $optionsArray) break; //enter
+                    elseif ($c == 32) //space
+                    {
+                        if(in_array($currentOption-1,$optionsArray))
+                            $optionsArray = array_diff($optionsArray, [$currentOption-1]);
+                        elseif(isset($options[$currentOption-1]))
+                            $optionsArray[] = $currentOption-1;
+                        else
+                            continue;
+
+                        $cliOptions=[];
+                        foreach ($options as $i => $o)
+                        {
+                            $cliOption.=self::NOTE."[ ]".self::INFO." ".$o." ";
+                        }
+                        $cliOptions[] = $cliOption;
+
+
+                        foreach ($options as $index => $option)
+                        {
+                            $cliOption ='';
+                            foreach ($options as $i => $o)
+                            {
+                                $cliOption.=($index === $i && $multi ? self::SUCCESS : self::NOTE)."[".(in_array($i, $optionsArray) ? 'X':' ')."]".self::INFO." ".$o." ";
+                            }
+                            $cliOptions[] = $cliOption;
+                        }
+
+                        echo "\033[".strlen($cliOptions[0])."D";
+                        echo $cliOptions[$currentOption];
+                    }
+                    elseif ($c == 68) //arrow left
+                    {
+                        if(isset($cliOptions[$currentOption-1]) && $currentOption-1)
+                        {
+                            echo "\033[".strlen($cliOptions[0])."D";
+                            echo $cliOptions[--$currentOption];
+                        }
+                    }
+                    elseif ($c == 67 || $c == 9) //arrow right | tab
+                    {
+                        if(isset($cliOptions[$currentOption+1]))
+                        {
+                            echo "\033[".strlen($cliOptions[0])."D";
+                            echo $cliOptions[++$currentOption];
+                        }
+                    }
+                }
+            }
+            else //single
+            {
+                while (1)
+                {
+                    $c = ord(fgetc($stdin));
+                    //echo "Char read: $c\n";
+
+                    if ($c ==10 && $currentOption > 0) break; //enter
+                    elseif ($c == 68) //arrow left
+                    {
+                        if(isset($cliOptions[$currentOption-1]) && $currentOption-1)
+                        {
+                            echo "\033[".strlen($cliOptions[0])."D";
+                            echo $cliOptions[--$currentOption];
+                        }
+                    }
+                    elseif ($c == 67 || $c == 9) //arrow right | tab
+                    {
+                        if(isset($cliOptions[$currentOption+1]))
+                        {
+                            echo "\033[".strlen($cliOptions[0])."D";
+                            echo $cliOptions[++$currentOption];
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        system('stty echo');
+
+        echo PHP_EOL;
+
+        if($multi) {
+            $_optionsArray = [];
+            foreach ($optionsArray as $option)
+            {
+                $_optionsArray[] = $orgKeys[$option];
+            }
+
+            return $_optionsArray;
+        }
+        else
+            return $orgKeys[$currentOption-1];
     }
 }
