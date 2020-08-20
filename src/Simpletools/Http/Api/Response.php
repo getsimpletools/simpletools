@@ -291,7 +291,7 @@
             }
 
             if($this->_payload!==null)
-                $response['body']   =   $this->_payload;
+                $response['body']   =   json_decode(json_encode($this->_payload));
 
             return $response;
         }

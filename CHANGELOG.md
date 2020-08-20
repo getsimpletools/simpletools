@@ -1,3 +1,7 @@
+### 2.9.15 (2020-08-20)
+  1. **Simpletools\Http\Api\Response**
+    1. Fixed `->toArray()` - reference leaking triggered by `->toLogJson()`.
+    
 ### 2.9.14 (2020-08-12)
   1. **Simpletools\Terminal\Cli**
     1. Added `->select()` - terminal UI with radio/checkbox like user interface.
