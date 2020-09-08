@@ -1,3 +1,7 @@
+### 2.9.16 (2020-09-08)
+  1. **Simpletools\Http\Api\ACL**
+    1. Improved ACL to prioritize deepest rule.
+
 ### 2.9.15 (2020-08-20)
   1. **Simpletools\Http\Api\Response**
     1. Fixed `->toArray()` - reference leaking triggered by `->toLogJson()`.

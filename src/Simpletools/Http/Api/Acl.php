@@ -53,28 +53,47 @@ class Acl
                 $SERVER_REQUEST_PATH = implode('.', array_slice($SERVER_REQUEST_PATH, 0, -1));
             }
 
-            $methods                    = [];
-            $methods['NONE']            = $this->_aclCompiled['NONE'] ?? [];
-            $methods[$this->_method]    = $this->_aclCompiled[$this->_method] ?? [];
-            $methods['ANY']             = $this->_aclCompiled['ANY'] ?? [];
+						$methods                    	= [];
+						$methods['NONE']            	= $this->_aclCompiled['NONE'] ?? [];
+						$methods['POST']   	 					= $this->_aclCompiled['POST'] ?? [];
+						$methods['PUT']   	 					= $this->_aclCompiled['PUT'] ?? [];
+						$methods['PATCH']   	 				= $this->_aclCompiled['PATCH'] ?? [];
+						$methods['DELETE']   	 				= $this->_aclCompiled['DELETE'] ?? [];
+						$methods['ANY']            	 	= $this->_aclCompiled['ANY'] ?? [];
 
-            foreach($methods as $method => $routes) {
-                foreach ($routes as $route) {
+						$result = false;
+						$deepLvl = 0;
 
-                    if (preg_match($route['pattern'], $SERVER_REQUEST_PATH, $matches)) {
+						foreach($methods as $method => $routes) {
+							foreach ($routes as $routeUri => $route) {
 
-                        if($method=='NONE') {
+								if (preg_match($route['pattern'], $SERVER_REQUEST_PATH, $matches)) {
 
-                            if($this->_dryRun)
-                                throw new \Exception('Forbidden, ACL NONE', 403);
-                            else
-                                throw new Exception('Forbidden, ACL NONE', 403);
-                        }
+									if($method=='NONE') {
 
-                        return true;
-                    }
-                }
-            }
+										if($this->_dryRun)
+											throw new \Exception('Forbidden, ACL NONE', 403);
+										else
+											throw new Exception('Forbidden, ACL NONE', 403);
+									}
+
+									$currentDeepLvl = substr_count($routeUri, '/');
+
+									if(($method == $this->_method || $method =='ANY') && $currentDeepLvl >= $deepLvl)
+									{
+										$result = true;
+										$deepLvl = $currentDeepLvl;
+									}
+									elseif($currentDeepLvl > $deepLvl)
+									{
+										$result = false;
+										$deepLvl = $currentDeepLvl;
+									}
+								}
+							}
+						}
+
+						if($result) return true;
 
             if($this->_dryRun)
                 throw new \Exception('Forbidden, ACL no matches',403);
