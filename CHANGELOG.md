@@ -1,3 +1,7 @@
+### 2.9.17 (2020-09-08)
+  1. **Simpletools\Http\Api\ACL**
+    1. Fixed space in methods.
+
 ### 2.9.16 (2020-09-08)
   1. **Simpletools\Http\Api\ACL**
     1. Improved ACL to prioritize deepest rule.

@@ -113,7 +113,7 @@ class Acl
 
         foreach($acl as $path => $methods)
         {
-            $methods = explode(',',$methods);
+						$methods = explode(',',str_replace(' ','',$methods));
 
             foreach($methods as $method) {
                 if (!isset($compiled[$method][$path]))
