@@ -1,3 +1,7 @@
+### 2.9.18 (2020-09-15)
+ 1. **Simpletools\Http\Api\Response**
+    1. Fixed body array bug.
+
 ### 2.9.17 (2020-09-08)
   1. **Simpletools\Http\Api\ACL**
     1. Fixed space in methods.

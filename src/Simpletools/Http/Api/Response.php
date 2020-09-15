@@ -63,6 +63,9 @@
 
         protected function _logListPrepare($list)
         {
+						if(!is_array($list) && !is_object($list))
+							return $this->_privateAll ? $this->_privateMask : $list;
+
             $type = is_object($list) ? 'object' : 'array';
 
             foreach ($list as $key => $value)
