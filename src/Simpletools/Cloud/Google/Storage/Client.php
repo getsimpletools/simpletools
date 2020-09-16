@@ -7,11 +7,14 @@ class Client
     protected static $_client;
     public static function get()
     {
-        if(!self::$_client)
+        $settings   = \Simpletools\Cloud\Google\Client::getSettings();
+        $client     = @$settings['keyFile']['client_email'];
+
+        if(!isset(self::$_client[$client]) OR !self::$_client[$client])
         {
-            self::$_client  = \Simpletools\Cloud\Google\Client::get()->storage();
+            self::$_client[$client]  = \Simpletools\Cloud\Google\Client::get()->storage();
         }
 
-        return self::$_client;
+        return self::$_client[$client];
     }
 }

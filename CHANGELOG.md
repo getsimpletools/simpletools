@@ -1,3 +1,7 @@
+### 2.9.19 (2020-09-16)
+ 1. **Simpletools\Cloud\Google\Client**
+    1. Added ability to specify multi client settings with `::activeSettingsByClientEmail()`
+    
 ### 2.9.18 (2020-09-15)
  1. **Simpletools\Http\Api\Response**
     1. Fixed body array bug.
