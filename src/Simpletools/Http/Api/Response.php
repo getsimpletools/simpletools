@@ -14,6 +14,7 @@
 
         protected $_apiEndpointParams = '';
         protected $_verbose=false;
+        protected $_verboseTrace=true;
 
         public static function self(array $body=null)
         {
@@ -254,6 +255,29 @@
             return $this;
         }
 
+        public function disableVerboseTrace()
+        {
+            $this->_verboseTrace = false;
+
+            return $this;
+        }
+
+        public function enableVerboseTrace()
+        {
+            $this->_verboseTrace = true;
+
+            return $this;
+        }
+
+        public function verboseTrace($enable=null)
+        {
+            if($enable===null) return $this->_verboseTrace;
+
+            $this->_verboseTrace = (bool) $enable;
+
+            return $this;
+        }
+
         public function toArray($verbose=false)
         {
             $status = [
@@ -275,6 +299,9 @@
                     'code'  => $this->_exception->getCode(),
                     'trace' => explode("\n",$this->_exception->getTraceAsString())
                 ];
+
+                if(!$this->_verboseTrace)
+                    unset($status['exception']['trace']);
             }
 
             if($this->_exception && is_a($this->_exception,'Simpletools\Http\Api\InputException'))

@@ -1,3 +1,11 @@
+### 2.10.0 (2020-10-01)
+ 1. **Simpletools\Http\Api\Response**
+    1. Added `->disableVerboseTrace()`
+    2. Added `->enableVerboseTrace()`
+    3. Added `->verboseTrace($enable=true|false|null)`
+ 1. **Simpletools\Http\Api\Input**
+    1. Added `::onPrivate(callable $callback)`
+    
 ### 2.9.19 (2020-09-16)
  1. **Simpletools\Cloud\Google\Client**
     1. Added ability to specify multi client settings with `::activeSettingsByClientEmail()`

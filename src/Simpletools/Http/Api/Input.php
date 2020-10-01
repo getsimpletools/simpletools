@@ -20,6 +20,13 @@ class Input
 
     protected static $_malformedJsonException = false;
 
+    protected static $_onPrivate;
+
+    public static function onPrivate(callable $callback)
+    {
+        self::$_onPrivate = $callback;
+    }
+
     protected static function _init()
     {
         if(self::$_init) return; self::$_init = true;
@@ -205,8 +212,13 @@ class Input
 
         //$this->_exceptions = [];
 
+        $runOnPrivate = false;
+
         foreach($mappings as $key => $settings)
         {
+            if(isset($mappings[$key]['private']) && $mappings[$key]['private'])
+                $runOnPrivate = true;
+
             if(is_integer($key))
             {
                 unset($mappings[$key]);
@@ -311,6 +323,13 @@ class Input
 						{
 							$this->_exceptions[] = new InputException('Not Implemented, :test is missing for defined key {' . $key . '}', 501);
 						}
+        }
+
+        //run once, on the first private
+        if(isset($runOnPrivate) && self::$_onPrivate && is_callable(self::$_onPrivate))
+        {
+            call_user_func(self::$_onPrivate);
+            self::$_onPrivate = false;
         }
 
         if(self::$_input && (is_object(self::$_input) OR is_array(self::$_input))) {
