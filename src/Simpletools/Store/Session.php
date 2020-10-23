@@ -216,31 +216,29 @@
 				self::$_sessionStarted = true;
 			}
 
-			$now = time();
-
-			if(!isset($_SESSION['__regenerateSessionIdEverySec']) OR $_SESSION['__regenerateSessionIdEverySec']<$now)
+			if(self::$_regenerateSessionIdEverySec)
 			{
-				if(isset($_SESSION['__regenerateSessionIdEverySec']) && $_SESSION['__regenerateSessionIdEverySec']<$now)
-				{
-                    if(
-                        self::$settings['handlerType'] == 'Simpletools\Cassandra' &&
-                        method_exists('\Simpletools\Db\Cassandra\SessionHandler','regenerateSessionId')
-                    )
-                    {
-                        \Simpletools\Db\Cassandra\SessionHandler::regenerateSessionId();
-                    }
-                    else {
-                        @session_regenerate_id(true);
+                $now = time();
+
+                if (!isset($_SESSION['__regenerateSessionIdEverySec']) or $_SESSION['__regenerateSessionIdEverySec'] < $now) {
+                    if (isset($_SESSION['__regenerateSessionIdEverySec']) && $_SESSION['__regenerateSessionIdEverySec'] < $now) {
+                        if (
+                            self::$settings['handlerType'] == 'Simpletools\Cassandra' &&
+                            method_exists('\Simpletools\Db\Cassandra\SessionHandler', 'regenerateSessionId')
+                        ) {
+                            \Simpletools\Db\Cassandra\SessionHandler::regenerateSessionId();
+                        } else {
+                            @session_regenerate_id(true);
+                        }
+
+                        if (self::$settings['onSessionIdRegenerate']) {
+                            $method = self::$settings['onSessionIdRegenerate'];
+                            $method(session_id());
+                        }
                     }
 
-                    if(self::$settings['onSessionIdRegenerate'])
-                    {
-                    	$method = self::$settings['onSessionIdRegenerate'];
-											$method(session_id());
-                    }
-				}
-
-				$_SESSION['__regenerateSessionIdEverySec'] = time()+self::$_regenerateSessionIdEverySec;
-			}
+                    $_SESSION['__regenerateSessionIdEverySec'] = time() + self::$_regenerateSessionIdEverySec;
+                }
+            }
 		}
 	}

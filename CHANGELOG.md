@@ -1,3 +1,7 @@
+### 2.10.1 (2020-10-23)
+ 1. **Simpletools\Store\Session**
+    1. Added ability to disable session id rotate by setting up `regenerateSessionIdEverySec` to `false` or `0`
+    
 ### 2.10.0 (2020-10-01)
  1. **Simpletools\Http\Api\Response**
     1. Added `->disableVerboseTrace()`
