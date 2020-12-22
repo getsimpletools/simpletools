@@ -46,7 +46,10 @@
 			'session_auto_start'						=> true,
 
             'handlerType'                               => "PHP",
-            'onSessionIdRegenerate'                     => false
+            'onSessionIdRegenerate'                     => false,
+
+
+            'maxLifeTime'                               => 0, //don't set, use php.ini defaults
 		);
 		private static $_sessionStarted					= false;
 		private static $_regenerateSessionIdEverySec 	= 600;
@@ -149,8 +152,9 @@
             }
 
 			self::$settings['autostart_if_session_cookie_set'] 	= isset($options['autostartIfSessionCookieSet']) ? (boolean) $options['autostartIfSessionCookieSet'] : self::$settings['autostart_if_session_cookie_set'];
+            self::$settings['maxLifeTime'] 	= isset($options['maxLifeTime']) ? (int) $options['maxLifeTime'] : self::$settings['maxLifeTime'];
 
-			self::$settings['session_auto_start'] 	= isset($options['session_auto_start']) ? (boolean) $options['sessionAutoStart'] : self::$settings['session_auto_start'];
+            self::$settings['session_auto_start'] 	= isset($options['session_auto_start']) ? (boolean) $options['sessionAutoStart'] : self::$settings['session_auto_start'];
 			self::$_regenerateSessionIdEverySec 	= isset($options['regenerateSessionIdEverySec']) ? (int) $options['regenerateSessionIdEverySec'] : self::$_regenerateSessionIdEverySec;
 
 			if(isset($options['handler']) && $options['handler'] instanceof \SessionHandlerInterface)
@@ -167,6 +171,12 @@
             }
 
             self::$default_return = (array_key_exists('defaultReturn',$options)) ? $options['defaultReturn'] : ((array_key_exists('default_return',$options)) ? $options['default_return'] : 'Exception');
+
+            if(self::$settings['maxLifeTime'])
+            {
+                @ini_set('session.cookie_lifetime', self::$settings['maxLifeTime']);
+                @ini_set('session.gc_maxlifetime', self::$settings['maxLifeTime']);
+            }
 
             if(self::$settings['autostart_if_session_cookie_set'])
 			{

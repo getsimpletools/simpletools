@@ -1,3 +1,7 @@
+### 2.10.2 (2020-12-22)
+1. **Simpletools\Store\Session**
+    1. Added ability to set `maxLifeTime` for `GC` and `cookie` needs
+
 ### 2.10.1 (2020-10-23)
  1. **Simpletools\Store\Session**
     1. Added ability to disable session id rotate by setting up `regenerateSessionIdEverySec` to `false` or `0`
