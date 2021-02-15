@@ -169,10 +169,22 @@ class Input
 
         $bindedMaps = [];
         $localMaps = [];
+        $localNsMaps = [];
 
         foreach($mappings as $key => $val)
         {
             if(is_integer($key)) $key = $val;
+
+
+            if(strpos($key,'/')!==false)
+            {
+                $keyChunks = explode('/',$key);
+
+                $key = array_pop($keyChunks);
+                $ns = implode($keyChunks);
+
+                $localNsMaps[$key] = $ns;
+            }
 
             $localMaps[$key] = 1;
         }
@@ -216,6 +228,8 @@ class Input
 
         foreach($mappings as $key => $settings)
         {
+
+
             if(isset($mappings[$key]['private']) && $mappings[$key]['private'])
                 $runOnPrivate = true;
 
@@ -263,23 +277,30 @@ class Input
                 }
             }
 
-            if(isset(self::$_input->{$key}) && isset($settings['decorator']) && is_callable($settings['decorator']))
+            $input_ns_key = $key;
+            if(strpos($input_ns_key,'/')!==false)
             {
-                @self::$_input->{$key} = $settings['decorator'](@self::$_input->{$key});
+                $input_ns_key = explode('/',$input_ns_key);
+                $input_ns_key = array_pop($input_ns_key);
+            }
+
+            if(isset(self::$_input->{$input_ns_key}) && isset($settings['decorator']) && is_callable($settings['decorator']))
+            {
+                @self::$_input->{$input_ns_key} = $settings['decorator'](@self::$_input->{$input_ns_key});
                 unset($mappings[$key]['decorator']);
             }
 
 						if (
 						    (!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional']) &&
-                            (!self::$_input OR !property_exists(self::$_input, $key))
+                            (!self::$_input OR !property_exists(self::$_input, $input_ns_key))
                         )
 						{
                             $mappings[$key][':test']['matching'] = false;
-							$this->_exceptions[] = new InputException('Bad Request, missing value for required key: {' . $key . '}', 400);
+							$this->_exceptions[] = new InputException('Bad Request, missing value for required key: {' . $input_ns_key . '}', 400);
 						}
 						else if (isset($settings[':test']))
 						{
-							$value = @self::$_input->{$key};
+							$value = @self::$_input->{$input_ns_key};
 
 							$mappings[$key][':test']['matching'] = true;
 
@@ -289,14 +310,14 @@ class Input
 							 */
                             if (
                                 isset($settings[':test']['conditional']) && $settings[':test']['conditional'] &&
-                                !property_exists(self::$_input, $key) && isset($settings[':test']['default'])
+                                !property_exists(self::$_input, $input_ns_key) && isset($settings[':test']['default'])
                             )
                             {
-                                self::$_input->{$key} = $value = $settings[':test']['default'];
+                                self::$_input->{$input_ns_key} = $value = $settings[':test']['default'];
                             }
 
 							if (
-									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $key)) OR
+									(isset($settings[':test']['conditional']) && $settings[':test']['conditional'] && property_exists(self::$_input, $input_ns_key)) OR
 									(!isset($settings[':test']['conditional']) OR !$settings[':test']['conditional'])
 							)
 							{
@@ -304,7 +325,7 @@ class Input
 								if (isset($settings[':test']['notEmpty']) && $settings[':test']['notEmpty'] && ($value === null OR (is_string($value) && !strlen($value)) OR (is_array($value) && !count($value)) OR (is_object($value) && empty($_value))))
 								{
 									$mappings[$key][':test']['matching'] = false;
-									$this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $key . '}', 400);
+									$this->_exceptions[] = new InputException('Bad Request, missing value for non-empty key {' . $input_ns_key . '}', 400);
 								}
 								unset($_value);
 
@@ -314,14 +335,14 @@ class Input
 									if (!$settings[':test']['matching'])
 									{
 										$mappings[$key][':test']['matching'] = false;
-										$this->_exceptions[] = new InputException('Bad Request, non-empty {' . $key . '} param is not passing value matching test', 400);
+										$this->_exceptions[] = new InputException('Bad Request, non-empty {' . $input_ns_key . '} param is not passing value matching test', 400);
 									}
 								}
 							}
 						}
 						else
 						{
-							$this->_exceptions[] = new InputException('Not Implemented, :test is missing for defined key {' . $key . '}', 501);
+							$this->_exceptions[] = new InputException('Not Implemented, :test is missing for defined key {' . $input_ns_key . '}', 501);
 						}
         }
 
@@ -334,6 +355,12 @@ class Input
 
         if(self::$_input && (is_object(self::$_input) OR is_array(self::$_input))) {
             foreach (self::$_input as $key => $value) {
+
+                if($localNsMaps) {
+                    $ns = $localNsMaps[$key];
+                    $key = $ns.'/'.$key;
+                }
+
                 if (!isset($mappings[$key])) {
                     $this->_exceptions[] = new InputException("Bad Request, submitted key {'.$key.'} is not supported", 400);
                 }

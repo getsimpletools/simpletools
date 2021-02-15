@@ -1,3 +1,7 @@
+### 2.11.1 (2021-02-15)
+1. **Simpletools\Http\Api\Input**
+    1. Added namespace support e.g `namespace/param`
+
 ### 2.10.2 (2020-12-22)
 1. **Simpletools\Store\Session**
     1. Added ability to set `maxLifeTime` for `GC` and `cookie` needs
