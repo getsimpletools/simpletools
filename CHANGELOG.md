@@ -1,3 +1,7 @@
+### 2.11.2 (2021-03-05)
+1. **Simpletools\Http\Api\Input**
+    1. Fixed a bug when namespaced and non-namespaced params were mixed
+    
 ### 2.11.1 (2021-02-15)
 1. **Simpletools\Http\Api\Input**
     1. Added namespace support e.g `namespace/param`

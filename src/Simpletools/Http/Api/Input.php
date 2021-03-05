@@ -356,7 +356,7 @@ class Input
         if(self::$_input && (is_object(self::$_input) OR is_array(self::$_input))) {
             foreach (self::$_input as $key => $value) {
 
-                if($localNsMaps) {
+                if(isset($localNsMaps[$key])) {
                     $ns = $localNsMaps[$key];
                     $key = $ns.'/'.$key;
                 }
