@@ -42,7 +42,8 @@ class Replicator
 
 	public static function on($event,$handler)
 	{
-		self::$_listeners[$event]	= $handler;
+		if(!isset(self::$_listeners[$event])) self::$_listeners[$event] = array();
+		self::$_listeners[$event][]	= $handler;
 	}
 
 	public static function off($event)
@@ -52,14 +53,18 @@ class Replicator
 	
 	public static function exists($event)
 	{
-		return isset(self::$_listeners[$event]) && is_callable(self::$_listeners[$event]);
+		return isset(self::$_listeners[$event]);
 	}
 
 	public static function trigger($event,$item)
 	{
-		if(isset(self::$_listeners[$event]) && is_callable(self::$_listeners[$event]))
+		if(isset(self::$_listeners[$event]) && self::$_listeners[$event])
 		{
-			return self::$_listeners[$event]($item);
+			foreach (self::$_listeners[$event] as $replicator)
+			{
+				if(is_callable($replicator))
+					$replicator($item);
+			}
 		}
 	}
 

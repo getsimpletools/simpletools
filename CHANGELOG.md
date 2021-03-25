@@ -1,3 +1,7 @@
+### 2.11.3 (2021-03-25)
+1. **Simpletools\Db\Replicator**
+    1. Allow assigning multiple replicators
+
 ### 2.11.2 (2021-03-05)
 1. **Simpletools\Http\Api\Input**
     1. Fixed a bug when namespaced and non-namespaced params were mixed
