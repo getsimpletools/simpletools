@@ -1,3 +1,7 @@
+### 2.11.4 (2021-07-08)
+1. **Simpletools\Db\Replicator**
+    1. Added helper and meta
+
 ### 2.11.3 (2021-03-25)
 1. **Simpletools\Db\Replicator**
     1. Allow assigning multiple replicators

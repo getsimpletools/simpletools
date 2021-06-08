@@ -40,10 +40,12 @@ class Replicator
 {
 	protected static $_listeners = array();
 
-	public static function on($event,$handler)
+	public static function on($event,$handler,$meta=null)
 	{
-		if(!isset(self::$_listeners[$event])) self::$_listeners[$event] = array();
-		self::$_listeners[$event][]	= $handler;
+		if(!isset(self::$_listeners[$event]))
+			self::$_listeners[$event] = array();
+
+		self::$_listeners[$event][] =	array('callback' =>$handler,'meta' =>$meta);
 	}
 
 	public static function off($event)
@@ -56,16 +58,21 @@ class Replicator
 		return isset(self::$_listeners[$event]);
 	}
 
-	public static function trigger($event,$item)
+	public static function trigger($event,$item, $helper =null)
 	{
 		if(isset(self::$_listeners[$event]) && self::$_listeners[$event])
 		{
 			foreach (self::$_listeners[$event] as $replicator)
 			{
-				if(is_callable($replicator))
-					$replicator($item);
+				if(is_callable($replicator['callback']))
+					$replicator['callback']($item, $helper);
 			}
 		}
+	}
+
+	public static function getAll()
+	{
+		return self::$_listeners;
 	}
 
 	public static function task()
