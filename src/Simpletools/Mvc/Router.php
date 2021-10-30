@@ -1069,12 +1069,13 @@
 				case 1:
 				{
 					if(
-						(!isset($_params['associative']['action']) && $_params['associative']['controller'] == $this->_settings['defaultController']) OR
-						(count($_params['associative']) == 2 && $_params['associative']['controller'] == $this->_settings['defaultController'] && $_params['associative']['action'] == $this->_settings['defaultAction'])	
+						(!isset($_params['associative']['action']) && isset($_params['associative']['controller']) && $_params['associative']['controller'] == $this->_settings['defaultController'])
+                        OR
+						(isset($_params['associative']) && count($_params['associative']) == 2 && $_params['associative']['controller'] == $this->_settings['defaultController'] && $_params['associative']['action'] == $this->_settings['defaultAction'])
 					){
 						$this->redirect('/',false,false,301,$GET);
 					}
-					else if(count($_params['associative']) == 2 && $_params['associative']['action'] == $this->_settings['defaultAction']) {
+					else if(isset($_params['associative']) && count($_params['associative']) == 2 && $_params['associative']['action'] == $this->_settings['defaultAction']) {
 						$this->redirect('/'.$_params['associative']['controller'],false,false,301,$GET);
 					}
 					else if(strlen($uri_path) > 1 && substr($uri_path,-1) == '/'){

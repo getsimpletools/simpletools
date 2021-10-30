@@ -1,3 +1,7 @@
+### 2.11.5 (2021-10-30)
+1. **Simpletools\Mvc\Router**
+    1. Fixed notices in `_fixDuplicateContent()`
+
 ### 2.11.4 (2021-07-08)
 1. **Simpletools\Db\Replicator**
     1. Added helper and meta
