@@ -1,3 +1,9 @@
+### 2.11.6 (2022-10-31)
+1. **Simpletools\Db\Mysql\QueryBuilder**
+    1. Added versioned scripts to include based on the `phpversion()` being used.
+    2. Updated `Querybuilder.php` to check PHP version, and include the relevant version of QueryBuilder.
+    3. Added `Querybuilder8.php`, with type casting on functions, where PHP highlights deprication warnings in PHP 8.1
+
 ### 2.11.5 (2021-10-30)
 1. **Simpletools\Mvc\Router**
     1. Fixed notices in `_fixDuplicateContent()`
