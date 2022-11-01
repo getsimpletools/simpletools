@@ -1,4 +1,4 @@
-### 2.11.5 (2021-10-30)
+### 2.11.5 (2021-10-30) (master rebase)
 1. **Simpletools\Mvc\Router**
     1. Fixed notices in `_fixDuplicateContent()`
 
