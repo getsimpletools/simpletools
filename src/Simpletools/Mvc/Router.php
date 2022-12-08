@@ -123,7 +123,7 @@
                 $this->_settings['failoverView'] 						    = isset($settings['failoverView']) ? $settings['failoverView'] : false;
                 $this->_settings['forcedView'] 						        = isset($settings['forcedView']) ? $settings['forcedView'] : false;
 
-                $this->_httpMethod                                          = ($rMethod = strtoupper(@$_SERVER['REQUEST_METHOD'])) ? $rMethod : false;
+                $this->_httpMethod                                          = ($rMethod = strtoupper(@$_SERVER['REQUEST_METHOD'] ?? '')) ? $rMethod : false;
 
 				if(isset($settings['routingNamespaces']))
 				{
@@ -882,16 +882,19 @@
 			//to avoid notice errors if running from command line
 			$SERVER_REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? parse_url('http://simpletools.php'.$_SERVER['REQUEST_URI'],PHP_URL_PATH) : null;
 
-			if(($p = stripos($SERVER_REQUEST_URI,'#')) !== false)
+			if(($p = stripos($SERVER_REQUEST_URI ?? '','#')) !== false)
 				$SERVER_REQUEST_URI = substr($SERVER_REQUEST_URI,0,$p);
 
-			$params = explode('/',rtrim(substr($SERVER_REQUEST_URI,1),'/'));
+			$params = explode('/',rtrim(substr($SERVER_REQUEST_URI ?? '',1),'/'));
 
 			//sanitasation
             $currentExt = '';
 			foreach($params as $index => $param)
 			{
-				$param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
+//				$param = filter_var(urldecode($param),FILTER_SANITIZE_STRING,array('flags'=>FILTER_FLAG_STRIP_HIGH));
+//                If tags required to be stripped. Is safer to use `strip_tags()`
+//                Ref: https://www.php.net/manual/en/filter.filters.sanitize.php#118186
+				$param = htmlspecialchars(urldecode($param));
 
 				if($this->_settings['uriExtMime'])
                 {

@@ -38,41 +38,47 @@ namespace Simpletools\Db\Mysql;
 
 class Driver extends \mysqli
 {
-	protected $_closed 	= false;
-	protected $_db 		= '';
+    protected $_closed 	= false;
+    protected $_db 		= '';
 
-	public function isClosed()
-	{
-		return $this->_closed;
-	}
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	public function close()
-	{
-		$this->_closed = true;
-		parent::close();
-	}
+    public function isClosed()
+    {
+        return $this->_closed;
+    }
 
-	public function select_db($db)
-	{
-		$this->_db = $db;
-		parent::select_db($db);
-	}
+    public function close()
+    {
+        $this->_closed = true;
+        parent::close();
+    }
 
-	public function real_connect($host=NULL,$user=NULL,$password=NULL,$database=NULL,$port=NULL,$socket=NULL,$flags=NULL)
-	{
-		$this->_db = $database;
-		parent::real_connect($host,$user,$password,$database,$port,$socket,$flags);
-	}
+    public function select_db($db) : bool
+    {
+        $this->_db = $db;
+        parent::select_db($db);
+    }
 
-	public function getDb()
-	{
-		return $this->_db;
-	}
+    public function real_connect($host=NULL,$user=NULL,$password=NULL,$database=NULL,$port=NULL,$socket=NULL,$flags=NULL) : bool
+    {
+        $this->_db = $database;
+        return parent::real_connect($host,$user,$password,$database,$port,$socket,$flags);
 
-	public function __destruct()
-	{
-		$this->close();
-	}
+    }
+
+    public function getDb()
+    {
+        return $this->_db;
+    }
+
+    public function __destruct()
+    {
+        $this->close();
+    }
 }
 
 ?>

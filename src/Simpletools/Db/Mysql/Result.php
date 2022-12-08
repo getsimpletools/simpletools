@@ -34,258 +34,258 @@
  * 
  */
 
-	namespace Simpletools\Db\Mysql;
+namespace Simpletools\Db\Mysql;
 
-	class Result implements \Iterator
-	{
-		protected $_mysqlResult 	= '';
-		protected $_mysqli 			= '';
+class Result implements \Iterator
+{
+    protected $_mysqlResult 	= '';
+    protected $_mysqli 			= '';
 
-		protected $_firstRowCache	= null;
-		protected $_firstRowCached	= false;
+    protected $_firstRowCache	= null;
+    protected $_firstRowCached	= false;
 
-		protected $_position 		= 0;
-		protected $_currentRow 		= false;
-		protected $_columnsMap      = array();
+    protected $_position 		= 0;
+    protected $_currentRow 		= false;
+    protected $_columnsMap      = array();
 
-		public function __construct(&$mysqliResult,&$mysqli)
-		{
-			$this->_mysqlResult = $mysqliResult;
-			$this->_mysqli		= $mysqli;
+    public function __construct(&$mysqliResult,&$mysqli)
+    {
+        $this->_mysqlResult = $mysqliResult;
+        $this->_mysqli		= $mysqli;
 
-			if(is_object($mysqliResult))
-			{
-				$this->_position 	= 0;
-				$this->_loadFirstRowCache();
-			}
-		}
-
-		public function columnMap(array $columnsMap)
+        if(is_object($mysqliResult))
         {
-            return $this->setColumnMap($columnsMap);
+            $this->_position 	= 0;
+            $this->_loadFirstRowCache();
+        }
+    }
+
+    public function columnMap(array $columnsMap)
+    {
+        return $this->setColumnMap($columnsMap);
+    }
+
+    public function setColumnMap(array $columnsMap)
+    {
+        $this->_columnsMap = $columnsMap;
+
+        return $this;
+    }
+
+    protected function _parseColumn($column,$value,$rawResultAssoc)
+    {
+        if(isset($this->_columnsMap[$column]))
+        {
+            $cast = $this->_columnsMap[$column];
+
+            if(is_callable($cast))
+            {
+                $value = $this->_callReflection($cast,$rawResultAssoc);
+            }
+            elseif($cast=='json' OR $cast=='json:array' OR $cast=='json:object')
+            {
+                $assoc = false;
+                if($cast=='json:array')
+                {
+                    $assoc = true;
+                }
+
+                $value = json_decode($value,$assoc);
+            }
+            elseif(is_string($cast))
+            {
+                settype($value,$cast);
+            }
         }
 
-        public function setColumnMap(array $columnsMap)
-        {
-            $this->_columnsMap = $columnsMap;
+        return $value;
+    }
 
-            return $this;
+    private function _callReflection($callable, array $args = array())
+    {
+        if(is_array($callable))
+        {
+            $reflection 	= new \ReflectionMethod($callable[0], $callable[1]);
+        }
+        elseif(is_string($callable))
+        {
+            $reflection 	= new \ReflectionFunction($callable);
+        }
+        elseif(is_a($callable, 'Closure') || is_callable($callable, '__invoke'))
+        {
+            $objReflector 	= new \ReflectionObject($callable);
+            $reflection    	= $objReflector->getMethod('__invoke');
         }
 
-        protected function _parseColumn($column,$value,$rawResultAssoc)
+        $pass = array();
+        foreach($reflection->getParameters() as $param)
         {
-            if(isset($this->_columnsMap[$column]))
+            $name = $param->getName();
+            if(isset($args[$name]))
             {
-                $cast = $this->_columnsMap[$column];
-
-                if(is_callable($cast))
+                $pass[] = $args[$name];
+            }
+            else
+            {
+                try
                 {
-                    $value = $this->_callReflection($cast,$rawResultAssoc);
+                    $pass[] = $param->getDefaultValue();
                 }
-                elseif($cast=='json' OR $cast=='json:array' OR $cast=='json:object')
+                catch(\Exception $e)
                 {
-                    $assoc = false;
-                    if($cast=='json:array')
-                    {
-                        $assoc = true;
-                    }
-
-                    $value = json_decode($value,$assoc);
-                }
-                elseif(is_string($cast))
-                {
-                    settype($value,$cast);
+                    $pass[] = null;
                 }
             }
-
-            return $value;
         }
 
-        private function _callReflection($callable, array $args = array())
-        {
-            if(is_array($callable))
-            {
-                $reflection 	= new \ReflectionMethod($callable[0], $callable[1]);
-            }
-            elseif(is_string($callable))
-            {
-                $reflection 	= new \ReflectionFunction($callable);
-            }
-            elseif(is_a($callable, 'Closure') || is_callable($callable, '__invoke'))
-            {
-                $objReflector 	= new \ReflectionObject($callable);
-                $reflection    	= $objReflector->getMethod('__invoke');
-            }
+        return $reflection->invokeArgs($callable, $pass);
+    }
 
-            $pass = array();
-            foreach($reflection->getParameters() as $param)
-            {
-                $name = $param->getName();
-                if(isset($args[$name]))
+    protected function _parseColumnsMap($result,$returnObject=true)
+    {
+        if($result && $this->_columnsMap) {
+
+            $rawResultAssoc = (array) $result;
+
+            if ($returnObject) {
+
+                foreach($this->_columnsMap as $column => $cast)
                 {
-                    $pass[] = $args[$name];
+                    if(isset($result->{$column}))
+                        $result->{$column} = $this->_parseColumn($column,$result->{$column},$rawResultAssoc);
                 }
-                else
+
+            } else {
+
+                foreach($this->_columnsMap as $column => $cast)
                 {
-                    try
-                    {
-                        $pass[] = $param->getDefaultValue();
-                    }
-                    catch(\Exception $e)
-                    {
-                        $pass[] = null;
-                    }
+                    if(isset($result[$column]))
+                        $result[$column] = $this->_parseColumn($column,$result[$column],$rawResultAssoc);
                 }
             }
-
-            return $reflection->invokeArgs($callable, $pass);
         }
 
-        protected function _parseColumnsMap($result,$returnObject=true)
+        return $result;
+    }
+
+    public function isEmpty()
+    {
+        return !mysqli_num_rows($this->_mysqlResult);
+    }
+
+    public function length()
+    {
+        return mysqli_num_rows($this->_mysqlResult);
+    }
+
+    public function fetch($returnObject=true)
+    {
+        if($returnObject)
+            $result = mysqli_fetch_object($this->_mysqlResult);
+        else
+            $result = mysqli_fetch_assoc($this->_mysqlResult);
+
+        return $this->_parseColumnsMap($result,$returnObject);
+    }
+
+    public function fetchAll($returnObject=true)
+    {
+        if($this->isEmpty()) return array();
+
+        $datas = array();
+        while($data = $this->fetch($returnObject))
         {
-            if($result && $this->_columnsMap) {
-
-                $rawResultAssoc = (array) $result;
-
-                if ($returnObject) {
-
-                    foreach($this->_columnsMap as $column => $cast)
-                    {
-                        if(isset($result->{$column}))
-                            $result->{$column} = $this->_parseColumn($column,$result->{$column},$rawResultAssoc);
-                    }
-
-                } else {
-
-                    foreach($this->_columnsMap as $column => $cast)
-                    {
-                        if(isset($result[$column]))
-                            $result[$column] = $this->_parseColumn($column,$result[$column],$rawResultAssoc);
-                    }
-                }
-            }
-
-            return $result;
+            $datas[] = $data;
         }
 
-		public function isEmpty()
-		{
-			return !mysqli_num_rows($this->_mysqlResult);
-		}
+        $this->free();
+        return $datas;
+    }
 
-		public function length()
-		{
-			return mysqli_num_rows($this->_mysqlResult);
-		}
+    public function &getRawResult()
+    {
+        return $this->_mysqlResult;
+    }
 
-		public function fetch($returnObject=true)
-		{
-			if($returnObject)
-				$result = mysqli_fetch_object($this->_mysqlResult);
-			else
-                $result = mysqli_fetch_assoc($this->_mysqlResult);
+    public function free()
+    {
+        mysqli_free_result($this->_mysqlResult);
+    }
 
-			return $this->_parseColumnsMap($result,$returnObject);
-		}
+    public function __desctruct()
+    {
+        mysqli_free_result($this->_mysqlResult);
+    }
 
-		public function fetchAll($returnObject=true)
-		{
-			if($this->isEmpty()) return array();
-			
-			$datas = array();
-			while($data = $this->fetch($returnObject))
-			{
-				$datas[] = $data;
-			}
-				
-			$this->free();
-			return $datas;
-		}
+    public function getAffectedRows()
+    {
+        return $this->_mysqli->affected_rows;
+    }
 
-		public function &getRawResult()
-		{
-			return $this->_mysqlResult;
-		}
+    public function getInsertedId()
+    {
+        return $this->_mysqli->insert_id;
+    }
 
-		public function free()
-		{
-			mysqli_free_result($this->_mysqlResult);
-		}
+    protected function _loadFirstRowCache()
+    {
+        if(!$this->_firstRowCached)
+        {
+            $this->_firstRowCache 	= $this->fetch();
+            $this->_firstRowCached 	= true;
+            mysqli_data_seek($this->_mysqlResult,0);
+        }
+    }
 
-		public function __desctruct()
-		{
-			mysqli_free_result($this->_mysqlResult);
-		}
+    public function getFirstRow()
+    {
+        return $this->_firstRowCache;
+    }
 
-		public function getAffectedRows()
-		{
-			return $this->_mysqli->affected_rows;
-		}
+    public function __get($name)
+    {
+        //$this->_loadFirstRowCache();
+        return isset($this->_firstRowCache->{$name}) ? $this->_firstRowCache->{$name} : null;
+    }
 
-		public function getInsertedId()
-		{
-			return $this->_mysqli->insert_id;
-		}
+    public function __isset($name)
+    {
+        //$this->_loadFirstRowCache();
+        return isset($this->_firstRowCache->{$name});
+    }
 
-		protected function _loadFirstRowCache()
-		{
-			if(!$this->_firstRowCached)
-			{
-				$this->_firstRowCache 	= $this->fetch();
-				$this->_firstRowCached 	= true;
-				mysqli_data_seek($this->_mysqlResult,0);
-			}
-		}
+    public function rewind() : void
+    {
+        mysqli_data_seek($this->_mysqlResult,0);
+        $this->_position 	= 0;
 
-		public function getFirstRow()
-		{
-			return $this->_firstRowCache;
-		}
+        if($this->_currentRow===false)
+        {
+            $this->_currentRow = $this->fetch();
+        }
+    }
 
-		public function __get($name)
-		{
-			//$this->_loadFirstRowCache();
-			return isset($this->_firstRowCache->{$name}) ? $this->_firstRowCache->{$name} : null;
-		}
+    public function current() : mixed
+    {
+        return $this->_currentRow;
+    }
 
-		public function __isset($name)
-		{
-			//$this->_loadFirstRowCache();
-			return isset($this->_firstRowCache->{$name});
-		}
+    public function key() : mixed
+    {
+        return $this->_position;
+    }
 
-		public function rewind()
-		{
-			mysqli_data_seek($this->_mysqlResult,0);
-			$this->_position 	= 0;
+    public function next() : void
+    {
+        $this->_currentRow = $this->fetch();
+        ++$this->position;
+//        return $this->_currentRow;
+    }
 
-			if($this->_currentRow===false)
-			{
-				$this->_currentRow = $this->fetch();
-			}
-		}
+    public function valid() : bool
+    {
+        return ($this->_currentRow!==null) ? true : false;
+    }
+}
 
-		public function current() 
-		{
-	        return $this->_currentRow;
-	    }
-
-	    public function key() 
-	    {
-	        return $this->_position;
-	    }
-
-	    public function next() 
-	    {
-	    	$this->_currentRow = $this->fetch();
-	        ++$this->position;
-	        return $this->_currentRow;
-	    }
-
-	    public function valid() 
-	    {
-	        return ($this->_currentRow!==null) ? true : false;
-	    }
-	}
-		
 ?>

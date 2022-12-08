@@ -1,3 +1,19 @@
+### 2.11.7 (2022-11-01)
+1. **Simpletools\Db\Mysql\QueryBuilder**
+    1. Additional Function typecast, fixed `void` type returning a value error.
+    2. Updated `Querybuilder.php` with type casting on iterator functions, where PHP highlights deprication warnings in PHP 8.1.
+2. **Simpletools\Db\Mysql\Client**
+    1. Initialise `$___connected` and `$___credentials` with empty array, as automatic conversion of false to array is deprecated.
+3. **Simpletools\Db\Mysql\Driver**
+    2. The object-oriented style `mysqli::init()` method has been deprecated. Replaced calls to `parent::init()` with `parent::__construct()`
+    3. Typecasting to return type functions.
+4. **Simpletools\Db\Mysql\Result**
+    1. Updated `Result.php` with type casting on functions, where PHP highlights deprication warnings in PHP 8.1
+5. **Simpletools\Cloud\Google\Storage\File**
+    1. Explicit check that `$_FileHandler` is a resource before attempting `fclose()`
+7. **Simpletools\Mvc\Model**
+   1. Updated `Model.php` `__callStatic` Method with function type cast, as Magic Methods will now have their arguments and return types checked if they have them declared. 
+
 ### 2.11.5 (2021-10-30)
 1. **Simpletools\Mvc\Router**
     1. Fixed notices in `_fixDuplicateContent()`
