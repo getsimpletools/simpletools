@@ -1,4 +1,4 @@
-### 2.11.7 (2022-11-01)
+### 2.11.7 (2022-12-08)
 1. **Simpletools\Db\Mysql\QueryBuilder**
     1. Additional Function typecast, fixed `void` type returning a value error.
     2. Updated `Querybuilder.php` with type casting on iterator functions, where PHP highlights deprication warnings in PHP 8.1.
