@@ -72,7 +72,7 @@
 			self::$_instance->_activeRoutingNamespace = $ns;
 		}
 
-		public static function __callStatic($name, $args)
+		public static function __callStatic($name, $args): mixed
 		{
 			array_unshift($args, $name);
 			return call_user_func_array(array('self','getInstance'), $args);

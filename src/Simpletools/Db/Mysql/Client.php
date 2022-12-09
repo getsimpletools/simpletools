@@ -41,8 +41,8 @@ use Simpletools\Db\Mysql\FullyQualifiedQuery;
 
 class Client
 {
-    protected 			$___credentials		= false;
-    protected 			$___connected 		= false;
+    protected 			$___credentials		= [];
+    protected 			$___connected 		= [];
     protected 			$___modelDir 		= '';
     protected			$___quotes_on 		= '';
     protected			$___query			= '';
@@ -289,7 +289,7 @@ class Client
             $mysqli_class = $this->___settings['custom_mysqli_class_name'];
 
         $this->___mysqli[$this->_queryServer] = new $mysqli_class();
-        $this->___mysqli[$this->_queryServer]->init();
+//        $this->___mysqli[$this->_queryServer]->connect();
         $this->setTimeout();
 
         //$this->___current_db could be already defined under model etc.
@@ -324,7 +324,7 @@ class Client
             //if(isset($_SERVER['SERVER_PROTOCOL'])){header($_SERVER['SERVER_PROTOCOL'].' 503 Service Unavailable');}
 
             if(
-            (isset($credentials['die_on_error']) && $credentials['die_on_error'] === true)
+                (isset($credentials['die_on_error']) && $credentials['die_on_error'] === true)
             )
             {
                 if($this->___settings['connect_error_filepath'] && realpath($this->___settings['connect_error_filepath']))
@@ -790,7 +790,7 @@ class Client
         }
 
         if(
-        !$result
+            !$result
         )
         {
             $errorMsg 	= $this->___mysqli[$this->_queryServer]->error;

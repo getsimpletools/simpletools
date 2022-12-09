@@ -954,28 +954,28 @@ class QueryBuilder implements \Iterator
         return $this->_result->length();
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->run();
         $this->_result->rewind();
     }
 
-    public function current()
+    public function current() : mixed
     {
         return $this->_result->current();
     }
 
-    public function key()
+    public function key() : mixed
     {
         return $this->_result->key();
     }
 
-    public function next()
+    public function next() : void
     {
-        return $this->_result->next();
+        $this->_result->next();
     }
 
-    public function valid()
+    public function valid() : bool
     {
         return $this->_result->valid();
     }

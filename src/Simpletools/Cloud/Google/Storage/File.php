@@ -140,49 +140,49 @@ class File
         return true;
     }
 
-		public function importFile($filepath, $flag='a')
-		{
-			if(!file_exists($filepath))
-			{
-				throw new \Exception('File '.$filepath.' doesn\'t exists');
-			}
+    public function importFile($filepath, $flag='a')
+    {
+        if(!file_exists($filepath))
+        {
+            throw new \Exception('File '.$filepath.' doesn\'t exists');
+        }
 
-			if($this->_fileHandler)
-			{
-				@fclose($this->_fileHandler);
-			}
+        if($this->_fileHandler)
+        {
+            @fclose($this->_fileHandler);
+        }
 
-			if($this->_fileLocation)
-			{
-				@unlink($this->_fileLocation);
-			}
+        if($this->_fileLocation)
+        {
+            @unlink($this->_fileLocation);
+        }
 
-			$this->_fileLocation = $filepath;
-			$this->_isTempFile = false;
-			$this->_isImport = true;
+        $this->_fileLocation = $filepath;
+        $this->_isTempFile = false;
+        $this->_isImport = true;
 
-			$this->_fileHandler = fopen($this->_fileLocation,$flag);
-			return $this;
-		}
+        $this->_fileHandler = fopen($this->_fileLocation,$flag);
+        return $this;
+    }
 
-		public function exportFile($filepath)
-		{
-			$this->_initStorageObject();
+    public function exportFile($filepath)
+    {
+        $this->_initStorageObject();
 
-			if(!$this->_remoteFile->exists())
-			{
-				throw new \Exception('File '.$this->_fileSettings['path']. "doesn't exists.");
-			}
+        if(!$this->_remoteFile->exists())
+        {
+            throw new \Exception('File '.$this->_fileSettings['path']. "doesn't exists.");
+        }
 
-			if(!$fp= @fopen($filepath,'w'))
-			{
-				throw new \Exception("Couldn't open a file pointer for this location: ".$filepath);
-			}
-			fclose($fp);
+        if(!$fp= @fopen($filepath,'w'))
+        {
+            throw new \Exception("Couldn't open a file pointer for this location: ".$filepath);
+        }
+        fclose($fp);
 
-			$this->_remoteFile->downloadToFile($filepath);
-			return $this;
-		}
+        $this->_remoteFile->downloadToFile($filepath);
+        return $this;
+    }
 
     public function getHandler($flag)
     {
@@ -382,7 +382,15 @@ class File
     {
         if($this->_fileHandler)
         {
-            @fclose($this->_fileHandler);
+            try {
+                if(is_resource($this->_fileHandler))
+                {
+                    @fclose($this->_fileHandler);
+                }
+            } catch(\ErrorException $e)
+            {
+                throw $e;
+            }
         }
 
         if($this->_fileLocation && $this->_isTempFile)
@@ -426,9 +434,9 @@ class File
 
     /**
      * Get a signed URL referencing the object
-     * 
+     *
      * @param \DateTime $expiry Expiry of the url
-     * 
+     *
      * @return string
      */
     public function getSignedUrl($expiry)
