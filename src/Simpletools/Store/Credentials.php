@@ -319,7 +319,7 @@ class Credentials implements \JsonSerializable
         return $debug;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : mixed
     {
         return $this->__toString();
     }
