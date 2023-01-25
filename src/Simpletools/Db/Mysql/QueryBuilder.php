@@ -948,7 +948,7 @@ class QueryBuilder implements \Iterator
         return $this->_result->fetchAll();
     }
 
-    public function length()
+    public function length() : int
     {
         $this->run();
         return $this->_result->length();

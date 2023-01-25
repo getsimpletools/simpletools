@@ -680,34 +680,34 @@
 			return iterator_to_array($this->_iterator);
 		}
 
-		public function length()
+		public function length() : int
 		{
 			$this->run();
 			return $this->_cursor->length();
 		}
 
-		public function rewind()
+		public function rewind() : void
 		{
 			$this->run();
 			$this->_iterator->rewind();
 		}
 
-		public function current() 
+		public function current() : mixed
 		{
 	        return $this->_iterator->current();
 	    }
 
-	    public function key() 
+	    public function key() : mixed
 	    {
 	        return $this->_iterator->key();
 	    }
 
-	    public function next() 
+	    public function next() : void
 	    {
-	    	return $this->_iterator->next();
+	    	$this->_iterator->next();
 	    }
 
-	    public function valid() 
+	    public function valid() : bool
 	    {
 	        return $this->_iterator->valid();
 	    }
