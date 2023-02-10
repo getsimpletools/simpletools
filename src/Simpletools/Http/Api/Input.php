@@ -33,7 +33,7 @@ class Input
 
         self::$_input = file_get_contents('php://input');
 
-        if(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='application/json')
+        if(trim(explode(';',strtolower($_SERVER['CONTENT_TYPE'] ?? ""))[0])=='application/json')
         {
             if(self::$_input)
                 self::$_input = json_decode(self::$_input);
@@ -48,7 +48,7 @@ class Input
                 self::$_input = (object)array();
             }
         }
-        elseif(trim(explode(';',strtolower(@$_SERVER['CONTENT_TYPE']))[0])=='multipart/form-data')
+        elseif(trim(explode(';',strtolower($_SERVER['CONTENT_TYPE'] ?? ""))[0])=='multipart/form-data')
         {
             self::$_input = json_decode(json_encode($_POST));
         }
