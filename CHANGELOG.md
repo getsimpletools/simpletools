@@ -1,4 +1,4 @@
-### 2.11.7 (2023-07-04)
+### 2.11.8 (2023-07-04)
 1. **Simpletools\Cloud\Bucket**
     1. Added `listFiles($directory = null, $sortBy='created',$sortDirection ='asc')` method to list files in bucket directory
     2. Added `getIterator($directory = null)` method to return an iterator for files in a bucket directory
