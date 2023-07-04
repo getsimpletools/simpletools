@@ -91,4 +91,15 @@ class Bucket
             'bucket'    => $path[0]
         );
     }
+
+  public function listFiles($directory = '', $sortBy='',$sortDirection ='asc')
+  {
+    return $this->_bucket->listFiles($directory, $sortBy,$sortDirection);
+  }
+
+  public function getIterator($directory = '')
+  {
+    return $this->_bucket->getIterator($directory);
+  }
+
 }

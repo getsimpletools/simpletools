@@ -1,3 +1,11 @@
+### 3.0.5 (2023-07-04)
+1. **Simpletools\Cloud\Bucket**
+    1. Added `listFiles($directory = '', $sortBy='',$sortDirection ='asc')` method to list files in bucket directory
+    2. Added `getIterator($directory = null)` method to return an iterator for files in a bucket directory
+1. **Simpletools\Cloud\Google\Storage\Bucket**
+    1. Added `listFiles($directory = '', $sortBy='',$sortDirection ='asc')` method to list files in bucket directory
+    2. Added `getIterator($directory = null)` method to return an iterator for files in a bucket directory
+
 ### 3.0.0 (2022-12-09)
 1. **Simpletools\Db\Mysql\QueryBuilder**
     1. Additional Function typecast, fixed `void` type returning a value error.
