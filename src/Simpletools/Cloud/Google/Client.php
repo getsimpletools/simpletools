@@ -2,7 +2,16 @@
 
 namespace Simpletools\Cloud\Google;
 
-use Google\Cloud\ServiceBuilder;
+/*
+
+Google\Cloud\ServiceBuilder is depricated as of 0.172.0
+Deprecated:
+
+use Google\Cloud\Core\ServiceBuilder instead.
+
+*/
+
+use Google\Cloud\Core\ServiceBuilder;
 
 /*
  * https://github.com/GoogleCloudPlatform/google-cloud-php

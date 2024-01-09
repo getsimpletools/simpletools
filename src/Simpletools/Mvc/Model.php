@@ -46,7 +46,7 @@
 		protected $_appDir 		= '';
 		private static $_instance = null;
 		protected $_activeRoutingNamespace = '';
-
+		protected $objects = array();
 		public function __construct($appDir,$_activeRoutingNamespace='')
 		{
 			self::$_instance 							= $this;
@@ -81,7 +81,8 @@
 		public static function of($model)
 		{
 			$args = func_get_args();
-			return call_user_func_array(array('self','getInstance'), $args);
+			$callable = self::class . '::getInstance';
+			return call_user_func_array($callable, $args);
 		}
 		
 		public static function getInstance($model)
