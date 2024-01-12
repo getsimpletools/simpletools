@@ -46,7 +46,7 @@
 		protected $_appDir 		= '';
 		private static $_instance = null;
 		protected $_activeRoutingNamespace = '';
-		protected $objects = array();
+		public $objects = array();
 		public function __construct($appDir,$_activeRoutingNamespace='')
 		{
 			self::$_instance 							= $this;

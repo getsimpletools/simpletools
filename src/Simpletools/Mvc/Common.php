@@ -49,8 +49,8 @@
 		* @param array $_params Global params list to set on construction
 		* @param array $_shifted_params Shifted global params list to set on construction
 		*/
-		private $_params = [];
-		private $_shifted_params = [];
+		protected $_params = [];
+		protected $_shifted_params = [];
 		
 		/**
 		* Action name normaliser
