@@ -86,6 +86,7 @@
 			'overrideAction'						=> 'index'
 		);
 
+		// Public as per default constructor
 		public $_routingEvents						= false;
 
 		//view object
