@@ -86,7 +86,7 @@
 			'overrideAction'						=> 'index'
 		);
 
-		private $_routingEvents						= false;
+		protected $_routingEvents						= false;
 
 		//view object
 		protected $_view			= '';
