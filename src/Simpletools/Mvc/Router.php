@@ -88,6 +88,8 @@
 
 		// Public as per default constructor
 		public $_routingEvents						= false;
+		// Public as per default constructor
+		public $_current_controller					= '';
 
 		//view object
 		protected $_view			= '';

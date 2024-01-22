@@ -43,7 +43,30 @@
 	class Controller extends \Simpletools\Mvc\Common
 	{			
 		protected static $_instance = null;
-				
+		/**
+		* Initial Variable Values
+		* 
+		*
+		* As of PHP 8.2 you are no longer able create dynamic properties
+		**/
+		protected $_appDir;
+		protected $_view;
+		protected $_autoRender;
+		protected $_forwarded;
+		protected $_params;
+		protected $_objects;
+		protected $_errorCode;
+		protected $_shifts_params;
+		protected $_classes;
+		protected $_current_controller;
+		protected $_404_error_header;
+		protected $_view_enabled;
+		protected $_routingEvents;
+		protected $_routingNamespaces;
+		protected $_activeRoutingNamespace;
+		protected $_activeRoutingNamespaceUrlPath;
+		protected $_httpMethod;
+
 		public function __construct($env)
 		{
 			$this->_appDir 					= &$env->appDir;
