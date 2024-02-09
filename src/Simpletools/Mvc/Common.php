@@ -43,6 +43,17 @@
 	class Common
 	{
 		/**
+		* Initial Variable Values
+		* @protected as per \Simpletools\Mvc\Controller $_instance initialisation
+		*
+		* As of PHP 8.2 you are no longer able create dynamic properties
+		* @param array $_params Global params list to set on construction
+		* @param array $_shifted_params Shifted global params list to set on construction
+		*/
+		protected $_params = [];
+		protected $_shifted_params = [];
+		
+		/**
 		* Action name normaliser
 		*
 		* @param string $action Action name to normalise

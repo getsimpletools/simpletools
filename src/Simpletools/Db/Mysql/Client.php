@@ -52,7 +52,8 @@ class Client
     protected 			$___args 			= '';
     protected           $_queryServer       = 'master';
     protected           $_forcedMasterServer = false;
-
+    
+    public              $_prepare_typ       = null;
     const 				_noArgs				= '$--SimpleMySQL--n0-aRg5--';
 
     protected 			$___current_db 		= null;
