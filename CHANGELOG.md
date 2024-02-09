@@ -1,3 +1,7 @@
+### 3.0.12 (2024-02-09)
+1. **Simpletools\Db\Mysql\Client**
+   1. Set mysqli_report to MYSQLI_REPORT_OFF
+
 ### 3.0.5 (2023-07-04)
 1. **Simpletools\Cloud\Bucket**
     1. Added `listFiles($directory = '', $sortBy='',$sortDirection ='asc')` method to list files in bucket directory
