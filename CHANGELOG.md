@@ -1,4 +1,4 @@
-### 3.0.12 (2024-02-09)
+### 3.0.13 (2024-02-09)
 1. **Simpletools\Db\Mysql\Client**
    1. Set mysqli_report to MYSQLI_REPORT_OFF
 
