@@ -1,3 +1,11 @@
+### 3.0.15 (2024-04-13)
+1. **Simpletools\Mvc\Router**
+    1. Initiated `_shifts_params` as array()
+2. **Simpletools\Mvc\Common**
+    1. Added `is_array($this->_shifts_params)` check
+3. **composer.json**
+    1. set to minimum PHP 7.0
+
 ### 3.0.13 (2024-02-09)
 1. **Simpletools\Db\Mysql\Client**
    1. Set mysqli_report to MYSQLI_REPORT_OFF

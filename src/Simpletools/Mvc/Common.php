@@ -404,7 +404,7 @@
 			
 				$counter = 0;
 				
-				if(count($this->_shifts_params) > 0)
+				if(is_array($this->_shifts_params) && count($this->_shifts_params) > 0)
 				{
 					foreach($this->_shifts_params as $p)
 					{

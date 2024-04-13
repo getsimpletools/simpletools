@@ -63,7 +63,7 @@
 
 		//instance holder
 		private static $_instance		= null;
-		protected $_shifts_params 		= false;
+		protected $_shifts_params 		= array();
 
 		//custom objects
 		protected $_objects					= false;
