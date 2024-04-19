@@ -1,4 +1,4 @@
-### 3.0.16 (2024-04-13)
+### 3.0.16 (2024-04-19)
 1. **Simpletools\Mvc\Common**
     1. Added `AllowDynamicProperties` class directive
 2. **Simpletools\Mvc\Model**
