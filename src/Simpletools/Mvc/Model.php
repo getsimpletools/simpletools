@@ -41,6 +41,8 @@
 	/**
 	* MVC Model
 	*/
+    use \AllowDynamicProperties;
+    #[\AllowDynamicProperties]
 	class Model
 	{
 		protected $_appDir 		= '';

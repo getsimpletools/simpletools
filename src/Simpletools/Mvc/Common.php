@@ -40,7 +40,9 @@
 	/**
 	* MVC Common Methods
 	*/
-	class Common
+    use \AllowDynamicProperties;
+    #[\AllowDynamicProperties]
+    class Common
 	{
 		/**
 		* Initial Variable Values

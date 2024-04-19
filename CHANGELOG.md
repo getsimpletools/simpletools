@@ -1,3 +1,11 @@
+### 3.0.16 (2024-04-13)
+1. **Simpletools\Mvc\Common**
+    1. Added `AllowDynamicProperties` class directive
+2. **Simpletools\Mvc\Model**
+    1. Added `AllowDynamicProperties` class directive
+3. **Simpletools\Mvc\Layout**
+    1. Added `AllowDynamicProperties` class directive
+   
 ### 3.0.15 (2024-04-13)
 1. **Simpletools\Mvc\Router**
     1. Initiated `_shifts_params` as array()

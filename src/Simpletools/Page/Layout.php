@@ -40,7 +40,8 @@
 	namespace Simpletools\Page;
 
 	use \Simpletools\Page\Layout;
-
+    use \AllowDynamicProperties;
+    #[\AllowDynamicProperties]
 	class Layout
 	{
 		private $_layout 		= '';
