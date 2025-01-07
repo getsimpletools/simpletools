@@ -1,3 +1,7 @@
+### 3.0.17 (2024-04-19)
+1. **Simpletools\Db\Mysql**
+    1. Added return type to Driver `close()` to match mysqli::close().
+
 ### 3.0.16 (2024-04-19)
 1. **Simpletools\Mvc\Common**
     1. Added `AllowDynamicProperties` class directive
