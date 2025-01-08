@@ -1,6 +1,6 @@
-### 3.0.20 (2025-01-08)
+### 3.0.21 (2025-01-08)
 1. **Simpletools\Db\Mysql**
-    1. Added return to Driver `close()` to match return type.
+    1. Change return type to `true`;  As of 8.0.0 This function now always returns true. Previously it returned false on failure (https://www.php.net/manual/en/mysqli.close.php).
 
 
 ### 3.0.19 (2025-01-08)
