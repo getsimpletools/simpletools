@@ -54,7 +54,7 @@ class Driver extends \mysqli
     public function close(): bool
     {
         $this->_closed = true;
-        parent::close();
+        return parent::close();
     }
 
     public function select_db($db) : bool

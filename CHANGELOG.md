@@ -1,3 +1,8 @@
+### 3.0.20 (2025-01-08)
+1. **Simpletools\Db\Mysql**
+    1. Added return to Driver `close()` to match return type.
+
+
 ### 3.0.19 (2025-01-08)
 1. **Simpletools\Db\Mysql**
     1. PHP 8.4 Compatibility. Implicitly marking parameter as nullable is deprecated.
