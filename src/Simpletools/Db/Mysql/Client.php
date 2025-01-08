@@ -59,7 +59,7 @@ class Client
     protected 			$___current_db 		= null;
     protected 			$___connectionName	= 'default';
 
-    public function __construct(array $settings=null,$connectionName='default')
+    public function __construct(array $settings=[],$connectionName='default')
     {
         mysqli_report(MYSQLI_REPORT_OFF);
         $this->setSettings($settings);

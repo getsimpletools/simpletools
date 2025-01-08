@@ -99,7 +99,7 @@
 
 		protected $_httpMethod      = '';
 
-		public function __construct(array $settings=null)
+		public function __construct(array $settings=[])
 		{
 			if(
 					(isset($settings['applicationDir']) && ($settings['applicationDir']))
@@ -284,7 +284,7 @@
 			return $this->_activeRoutingNamespace;
 		}
 
-		public static function &getInstance(array $settings=null)
+		public static function &getInstance(array $settings=[])
 		{
 			 if (empty(self::$_instance))
 			     self::$_instance = new \Simpletools\Mvc\Router($settings);
