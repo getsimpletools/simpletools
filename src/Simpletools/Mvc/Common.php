@@ -172,11 +172,11 @@
 		* HTTP GET getter
 		*
 		* @param string $id GET key to return
-		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_SPECIAL_CHARS
 		* @param array $sanitizeFilterOptions Sanitize Filter options
 		* @return mixed GET value or values if $id is not provided
 		*/
-		public function getQuery($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+		public function getQuery($id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_GET;
 
@@ -207,11 +207,11 @@
 		* HTTP POST getter
 		*
 		* @param string $id POST key to return
-		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_SPECIAL_CHARS
 		* @param array $sanitizeFilterOptions Sanitize Filter options
 		* @return mixed POST value or values if $id is not provided
 		*/
-		public function getPost($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+		public function getPost($id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_POST;
 			
@@ -242,11 +242,11 @@
 		* HTTP REQUEST getter
 		*
 		* @param string $id REQUEST key to return
-		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_STRING
+		* @param int $sanitizeFilter Sanitize Filter type - http://php.net/manual/en/filter.filters.sanitize.php, defaults to FILTER_SANITIZE_SPECIAL_CHARS
 		* @param array $sanitizeFilterOptions Sanitize Filter options
 		* @return mixed REQUEST value or values if $id is not provided
 		*/
-		public function getRequest($id=null,$sanitizeFilter=FILTER_SANITIZE_STRING,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+		public function getRequest($id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
 		{
 			if($id==null) return $_REQUEST;
 			

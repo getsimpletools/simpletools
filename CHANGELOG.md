@@ -1,7 +1,10 @@
+### 3.0.22 (2025-01-11)
+1. **Simpletools\Mvc\Common**
+    1. Changed default filter sanitiser for `->getPost()`, `->getQuery()`, `->getRequest()` from `FILTER_SANITIZE_STRING` to `FILTER_SANITIZE_SPECIAL_CHARS`
+
 ### 3.0.21 (2025-01-08)
 1. **Simpletools\Db\Mysql**
     1. Change return type to `true`;  As of 8.0.0 This function now always returns true. Previously it returned false on failure (https://www.php.net/manual/en/mysqli.close.php).
-
 
 ### 3.0.19 (2025-01-08)
 1. **Simpletools\Db\Mysql**
@@ -485,12 +488,12 @@
  1. **Simpletools/Db/Mysql/Connection**
     1. Introduced query logging storage
  1. **Simpletools/Db/Mysql/Client**
-    1. Introduced query logging capabilities, to enable specify `queryLog` at config, accepts the following optional values: `'queryLog'		=> [
-                                                                                                            		'minTimeSec'	=> (float) $sec,
-                                                                                                            		'emitEvent'		=> (string) $eventName,
-                                                                                                            		'emitEventOnly'	=> (true|false),
-                                                                                                            		'ignore'		=> ['INSERT','SET','...']
-                                                                                                            	]`
+    1. Introduced query logging capabilities, to enable specify `queryLog` at config, accepts the following optional values: `'queryLog'        => [
+                                                                                                                    'minTimeSec'    => (float) $sec,
+                                                                                                                    'emitEvent'     => (string) $eventName,
+                                                                                                                    'emitEventOnly' => (true|false),
+                                                                                                                    'ignore'        => ['INSERT','SET','...']
+                                                                                                                ]`
     2. Introduced `getQueryLog()`
 
 ### 2.1.2 (2016-08-11)
