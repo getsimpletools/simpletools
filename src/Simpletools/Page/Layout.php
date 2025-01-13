@@ -110,7 +110,7 @@
 				$this->_settings['charset'] = 'UTF-8';
 		}
 		
-		public static function &getInstance($settings=null)
+		public static function &getInstance(array|null $settings=null)
 		{
 			if (empty(self::$_instance)) 
 			{

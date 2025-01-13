@@ -791,7 +791,7 @@ class QueryBuilder implements \Iterator
         }
     }
 
-    public function &whereSql($statement,$vars=null)
+    public function &whereSql($statement,array|null $vars=null)
     {
         $this->_query['whereSql'] = array('statement'=>$statement,'vars'=>$vars);
 

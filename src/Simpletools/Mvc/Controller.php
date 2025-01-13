@@ -102,7 +102,7 @@
 			}
 		}
 		
-		public static function &getInstance($empty=null)
+		public static function &getInstance(bool|null $empty=null)
 		{
 			if (!empty(self::$_instance)) 
 			{
@@ -119,7 +119,7 @@
 			$this->{$objectName} = $obj;
 		}
 		
-		public function render($controller,$view=null)
+		public function render($controller,string|null $view=null)
 		{
 			if(!$this->_view_enabled) return;
 
@@ -254,7 +254,7 @@
 			return $env;
 		}
 		
-		public function forward($controller,$action=null,$params=false)
+		public function forward($controller,string|null $action=null,$params=false)
 		{			
 			$this->_forwarded = true;
 			
@@ -532,7 +532,7 @@
 			$this->_view_enabled = false;
 		}
 
-		public function isAction($action=null)
+		public function isAction(string|null $action=null)
 		{
 			if(!$action)
 				$action	= self::getCorrectActionName($this->getParam('action')).'Action';

@@ -51,7 +51,7 @@
 		
 		protected static $__instance;
 		
-		public function __construct(array $settings=null)
+		public function __construct(array|null $settings=null)
 		{ 
 			$settings['uri_mvc_app_position'] = isset($settings['uri_mvc_app_position']) ? $settings['uri_mvc_app_position'] : 0;
 			$settings['section'] = isset($settings['section']) ? $settings['section'] : false;

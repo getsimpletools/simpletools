@@ -125,7 +125,7 @@ class Acl
         return $this;
     }
 
-    protected function _parsePath($path,$invoke=null)
+    protected function _parsePath($path)
     {
         preg_match_all('/\{(.*?)\}/', $path, $matches);
 

@@ -40,7 +40,7 @@ class Replicator
 {
 	protected static $_listeners = array();
 
-	public static function on($event,$handler,$meta=null)
+	public static function on($event,$handler,string|null $meta=null)
 	{
 		if(!isset(self::$_listeners[$event]))
 			self::$_listeners[$event] = array();
@@ -58,7 +58,7 @@ class Replicator
 		return isset(self::$_listeners[$event]);
 	}
 
-	public static function trigger($event,$item, $helper =null)
+	public static function trigger($event,$item, string|null $helper =null)
 	{
 		if(isset(self::$_listeners[$event]) && self::$_listeners[$event])
 		{

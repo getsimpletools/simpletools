@@ -218,7 +218,7 @@ class File
         return $this->_file->getBody();
     }
 
-    public function setBody($body,$flag=null)
+    public function setBody($body, string|null $flag=null)
     {
         $this->_file->setBody($body,$flag);
         return $this;

@@ -16,7 +16,7 @@
         protected $_verbose=false;
         protected $_verboseTrace=true;
 
-        public static function self(array $body=null)
+        public static function self(array|null $body=null)
         {
             if(!self::$_self)
             {
@@ -30,7 +30,7 @@
         protected $_privateFlipped      = array();
         protected $_privateAll          = false;
 
-        public function private($keys=null)
+        public function private(array|string|null $keys=null)
         {
             if($this->_privateFlipped) {
                 $this->_private = array_flip($this->_private);
@@ -124,7 +124,7 @@
             return json_encode($response);
         }
 
-        public function __construct(array $body=null)
+        public function __construct(array|null $body=null)
         {
             $this->_payload = $body;
         }
@@ -193,7 +193,7 @@
             return $this->_statusCode;
         }
 
-        public function body($body, $transformer=null)
+        public function body($body,callable|null $transformer=null)
         {
             if(is_callable($transformer))
             {
@@ -217,7 +217,7 @@
             return $this;
         }
 
-        public function meta($key,$value=null)
+        public function meta($key,string|null $value=null)
         {
             if (!is_array($this->_meta))
             {
@@ -269,7 +269,7 @@
             return $this;
         }
 
-        public function verboseTrace($enable=null)
+        public function verboseTrace(string|null $enable=null)
         {
             if($enable===null) return $this->_verboseTrace;
 

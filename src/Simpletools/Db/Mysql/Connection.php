@@ -63,7 +63,7 @@ class Connection
 		self::$_connectors[$name] = $connector;
 	}
 
-	public static function logQuery($start,$end,$query,$errMsg=null,$errNo=null)
+	public static function logQuery($start,$end,$query,string|null $errMsg=null,string|int|null $errNo=null)
 	{
 		if(self::$_logQuerySettings)
 		{

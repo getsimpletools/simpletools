@@ -195,12 +195,12 @@
             return false;
         }
 
-        public static function start($sessionId=null)
+        public static function start(string|null $sessionId=null)
         {
             self::_autoStart($sessionId);
         }
 
-		protected static function _autoStart($sessionId=null)
+		protected static function _autoStart(string|null $sessionId=null)
 		{
 			if(self::$_sessionStarted)
 			{

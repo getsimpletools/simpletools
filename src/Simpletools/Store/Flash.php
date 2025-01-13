@@ -105,7 +105,7 @@
 		* @param mixed $keys Settings to be used as default
 		* @return null
 		*/
-		public static function reflush($keys=null)
+		public static function reflush(string|array|null $keys=null)
 		{
 			self::_cleanPrevious();
 

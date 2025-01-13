@@ -167,7 +167,7 @@ class Progress
         return $this->step($step);
     }
 
-    public function step($step=null)
+    public function step(int|null $step=null)
     {
         if($this->_done) return $this;
 

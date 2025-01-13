@@ -135,7 +135,7 @@
 			return $id;
 		}
 
-		public static function unqueue($event,$id=null)
+		public static function unqueue($event,string|null $id=null)
 		{
 			if($id)
 			{

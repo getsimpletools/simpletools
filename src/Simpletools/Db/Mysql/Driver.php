@@ -63,7 +63,14 @@ class Driver extends \mysqli
         parent::select_db($db);
     }
 
-    public function real_connect($host=NULL,$user=NULL,$password=NULL,$database=NULL,$port=NULL,$socket=NULL,$flags=NULL) : bool
+    public function real_connect(
+        string|null $host=NULL,
+        string|null $user=NULL,
+        string|null $password=NULL,
+        string|null $database=NULL,
+        int|null $port=NULL,
+        string|null $socket=NULL,
+        int $flags=0) : bool
     {
         $this->_db = $database;
         return parent::real_connect($host,$user,$password,$database,$port,$socket,$flags);
