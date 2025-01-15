@@ -1,3 +1,8 @@
+### 3.0.24 (2025-01-15)
+1. **PHP 8.4 Compatibility. (Implicitly marking parameter as nullable is deprecated.)**
+    1. ***Simpletools\Db\Mysql\Client***
+        1. Changed Default `$flags` value from null to 0;
+
 ### 3.0.23 (2025-01-13)
 1. **PHP 8.4 Compatibility. (Implicitly marking parameter as nullable is deprecated.)**
     1. ***Simpletools\Http\Api\Acl***

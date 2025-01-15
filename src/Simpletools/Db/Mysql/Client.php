@@ -300,7 +300,7 @@ class Client
             $this->___current_db 						= $_credentials['db'];
         }
 
-        $flags = null;
+        $flags = 0;
         if($_credentials['compression'])
         {
             $flags = MYSQLI_CLIENT_COMPRESS;
@@ -318,7 +318,7 @@ class Client
             $_credentials['db'],
             intval($_credentials['port']),
             null,
-            $flags ?? 0
+            $flags
         );
 
         if(mysqli_connect_errno())
