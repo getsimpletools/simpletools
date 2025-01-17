@@ -51,7 +51,8 @@ class Driver extends \mysqli
         return $this->_closed;
     }
 
-    public function close(): true
+    #[\ReturnTypeWillChange]
+    public function close()
     {
         $this->_closed = true;
         return parent::close();
