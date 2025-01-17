@@ -1,3 +1,9 @@
+### 3.0.25 (2025-01-17)
+1. **PHP 8.4 Compatibility. (Implicitly marking parameter as nullable is deprecated.)**
+    1. ***Simpletools\Db\Mysql\Driver***
+        1. Changed return to mysql `#[\ReturnTypeWillChange]`;
+
+
 ### 3.0.24 (2025-01-15)
 1. **PHP 8.4 Compatibility. (Implicitly marking parameter as nullable is deprecated.)**
     1. ***Simpletools\Db\Mysql\Client***
