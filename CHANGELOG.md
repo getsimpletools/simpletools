@@ -1,3 +1,8 @@
+### 3.0.26 (2025-01-21)
+1. **PHP 8.4 Compatibility.**
+    1. ***Simpletools\Http\Api\Input***
+        1. Amended `input()` function to allow array `$key` to be passed.
+
 ### 3.0.25 (2025-01-17)
 1. **PHP 8.4 Compatibility. (Implicitly marking parameter as nullable is deprecated.)**
     1. ***Simpletools\Db\Mysql\Driver***
