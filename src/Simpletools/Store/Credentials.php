@@ -209,7 +209,7 @@ class Credentials implements \JsonSerializable
 
             $this->_resetIv();
 
-            $this->_payloadEncrypted = base64_encode($this->_cryptIv).'.'.openssl_encrypt(json_encode($this->_payloadDecrypted),self::$_CIPHER,$this->_cryptKey,null,$this->_cryptIv);
+            $this->_payloadEncrypted = base64_encode($this->_cryptIv).'.'.openssl_encrypt(data: json_encode($this->_payloadDecrypted), cipher_algo: self::$_CIPHER, passphrase: $this->_cryptKey, iv: $this->_cryptIv);
         }
         else
         {

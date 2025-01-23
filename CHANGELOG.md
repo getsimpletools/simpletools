@@ -1,3 +1,9 @@
+### 3.0.27 (2025-01-24)
+1. **PHP 8.4 Compatibility.**
+    1. ***Simpletools\Store\Credentials***
+        1. Amended `_encrypt()`  function to pass `openssl_encrypt()` parameters by name, to clear deprication warning when passing `null` to parameter.
+
+
 ### 3.0.26 (2025-01-21)
 1. **PHP 8.4 Compatibility.**
     1. ***Simpletools\Http\Api\Input***
