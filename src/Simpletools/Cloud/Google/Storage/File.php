@@ -320,7 +320,7 @@ class File
         return file_get_contents($this->_fileLocation);
     }
 
-    public function setBody($body, string|null $flag=null)
+    public function setBody($body, mixed $flag=null)
     {
         $this->_bodyTouched = true;
 

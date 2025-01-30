@@ -146,7 +146,7 @@ class Credentials implements \JsonSerializable
         return isset($this->_payloadDecrypted['body'][$name]);
     }
 
-    public function get(string|null $name=null)
+    public function get(mixed $name=null)
     {
         $this->_decrypt();
 

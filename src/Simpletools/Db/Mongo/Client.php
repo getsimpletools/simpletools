@@ -48,7 +48,7 @@
 		protected $___current_db 		= null;
 		protected $___connected			= false;
 
-		public function __construct(array|null $settings=null,$connectionName='default')
+		public function __construct(mixed $settings=null,$connectionName='default')
 		{
 			$this->___connectionName = $connectionName;
 			$this->setSettings($settings);
@@ -202,7 +202,7 @@
 			return $this->___settings;
 		}
 
-		public function getObjectId(string|null $id=null)
+		public function getObjectId(mixed $id=null)
 		{
 			return (!$id) ? new \MongoDB\BSON\ObjectID() : new \MongoDB\BSON\ObjectID($id);
 		}

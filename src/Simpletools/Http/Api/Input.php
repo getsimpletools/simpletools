@@ -58,7 +58,7 @@ class Input
         }
     }
 
-    public static function input(string|array|null $key=null,string|null $value=null)
+    public static function input(mixed $key=null, mixed $value=null)
     {
         self::_init();
 

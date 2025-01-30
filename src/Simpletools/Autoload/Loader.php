@@ -46,7 +46,7 @@
 	    private $__prefixes 			= array();
 	    private $__fallbackAutoloader 	= false;
 
-	    public static function &getInstance($options=null)
+	    public static function &getInstance(mixed $options=null)
 	    {
 	        if (self::$loader == NULL)
 	            self::$loader = new self($options);
@@ -54,7 +54,7 @@
 	        return self::$loader;
 	    }
 
-	    public function __construct($options=null)
+	    public function __construct(mixed $options=null)
 	    {
 	        spl_autoload_register(array($this,'__load'));
 	        if($options) $this->setOptions($options);

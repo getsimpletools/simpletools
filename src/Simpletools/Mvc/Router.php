@@ -631,7 +631,7 @@
 			}
 		}
 
-		public function forward($controller,string|null $action=null,$params=false)
+		public function forward($controller,mixed $action=null,$params=false)
 		{
 			$this->_autoRender = true;
 
@@ -761,7 +761,7 @@
 			$this->_view_enabled = false;
 		}
 		
-		protected function _render($controller,string|null $view=null)
+		protected function _render($controller,mixed $view=null)
 		{
 			if(!$this->_view_enabled) return;
 

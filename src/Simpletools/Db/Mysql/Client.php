@@ -235,7 +235,7 @@ class Client
         return $this->___mysqli[$this->_queryServer]->options(MYSQLI_OPT_CONNECT_TIMEOUT,$time);
     }
 
-    public function setTimezone(string|null $timezone,$queryServer=null)
+    public function setTimezone(mixed $timezone,mixed $queryServer=null)
     {
         if(!$this->isConnected())
         {
@@ -385,7 +385,7 @@ class Client
         return $this->___connected[$this->_queryServer];
     }
 
-    public function getServerInfo(string|null $queryServer = null)
+    public function getServerInfo(mixed $queryServer = null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -403,7 +403,7 @@ class Client
         return $this->___mysqli[$this->_queryServer]->connect_error;
     }
 
-    public function isThreadSafe(string|null $queryServer = null)
+    public function isThreadSafe(mixed $queryServer = null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -421,7 +421,7 @@ class Client
         return $this->___mysqli[$this->_queryServer]->connect_errno;
     }
 
-    public function isTable($table,string|null $db=null, string|null$queryServer=null)
+    public function isTable($table,mixed $db=null, mixed $queryServer=null)
     {
         $this->_manualSetQueryServer($queryServer);
         $table = $this->escape($table);
@@ -440,7 +440,7 @@ class Client
     /*
      * START innoDB methods only
      */
-    public function setAutoCommit($autoCommit=true,string|null $queryServer=null)
+    public function setAutoCommit($autoCommit=true,mixed $queryServer=null)
     {
         if($autoCommit)
             $this->query('SET AUTOCOMMIT=1',$queryServer);
@@ -448,27 +448,27 @@ class Client
             $this->query('SET AUTOCOMMIT=0',$queryServer);
     }
 
-    public function startTransaction(string|null $queryServer=null)
+    public function startTransaction(mixed $queryServer=null)
     {
         $this->query('START TRANSACTION',$queryServer);
     }
 
-    public function beginTransaction(string|null $queryServer=null)
+    public function beginTransaction(mixed $queryServer=null)
     {
         $this->query('BEGIN',$queryServer);
     }
 
-    public function rollback(string|null $queryServer=null)
+    public function rollback(mixed $queryServer=null)
     {
         $this->query('ROLLBACK',$queryServer);
     }
 
-    public function commit(string|null $queryServer=null)
+    public function commit(mixed $queryServer=null)
     {
         $this->query('COMMIT',$queryServer);
     }
 
-    public function setUniqueChecks($uniqueChecks=true,string|null $queryServer=null)
+    public function setUniqueChecks($uniqueChecks=true,mixed $queryServer=null)
     {
         if($uniqueChecks)
             $this->query('SET UNIQUE_CHECKS=1',$queryServer);
@@ -479,7 +479,7 @@ class Client
      * END innoDB methods only
      */
 
-    public function getInfo(string|null $queryServer=null)
+    public function getInfo(mixed $queryServer=null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -507,7 +507,7 @@ class Client
         return (boolean) $this->___mysqli[$this->_queryServer]->errno;
     }
 
-    public function getCharset(string|null $queryServer=null)
+    public function getCharset(mixed $queryServer=null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -520,7 +520,7 @@ class Client
         return $this->___mysqli[$this->_queryServer]->get_charset();
     }
 
-    public function setCharset($charset,string|null $queryServer=null)
+    public function setCharset($charset,mixed $queryServer=null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -549,7 +549,7 @@ class Client
         }
     }
 
-    public function getConnectionStatus(string|null $queryServer=null)
+    public function getConnectionStatus(mixed $queryServer=null)
     {
         $this->_manualSetQueryServer($queryServer);
 
@@ -737,7 +737,7 @@ class Client
         return $this->_queryServer;
     }
 
-    public function query($query,string|null $queryServer=null)
+    public function query($query,mixed $queryServer=null)
     {
         if(!$this->_manualSetQueryServer($queryServer))
         {
@@ -939,7 +939,7 @@ class Client
         return isset($this->___connected[$this->_queryServer]) && $this->___connected[$this->_queryServer];
     }
 
-    public function getInstanceOfModel($modelName,array|null $initArgs=null,$namespace='')
+    public function getInstanceOfModel($modelName,mixed $initArgs=null,$namespace='')
     {
         $class = $namespace ? $namespace.'\\'.$modelName.'Model' : $modelName.'Model';
 
@@ -994,19 +994,19 @@ class Client
             return isset($_REQUEST[$id]);
     }
 
-    public function getQuery(string|null $id=null)
+    public function getQuery(mixed $id=null)
     {
         if($id==null) return $_GET;
         return isset($_GET[$id]) ? $_GET[$id] : null;
     }
 
-    public function getPost(string|null $id=null)
+    public function getPost(mixed $id=null)
     {
         if($id==null) return $_POST;
         return isset($_POST[$id]) ? $_POST[$id] : null;
     }
 
-    public function getRequest(string|null $id=null)
+    public function getRequest(mixed $id=null)
     {
         if($id==null) return $_REQUEST;
         return isset($_REQUEST[$id]) ? $_REQUEST[$id] : null;

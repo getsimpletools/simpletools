@@ -15,13 +15,13 @@ class Json
     protected $_type;
     protected $_client;
 
-    public static function get($dataSource,$dataSourceOut=null)
+    public static function get($dataSource,mixed $dataSourceOut=null)
     {
         $json = new static($dataSource,$dataSourceOut);
         return $json;
     }
 
-    public function __construct($dataSource,$dataSourceOut=null)
+    public function __construct($dataSource,mixed $dataSourceOut=null)
     {
         $this->_columnName = $dataSource;
         $this->_targetColumn = $dataSourceOut;

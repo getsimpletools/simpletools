@@ -1,3 +1,9 @@
+### 3.0.28 (2025-01-30)
+1. **PHP 8.4 Compatibility.**
+    1. ***File List from 3.0.23***
+        1. Amended `<type>|null` to `mixed` to prevent type casting between string/int when not explicitly set.
+
+
 ### 3.0.27 (2025-01-24)
 1. **PHP 8.4 Compatibility.**
     1. ***Simpletools\Store\Credentials***

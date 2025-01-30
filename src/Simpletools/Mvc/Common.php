@@ -95,7 +95,7 @@
         * @param array $filterOptions Filter options
         * @return mixed boolean if no filter is set
         */
-        public function isPost($id=false, string|null $filter=null,$filterOptions=array())
+        public function isPost($id=false, mixed $filter=null,$filterOptions=array())
         {
             if(!$id)
             {
@@ -122,7 +122,7 @@
         * @param array $filterOptions Filter options
         * @return mixed boolean if no filter is set
         */
-        public function isQuery($id=false,string|null $filter=null,$filterOptions=array())
+        public function isQuery($id=false, mixed $filter=null,$filterOptions=array())
         {
             if(!$id)
             {
@@ -149,7 +149,7 @@
         * @param array $filterOptions Filter options
         * @return mixed boolean if no filter is set
         */
-        public function isRequest($id=false,string|null $filter=null,$filterOptions=array())
+        public function isRequest($id=false, mixed $filter=null,$filterOptions=array())
         {
             if(!$id)
             {
@@ -176,7 +176,7 @@
         * @param array $sanitizeFilterOptions Sanitize Filter options
         * @return mixed GET value or values if $id is not provided
         */
-        public function getQuery(string|null $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+        public function getQuery(mixed $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
         {
             if($id==null) return $_GET;
 
@@ -211,7 +211,7 @@
         * @param array $sanitizeFilterOptions Sanitize Filter options
         * @return mixed POST value or values if $id is not provided
         */
-        public function getPost(string|null $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+        public function getPost(mixed $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
         {
             if($id==null) return $_POST;
             
@@ -246,7 +246,7 @@
         * @param array $sanitizeFilterOptions Sanitize Filter options
         * @return mixed REQUEST value or values if $id is not provided
         */
-        public function getRequest(string|null $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
+        public function getRequest(mixed $id=null,$sanitizeFilter=FILTER_SANITIZE_SPECIAL_CHARS,$sanitizeFilterOptions=array('flags'=>FILTER_FLAG_STRIP_HIGH))
         {
             if($id==null) return $_REQUEST;
             
