@@ -1,3 +1,9 @@
+### 2.11.9 (2025-03-26)
+1. **Simpletools\Cloud\Google\Client**
+    1. Added standalone object of the class
+2. **Simpletools\Cloud\Google\Storage\File**
+    1. It can accept Client in constructor
+
 ### 2.11.8 (2023-07-04)
 1. **Simpletools\Cloud\Bucket**
     1. Added `listFiles($directory = null, $sortBy='created',$sortDirection ='asc')` method to list files in bucket directory

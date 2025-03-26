@@ -8,6 +8,7 @@ use Simpletools\Cloud\Google;
 class File
 {
     protected $_file;
+    protected $_client;
     protected static $_defaultProtocol;
     protected static $_bucketSuffix;
     protected static $_bucketPrefix;
@@ -80,11 +81,14 @@ class File
         return strtolower(end($ext));
     }
 
-    public function __construct($file,array $meta=[])
+    public function __construct($file,array $meta=[], $client=null)
     {
+        if($client) $this->_client = $client;
+
+
         if($file instanceof StorageObject)
         {
-            $this->_file = new Google\Storage\File($file,$meta);
+            $this->_file = new Google\Storage\File($file,$meta,$client);
             $ext = $this->_getExt($this->_file->getName());
 
         }
@@ -97,7 +101,7 @@ class File
             }
 
             if($path['protocol']=='gs')
-                $this->_file = new Google\Storage\File($path['path'],$meta);
+                $this->_file = new Google\Storage\File($path['path'],$meta, $client);
             else
                 throw new \Exception('An unknown protocol '.$path['protocol']);
 
@@ -149,13 +153,13 @@ class File
 
         $protocol   = $protocol[0];
 
-        if(self::$_bucketPrefix)
+        if(self::$_bucketPrefix && !$this->_client)
         {
             $path[0]    = self::$_bucketPrefix.$path[0];
             $fullPath   = $protocol.'://'.$path[0].'/'.$path[1];
         }
 
-        if(self::$_bucketSuffix)
+        if(self::$_bucketSuffix && !$this->_client)
         {
             $path[0]    .= self::$_bucketSuffix;
             $fullPath   = $protocol.'://'.$path[0].'/'.$path[1];
