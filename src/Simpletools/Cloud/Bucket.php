@@ -101,5 +101,4 @@ class Bucket
   {
     return $this->_bucket->getIterator($directory);
   }
-
 }

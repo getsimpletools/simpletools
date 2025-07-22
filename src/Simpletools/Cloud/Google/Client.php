@@ -23,6 +23,24 @@ class Client
 
     protected static $_activeUser;
 
+    protected $_settings;
+    protected $_storage;
+
+    public function __construct($settings)
+    {
+      $this->_settings = $settings;
+      $this->_storage = new ServiceBuilder($settings);
+    }
+
+    public function getStorage()
+    {
+        return $this->_storage;
+    }
+    public function getClientSettings()
+    {
+      return $this->_settings;
+    }
+
     public static function settings($settings)
     {
         $clientEmail = @$settings['keyFile']['client_email'];

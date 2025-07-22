@@ -29,8 +29,13 @@ class File
     protected $_gzipChunk = 100000;
     protected $_gzipCompressionLevel = 9;
 
-    public function __construct($file,array $meta=[])
+    public function __construct($file,array $meta=[], $client = null)
     {
+        if($client)
+        {
+            $this->_client = $client;
+        }
+
         if($file instanceof StorageObject)
         {
             $this->_remoteFile = $file;
@@ -73,6 +78,11 @@ class File
     protected function _getBucket($bucket)
     {
         if($this->_bucketObject) return $this->_bucketObject;
+
+        if($this->_client)
+        {
+            return $this->_bucketObject = $this->_client->getStorage()->storage()->bucket($bucket);
+        }
 
         return $this->_bucketObject = Bucket::get($bucket);
     }
