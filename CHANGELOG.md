@@ -1,3 +1,7 @@
+### 3.0.30 (2025-07-28)
+1. **Simpletools\Http\Api\Input**
+    1. Remove object reference in `toObject()` method
+
 ### 3.0.29 (2025-07-22)
 1. **PHP 8.4 sync'd with Simpletools-PHP7 Branch**
     1. **Simpletools\Cloud\Google\Client**
