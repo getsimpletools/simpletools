@@ -1,3 +1,7 @@
+### 2.11.10 (2025-07-28)
+1. **Simpletools\Http\Api\Input**
+    1. Remove object reference in `toObject()` method 
+
 ### 2.11.9 (2025-03-26)
 1. **Simpletools\Cloud\Google\Client**
     1. Added standalone object of the class

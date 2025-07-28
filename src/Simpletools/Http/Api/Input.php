@@ -425,7 +425,7 @@ class Input
 
     public function toObject()
     {
-        return self::$_input;
+        return json_decode(json_encode(self::$_input));
     }
 
     public function toArray()
