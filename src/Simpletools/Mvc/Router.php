@@ -999,6 +999,8 @@
 						foreach($matches as $i=>$m)
 						{
 							if(!isset($route['map'][$i])) continue;
+                            if($this->_activeCustomRouteArgs === false)
+                                $this->_activeCustomRouteArgs = [];
 
 							$this->_activeCustomRouteArgs[$route['map'][$i]] = $m;
 						}
