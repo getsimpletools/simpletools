@@ -1,3 +1,7 @@
+### 3.0.34 (2026-03-29)
+1. **Simpletools\Page\Layout**
+    1. Fixed `displayMetaTags()` not separating tags with a space, causing e.g. `tag1="value1"tag2="value2"` issue introduced in 3.0.33
+
 ### 3.0.33 (2026-03-29)
 1. **Simpletools\Page\Layout**
     1. Added `metaTags($name = null)` returning current meta tags or a specific one if it exists, or null otherwise

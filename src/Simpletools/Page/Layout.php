@@ -353,9 +353,9 @@
                         echo '<meta ';
                         foreach($content as $key=>$value)
                         {
-                            echo $key.'="'.$value.'"';
+                            echo $key.'="'.$value.'" ';
                         }
-                        echo ' />'."\n";
+                        echo '/>'."\n";
 					}
 				}
 			}
