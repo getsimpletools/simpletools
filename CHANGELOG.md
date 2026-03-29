@@ -1,3 +1,16 @@
+### 3.0.33 (2026-03-29)
+1. **Simpletools\Page\Layout**
+    1. Added `metaTags($name = null)` returning current meta tags or a specific one if it exists, or null otherwise
+    2. Added `removeMetaTag($name)` allowing removal of a previously added tag
+    3. Improved `addMetaTag($name, $content)` to support custom key-value pairs (e.g. `property=` instead of `name=`). When `$content` is not passed as a string, it enables customisation using key-value pairs, e.g. `["property" => "og:image", "content" => "https://example.com/image.png"]` renders `<meta property="og:image" content="https://example.com/image.png" />`  
+
+### 3.0.32 (2025-11-27)
+1. **Simpletools\Mvc\Router**
+   1. Fixed `Cannot convert false to array`
+
+### 3.0.31 (2025-09-09)
+1. PHP 8.4 sync'd with Simpletools-PHP7 Branch
+
 ### 3.0.30 (2025-07-28)
 1. **Simpletools\Http\Api\Input**
     1. Remove object reference in `toObject()` method

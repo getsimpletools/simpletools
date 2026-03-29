@@ -325,24 +325,49 @@
 		
 		public function &addMetaTag($name,$content)
 		{
+            //normalisation for backward compatibility in case content is a string
+            if(!is_array($content))
+                $content = ['name'=>$name,'content'=>$content];
+
 			$this->_meta_tags[$name] = $content;
 			
 			return $this;
 		}
+
+        public function &removeMetaTag($name)
+        {
+            if(isset($this->_meta_tags[$name]))
+                unset($this->_meta_tags[$name]);
+
+            return $this;
+        }
 		
 		public function displayMetaTags()
 		{
 			if(count($this->_meta_tags)) {
 				
-				foreach($this->_meta_tags as $tag => $content)
+				foreach($this->_meta_tags as $content)
 				{
 					if($content)
 					{
-						echo '<meta name="'.$tag.'" content="'.$content.'" />';
+                        echo '<meta ';
+                        foreach($content as $key=>$value)
+                        {
+                            echo $key.'="'.$value.'"';
+                        }
+                        echo ' />'."\n";
 					}
 				}
 			}
 		}
+
+        public function metaTags($name=null)
+        {
+            if($name)
+                return $this->_meta_tags[$name]??null;
+
+            return $this->_meta_tags;
+        }
 		
 		public function &addHeadLink(array $options)
 		{
