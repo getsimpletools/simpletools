@@ -91,28 +91,27 @@
 	    	}
 	    }
 
-	    function rewind() 
+	    function rewind() : void
 	    {
 	    	$this->_runQuery(true);
 	    }
 
-	    function current() 
+	    function current() : mixed
 	    {
 	    	return $this->_currentRow;
 	    }
 
-	    function key() 
+	    function key() : mixed
 	    {
 	    	return $this->_currentId;
 	    }
 
-	    function next() 
+	    function next() :void
 	    {
 	    	$this->_setRow();
-	        return $this->_currentRow;
 	    }
 
-	    function valid() 
+	    function valid() : bool
 	    {
 	    	if($this->_currentId === $this->_startId) 
 	    	{
