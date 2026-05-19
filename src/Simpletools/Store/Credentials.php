@@ -260,9 +260,9 @@ class Credentials implements \JsonSerializable
             $this->_payloadEncrypted = $this->_payloadInput;
 
             $this->_cryptIv = base64_decode($cryptChunks[0]);
-            $this->_payloadInput = $cryptChunks[1];
+            $this->_payloadInput = $cryptChunks[1]??'';
 
-            $decrypted = openssl_decrypt($this->_payloadInput,self::$_CIPHER,$this->_cryptKey,0,$this->_cryptIv);
+            $decrypted = @openssl_decrypt($this->_payloadInput,self::$_CIPHER,$this->_cryptKey,0,$this->_cryptIv);
             if($decrypted===false)
             {
                 throw new \Exception('Provided credentials can\'t be decrypted, please check your encryption key',400);

@@ -1,3 +1,7 @@
+### 3.0.35 (2026-05-19)
+1. **Simpletools\Store\Credentials**
+    1. Silence unneeded deprecation warning
+
 ### 3.0.34 (2026-03-29)
 1. **Simpletools\Page\Layout**
     1. Fixed `displayMetaTags()` not separating tags with a space, causing e.g. `tag1="value1"tag2="value2"` issue introduced in 3.0.33
