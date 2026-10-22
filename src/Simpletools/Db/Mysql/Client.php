@@ -61,7 +61,7 @@ class Client
 
     public function __construct(array $settings=[],$connectionName='default')
     {
-        //mysqli_report(MYSQLI_REPORT_OFF);
+        mysqli_report(MYSQLI_REPORT_OFF);
         $this->setSettings($settings);
 
         $this->___connectionName = $connectionName;

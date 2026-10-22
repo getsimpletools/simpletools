@@ -1,3 +1,7 @@
+### 3.0.38 (2026-10-22)
+1. **Simpletools\Db\Mysql\Client**
+    1. Enabled mysqli_report
+
 ### 3.0.37 (2026-10-22)
 1. **Simpletools\Db\Mysql\Client**
     1. Dissabled mysqli_report
