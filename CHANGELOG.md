@@ -1,3 +1,7 @@
+### 3.0.37 (2026-10-22)
+1. **Simpletools\Db\Mysql\Client**
+    1. Dissabled mysqli_report
+
 ### 3.0.35 (2026-05-19)
 1. **Simpletools\Store\Credentials**
     1. Silence unneeded deprecation warning
